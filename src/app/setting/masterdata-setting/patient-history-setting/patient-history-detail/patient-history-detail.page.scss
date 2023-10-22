@@ -1,0 +1,22 @@
+.option-ctl {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    z-index: 99;
+
+    ion-button {
+        --padding-start: .6em;
+        --padding-end: .6em;
+        margin-inline: 2px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        font-size: 12px;
+    }
+}
+
+ion-col {
+    align-self: center;
+}

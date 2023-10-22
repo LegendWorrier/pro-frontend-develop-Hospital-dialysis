@@ -1,0 +1,55 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="notifications" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    
+    <ion-title>Notifications</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-list>
+        <ion-item *ngFor="let item of notifications" class="noti-item"
+        [class.new]="!item.isRead"
+        [class.expired]="isExpired(item)"
+        [class.approved]="isApproved(item)"
+        [class.denied]="isDenied(item)"
+        [class.invalid]="isInvalid(item)"
+        [button]="canAction(item)"
+        (click)="canAction(item) ? notiAction(item) : undefined"
+        >
+          <div class="content">
+            <ion-text class="title"> {{ item.Title }}</ion-text>
+            <span class="detail">
+              <ion-text [innerHTML]="getSanitizedDetail(item)"></ion-text>
+            </span>
+            <ion-text class="time-label">{{getCreateLabel(item.Created)}}</ion-text>
+          </div>
+          <!-- indicator -->
+          <ion-text *ngIf="isApproved(item)" color="greenish" class="indicator">Approved</ion-text>
+          <ion-text *ngIf="isDenied(item)" color="danger" class="indicator">Rejected</ion-text>
+          <ion-text *ngIf="isInvalid(item)" color="danger" class="indicator">Invalid</ion-text>
+        </ion-item>
+      </ion-list>
+      <!-- loading -->
+      <app-page-loader #loader label="Notifications" [(dataList)]="notifications" [retryable]="true" [autoRefresh]="false"
+      [loadCall]="loadNoti$" [limit]="15"></app-page-loader>
+    </ion-col>
+  </ion-row>
+  
+  <div class="no-record no-record-middle" *ngIf="notifications.length === 0">
+    <ion-text>No Notification</ion-text>
+  </div>
+  
+  <ion-footer slot="fixed" class="footer">
+    <ion-button color="secondary" (click)="readAll(true)" [expand]="width > 576 ? 'unset': 'full'" >
+      Read All
+    </ion-button>
+    <!-- Disable for maintenance -->
+    <ion-button color="orange" (click)="clearAll()" [expand]="width > 576 ? 'unset': 'full'" [hidden]="true" >
+      Clear All
+    </ion-button>
+  </ion-footer>
+</ion-content>

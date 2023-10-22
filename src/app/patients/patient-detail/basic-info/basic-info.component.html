@@ -1,0 +1,391 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-header>
+          <ion-badge class="id-badge" color="secondary-bright">{{ patient.id }}</ion-badge>
+          <ion-button class="ion-hide-sm-up ion-float-right" color="greenish" size="small" (click)="edit()" [disabled]="!canEdit" >Edit</ion-button>
+          <ion-button class="ion-float-right" color="secondary-bright" size="small" (click)="history()" > {{width > 576 ? 'Profile & History' : 'More'}}</ion-button>
+          <ion-card-title style="width: fit-content;">Information</ion-card-title>
+          <ion-card-subtitle>Name - {{ patient.name }} <ion-icon
+            [color]="patient.gender?(patient.gender === 'M'?'primary':'pink'):'warning'"
+            [name]="patient.gender?(patient.gender === 'M'?'male':'female'):'help'"></ion-icon>
+          </ion-card-subtitle>
+          
+          <ion-button class="ion-hide-sm-down" color="greenish" (click)="edit()" [disabled]="!canEdit">Edit</ion-button>
+          <ion-row>
+            <hemo-tag *ngFor="let item of patient.tags" [tag]="item"></hemo-tag>
+          </ion-row>
+          <ion-item-divider mode="md"></ion-item-divider>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-row>
+            <ion-col size="12" size-lg="6" class="ion-margin-bottom">
+              <ion-card-title>Basic</ion-card-title>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>HN (Hospital Number): </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.hospitalNumber }}
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="!useHN">
+                <ion-col size="4">
+                  <ion-label>ID: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.id }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Identity No: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.identityNo | identity }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Birthdate: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.birthDate | date: 'dd MMM yyyy' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Blood Type: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ getBloodType() || 'Unknown' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Admission Type: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.admission || '-') | pretty }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Telephone: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.telephone || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Address: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.address || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-card-title class="ion-margin-top">Emergency Contact</ion-card-title>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Name: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.emergencyContact.name || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Phone: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.emergencyContact.phoneNumber || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Relationship: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.emergencyContact.relationship || '-' }}
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-card-title>Dialysis Info</ion-card-title>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Doctor: </ion-label>
+                </ion-col>
+                <ion-col *ngIf="doctorName || patient.doctorId">
+                  {{ doctorName }}
+                </ion-col>
+                <ion-col *ngIf="!doctorName && !patient.doctorId">
+                  <ion-text color="danger"><i>No Doctor</i></ion-text>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Transferred From: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.transferFrom || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Accumulated Treament Times: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.dialysisInfo.accumulatedTreatmentTimes != null ? patient.dialysisInfo.accumulatedTreatmentTimes + ' time(s) before coming here' : null) || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>First Time: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.dialysisInfo.firstTime | date: 'dd MMM yyyy') || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>First Time Here: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.dialysisInfo.firstTimeAtHere | date: 'dd MMM yyyy') || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="patient.dialysisInfo.endDateAtHere">
+                <ion-col size="4">
+                  <ion-label>Last Time Here: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.dialysisInfo.endDateAtHere | date: 'dd MMM yyyy') || '-' }}
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="patient.dialysisInfo.kidneyTransplant">
+                <ion-col size="4">
+                  <ion-label>Kidney Transplant Date: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.dialysisInfo.kidneyTransplant | date: 'dd MMM yyyy') }}
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="patient.dialysisInfo.kidneyState">
+                <ion-col size="4">
+                  <ion-label>Kidney State: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ ( KidneyState[patient.dialysisInfo.kidneyState] | pretty) }}
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Cause of Kidney Disease: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ patient.dialysisInfo.causeOfKidneyDisease || 'N/A' }}
+                </ion-col>
+              </ion-row>
+              <ng-container *ngIf="patient.dialysisInfo.status">
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Status: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ patient.dialysisInfo.status }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="patient.dialysisInfo.causeOfDeath">
+                  <ion-col size="4">
+                    <ion-label>Cause of Death: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ patient.dialysisInfo.causeOfDeath }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="patient.dialysisInfo.timeOfDeath">
+                  <ion-col size="4">
+                    <ion-label>Time of Death: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ patient.dialysisInfo.timeOfDeath | date: 'dd/MM/yyyy HH:mm' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="patient.dialysisInfo.transferTo">
+                  <ion-col size="4">
+                    <ion-label>Transferred To: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ patient.dialysisInfo.transferTo }}
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+              <ion-card-title class="ion-margin-top">Payment Info</ion-card-title>
+              <ion-row>
+                <ion-col size="4">
+                  <ion-label>Coverage Scheme: </ion-label>
+                </ion-col>
+                <ion-col>
+                  {{ (patient.coverageScheme || '-') | pretty }}
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+        
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <!-- medicine -->
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title class="ion-margin-bottom">Allergy</ion-card-title>
+          <ion-item-divider mode="md"></ion-item-divider>
+        </ion-card-header>
+        <ng-container *ngTemplateOutlet="medicineTemplate; context: { list: patient.allergy }"></ng-container>
+      </ion-card>
+    </ion-col>
+    <ng-template #medicineTemplate let-list="list" let-medicineList="medicineList">
+      <ion-card-content>
+        <ion-row>
+          <ion-col class="medicine-item" *ngFor="let item of list" size="6" size-lg="4" [attr.size-xl]="width > 1500? 3 : 4">
+            <ion-text>{{ getMedicine(item) }}</ion-text>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ng-template>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Note</ion-card-title>
+          <ion-item-divider mode="md"></ion-item-divider>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-textarea readonly>
+            {{ patient.note }}
+          </ion-textarea>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-card class="med-history-grp">
+        <ion-card-header>
+          <div class="controls ion-float-right">
+            <ion-fab-button (click)="addMedHistory()"><ion-icon name="add"></ion-icon></ion-fab-button>
+            <ion-button (click)="medHistory()">Detail</ion-button>
+          </div>
+          <ion-card-title class="ion-margin-bottom">Medicine History</ion-card-title>
+          <ion-item-divider mode="md"></ion-item-divider>
+        </ion-card-header>
+        <!-- med overview -->
+        <ion-card-content>
+          <ion-row>
+            <ion-col>
+              <ion-list class="med-list" *ngIf="medOverview && medOverview.thisMonthMeds.length > 0; else none">
+                <ion-title style="position: unset;">
+                  This Month
+                </ion-title>
+                <ion-item-divider>
+                </ion-item-divider>
+                <ion-item *ngFor="let med of medOverview.thisMonthMeds">
+                  <ion-label>{{med.medicine.name}}</ion-label>
+                  <ion-label>{{med.count}} time(s)</ion-label>
+                </ion-item>
+              </ion-list>
+              <ng-template #none>
+                <ion-title class="no-record">None this month</ion-title>
+              </ng-template>
+              
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Admission</ion-card-title>
+          <ion-item-divider mode="md"></ion-item-divider>
+        </ion-card-header>
+        <ion-card-content>
+          <ng-container *ngIf="admit; else admission">
+            <ion-row>
+              <ion-col size="4">
+                <ion-label>AN: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ admit.an }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4">
+                <ion-label>Admit: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ admit.admit | date: 'dd MMM yyyy, hh:mm a' }}
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="admit.room">
+              <ion-col size="4">
+                <ion-label>Room: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ admit.room }}
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="admit.telNo">
+              <ion-col size="4">
+                <ion-label>Room Tel No.: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ admit.telNo }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4">
+                <ion-label>Chief Complaint: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ (admit.chiefComplaint) || '-' }}
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4">
+                <ion-label>Diagnosis: </ion-label>
+              </ion-col>
+              <ion-col>
+                {{ (admit.diagnosis) || '-' }}
+              </ion-col>
+            </ion-row>
+            <ion-label class="ion-margin-top title">Underlying</ion-label>
+            <ion-item-divider mode="md"></ion-item-divider>
+            <ion-row>
+              <ion-col class="medicine-item" *ngFor="let item of admit.underlying" size="6" size-lg="4" [attr.size-xl]="width > 1500? 3 : 4">
+                <ion-text>{{ item.name }}</ion-text>
+              </ion-col>
+            </ion-row>
+          </ng-container>
+          <ng-template #admission>
+            <ion-row>
+              <ion-col>
+                <ion-fab-button (click)="newAdmit()"><ion-icon name="add"></ion-icon></ion-fab-button>
+              </ion-col>
+            </ion-row>
+          </ng-template>
+          
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+</ion-grid>

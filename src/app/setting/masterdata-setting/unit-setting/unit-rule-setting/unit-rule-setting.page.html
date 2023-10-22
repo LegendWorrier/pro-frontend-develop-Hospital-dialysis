@@ -1,0 +1,79 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Unit Rules & Settings</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content >
+  <ion-row class="safe-area spacing">
+    <ion-col>
+      <ion-title>
+          {{ unitName }}
+      </ion-title>
+    </ion-col>
+  </ion-row>
+  
+  <ng-container *ngIf="setting; else loading">
+    <ion-card>
+      <ion-card-content>
+        <ion-row>
+          <ion-col>
+            <ion-title>Settings</ion-title>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-input label="Max patients/beds per round: " [labelPlacement]="width > 576 ? 'start' : 'floating'"
+            placeholder="Total Beds"
+            type="number" inputmode="numeric" min="1"
+            [(ngModel)]="setting.maxPatientPerSlot"></ion-input>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <ion-row>
+          <ion-col>
+            <ion-title>Rules</ion-title>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-checkbox [(ngModel)]="setting.autoNurseInShift" labelPlacement="end" justify="start">
+                Auto-fill in HD nurses/PN on hemosheet when complete (based on every nurses/PN in current Shifts)
+              </ion-checkbox>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-checkbox [(ngModel)]="setting.autoSendHemosheetWhenFinish" labelPlacement="end" justify="start">
+                Auto-send hemosheet as PDF to HIS on complete (if enabled)
+              </ion-checkbox>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-row class="spacing safe-area">
+      <ion-col>
+        <ion-button color="greenish" (click)="save()">Save</ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ng-container>
+  
+  <ng-template #loading>
+    <ion-spinner></ion-spinner>
+  </ng-template>
+  
+</ion-content>

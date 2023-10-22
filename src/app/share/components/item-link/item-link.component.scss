@@ -1,0 +1,16 @@
+.selected {
+    --color: var(--ion-color-primary);
+}
+
+ion-item {
+    --ripple-color: var(--ion-color-primary);
+    --color-focused: var(--ion-color-primary);
+    --background-hover: var(--ion-color-secondary);
+    --detail-icon-color: var(--ion-color-primary);
+    --color-activated: var(--ion-color-primary);
+    --highlight-color-focused: var(--ion-color-primary);
+}
+ion-item ion-icon {
+    color: inherit;
+    margin-right: 15px;
+}

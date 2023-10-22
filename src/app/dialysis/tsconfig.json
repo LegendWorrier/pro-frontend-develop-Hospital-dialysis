@@ -1,0 +1,26 @@
+{
+  "extends": "../../../server/tsconfig-base.json",
+  "include": [
+    "hemosheet-info.ts",
+    "dialysis-prescription-info.ts",
+    "dialysis-mode.ts",
+    "hdf-type.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../server/dist",
+    "composite": true, // needed for references sub-projects
+    "rootDir": ".",
+    "tsBuildInfoFile": "../../../server/dist/srcbuildinfo-dialysis",
+    "experimentalDecorators": true,
+    "strict": false,
+    "strictNullChecks": false
+  },
+  "references": [
+    {
+      "path": "../enums"
+    },
+    {
+      "path": "../share"
+    }
+  ]
+}

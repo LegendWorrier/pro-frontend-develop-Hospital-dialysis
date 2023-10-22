@@ -1,0 +1,55 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Patient History Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            History Entry List
+          </ion-title>
+          <ion-item-divider></ion-item-divider>
+          <ng-container *ngIf="historyList; else loading">
+            <ion-item button *ngFor="let item of historyList; let i=index;" (click)="edit(item)">
+              <ion-label>
+                {{ item.displayName }}
+          
+                <p>{{ item.name }}</p>
+              </ion-label>
+              <ion-button color="medium" class="icon-button" (click)="$event.stopPropagation();swap(item, historyList[i-1])" [disabled]="i === 0"
+                *ngIf="canEdit">
+                <ion-icon name="arrow-up"></ion-icon>
+              </ion-button>
+              <ion-button color="medium" class="icon-button" (click)="$event.stopPropagation();swap(item, historyList[i+1])" [disabled]="i === historyList.length - 1"
+              *ngIf="canEdit">
+                <ion-icon name="arrow-down"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    
+  </ion-grid>
+  <ion-fab slot="fixed" horizontal="center" vertical="bottom" *ngIf="canEdit">
+    <ion-fab-button (click)="add()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ng-template #loading>
+  <ion-spinner></ion-spinner>
+</ng-template>
+

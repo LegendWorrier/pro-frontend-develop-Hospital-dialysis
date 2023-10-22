@@ -1,0 +1,39 @@
+
+<ion-content>
+  <ion-label><h1>Adjust Stock</h1></ion-label>
+  <ion-item-divider mode="md"></ion-item-divider>
+  <ion-row>
+    <ion-col>
+      <ion-label>
+        Check Date:
+      </ion-label>
+    </ion-col>
+    <ion-col>
+      <ion-label>
+        {{ stockItem.entryDate | date: 'dd MMM yyyy' }}
+      </ion-label>
+    </ion-col>
+  </ion-row>
+  <ion-card class="adjust">
+    <ion-row>
+      <ion-col class="ion-text-start">
+        <ion-label>
+          {{ stockItem.isCredit? 'Missing' : 'Excess' }}
+        </ion-label>
+      </ion-col>
+      <ion-col class="ion-text-end">
+        <ion-label [color]="stockItem.isCredit? 'danger' : 'greenish'">
+          {{ stockItem.isCredit? '-' : '' }}{{ stockItem.quantity }}
+        </ion-label>
+        Unit
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  <ion-button color="danger" size="small" fill="outline" (click)="cancelEntry()">Cancel Adjust</ion-button>
+  <ion-item-divider mode="md"></ion-item-divider>
+  <ion-row class="ion-justify-content-end">
+    <ion-col size="auto">
+      <ion-button color="secondary" (click)="close()">Close</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

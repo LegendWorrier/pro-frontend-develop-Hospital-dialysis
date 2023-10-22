@@ -1,0 +1,202 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="person-circle" style="font-size: 24px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <app-back-btn-group prev="/patients"></app-back-btn-group>
+    </ion-buttons>
+
+    <ion-title> Profile </ion-title>
+    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card class="card-panel">
+          <ion-card-header>
+            <ion-badge color="danger" *ngIf="user.isAdmin" class="ion-float-right ion-margin"> Admin </ion-badge>
+            <ion-card-title>
+              Username [{{ user.userName }}]
+            </ion-card-title>
+            <ion-card-subtitle *ngIf="!user.isPowerAdmin" >
+              Employee ID : {{ user.employeeId || '-' }}
+            </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <form (ngSubmit)="updateProfile()" enctype="multipart/form-data" #form="ngForm">
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> First Name </ion-label>
+                </ion-col>
+                <ion-col size="12" size-sm="10" size-xl="4">
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> First Name </ion-label>
+                    <ion-input name="first" placeholder="Enter the first name" [(ngModel)]="user.firstName"></ion-input>
+                  </ion-item>
+                </ion-col>
+                
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Last Name </ion-label>
+                </ion-col>
+                <ion-col size="12" size-sm="10" size-xl="4">
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Last Name </ion-label>
+                    <ion-input name="last" placeholder="Enter the last name" [(ngModel)]="user.lastName"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Email </ion-label>
+                </ion-col>
+                <ion-col size="12" size-sm="10" size-xl="4">
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Email </ion-label>
+                    <ion-input name="email" inputmode="email" placeholder="Enter the email" [(ngModel)]="user.email"></ion-input>
+                  </ion-item>
+                </ion-col>
+  
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Phone Number </ion-label>
+                </ion-col>
+                <ion-col size="12" size-sm="10" size-xl="4">
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Phone Number </ion-label>
+                    <ion-input name="phone" inputmode="tel" placeholder="Enter the phone number" [(ngModel)]="user.phoneNumber"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12" size-sm="2">
+                  <ion-label> Signature </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-img [src]="src" [style.height]="src?(width > 376?'150px':'90px'):''" class="sig-display" (click)="chooseSignature()"></ion-img>
+                  <ion-button color="secondary" size="small" (click)="createSignature()">
+                    <ion-icon name="pencil-sharp"></ion-icon>
+                  </ion-button>
+                  <ion-button color="secondary" size="small" (click)="chooseSignature()">
+                    <ion-icon name="image"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+
+              <div class="btn-group">
+                <ion-button type="submit" color="orange">
+                  Update
+                </ion-button>
+              </div>
+            </form>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="panel">
+          <ion-card-header>
+            <ion-card-title>
+              Password
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-button color="secondary" (click)="password()" *ngIf="!editPassword" >
+              Change Password
+            </ion-button>
+            <ng-container *ngIf="editPassword" >
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Old Password </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Old Password </ion-label>
+                    <ion-input placeholder="Enter current password" [(ngModel)]="oldPassword" required type="password"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> New Password </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> New Password </ion-label>
+                    <ion-input placeholder="Enter new password" [(ngModel)]="newPassword" required type="password"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Re-Enter Password </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Re-Enter Password </ion-label>
+                    <ion-input placeholder="Re-Enter new password" [(ngModel)]="rePassword" required type="password"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <div class="error-txt">
+                <ion-text  color="danger">{{error}}</ion-text>
+              </div>
+              <div>
+                <ion-button (click)="updatePassword()" color="success">
+                  Confirm
+                </ion-button>
+                <ion-button (click)="cancelPassword()" color="danger">
+                  Cancel
+                </ion-button>
+              </div>
+              
+            </ng-container>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col class="ion-text-center">
+        <ng-container *ngIf="!smartLoginToken">
+          <ion-button id="smart-login-btn" color="quaternary-alt" (click)="smartLoginGenerate()">Smart Login Generate</ion-button>
+        </ng-container>
+        <ion-card *ngIf="smartLoginToken">
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-text color="danger">*Please keep this information a secret: save/capture/write down QR Code before leaving this page</ion-text>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col id="qr-holder">
+                <canvas #qrCanvas style="width: 250px; height: 250px;"></canvas>
+                <ion-button color="secondary" (click)="downloadQR()">Save Image</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-textarea readonly>
+                  {{ smartLoginToken }}
+                </ion-textarea>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col class="ion-text-center">
+        <ion-button color="danger" (click)="revokeSmartLogin()">Revoke smart login</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col class="ion-text-center">
+        <ion-text color="danger" class="error-text">
+          {{ error }}
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

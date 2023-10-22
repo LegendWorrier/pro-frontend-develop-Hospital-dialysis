@@ -1,0 +1,7 @@
+<ion-infinite-scroll #infiniteScroll [threshold]="threshold" (ionInfinite)="loadData()" [disabled]="isTotal">
+  <ion-infinite-scroll-content [class.override-display]="isLoading" loadingSpinner="bubbles" [loadingText]="LoadingLabel"></ion-infinite-scroll-content>
+</ion-infinite-scroll>
+<div class="retry-btn" *ngIf="displayRetry">
+  <ion-icon name="reload" (click)="reload()"></ion-icon>
+  <ion-label (click)="reload()"> Retry </ion-label>
+</div>

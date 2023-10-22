@@ -1,0 +1,80 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Hemosheet's Lab Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+
+        <ion-row>
+          <ion-col>
+            <ion-label color="medium"><i>* Choose Lab Items to be included in hemosheet report</i></ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-label color="medium"><i>* Map Name is used for report mapping.</i></ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-label color="medium"><i>* If Only on Date is unchecked, the latest lab value will always be included in hemosheet report.</i></ion-label>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="ion-justify-content-center">
+          <ion-col [size]="list ? '12': 'auto'">
+            <ion-list *ngIf="list; else loading">
+              <ion-row *ngFor="let item of list">
+                <ion-col>
+                  <ion-item>
+                    <ion-label class="item-name">{{item.itemName}}</ion-label>
+                    <ion-col>
+                      <ion-input name="name" label="Map Name" [labelPlacement]="width > 576 ? 'start' : 'floating'" [(ngModel)]="item.name" required></ion-input>
+                    </ion-col>
+                    <ion-col>
+                      <ion-checkbox name="ood" [labelPlacement]="width > 576 ? 'start' : 'floating'" [(ngModel)]="item.onlyOnDate">Only on Date</ion-checkbox>
+                    </ion-col>
+                    
+                  </ion-item>
+                </ion-col>
+                <ion-col size="2" class="ion-align-self-center ion-text-center">
+                  <ion-fab-button class="del" color="danger" (click)="del(item)"><ion-icon name="close"></ion-icon></ion-fab-button>
+                </ion-col>
+              </ion-row>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="auto">
+            <ion-fab-button (click)="add()"><ion-icon name="add"></ion-icon></ion-fab-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="ion-text-center">
+          <ion-col>
+            <ion-text color="danger">{{ error }}</ion-text>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="spacing ion-text-center">
+          <ion-col>
+            <ion-button (click)="save()" color="secondary">Update List</ion-button>
+          </ion-col>
+        </ion-row>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ng-template #loading><ion-spinner></ion-spinner></ng-template>
+

@@ -1,0 +1,33 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="library" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-title>History List</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid *ngIf="!loading; else load">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of historyList; let i = index;" button (click)="select(item)" >
+            <ion-note> {{ i + 1 }} </ion-note>
+            <ion-label> {{ item | date: 'MMM yyyy' }} </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  
+  <div *ngIf="!loading && historyList.length === 0" class="no-record no-record-middle" >
+    <ion-text>No History</ion-text>
+  </div>
+  
+  <ng-template #load>
+    <div class="no-record no-record-middle">
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+</ion-content>

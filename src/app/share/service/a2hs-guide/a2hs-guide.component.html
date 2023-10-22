@@ -1,0 +1,20 @@
+<div class="text-container" >
+  <ng-container *ngIf="isIOS && !isSafari">
+    <ion-text color="danger" class="ion-text-center" ><b>*You must use 'Safari' browser to install this app.</b></ion-text>
+    <br>
+  </ng-container>
+  <ion-text>You can install the app manually via {{ isIOS? 'Safari': '' }} browser :</ion-text>
+</div>
+
+<div class="img-container">
+  <ion-img *ngFor="let n of imgsSrc" [src]="n" ></ion-img>
+</div>
+<div *ngIf="isEdge && isDesktopModeHint" class="tip-container ion-text-center ion-margin-top">
+  <ion-text >
+    Tip: If you are using edge on tablet device, chance are you're using desktop mode (by default). 
+    You can change to mobile site view and set default at the 'Settings -> General -> Site display settings':
+  </ion-text>
+  <ion-img class="ion-margin-top" src="assets/guide/install/edge_mobile_view.png"></ion-img>
+</div>
+
+<ion-button class="ok-btn" color="secondary" size="large" (click)="close()" >Ok</ion-button>

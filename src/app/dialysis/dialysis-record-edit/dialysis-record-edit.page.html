@@ -1,0 +1,780 @@
+<app-header *ngIf="!isModal" [pageName] = "(!editMode? 'New ':'') + 'Dialysis Record'" [searchBar]="false" prev="/patients"></app-header>
+<ion-header appHeaderTheme *ngIf="isModal">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="reader" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ !editMode? 'New':'' }} Dialysis Record</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row *ngIf="viewOnly" >
+    <ion-col>
+      <ion-badge color="secondary" class="from-machine">From Machine</ion-badge>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <form #form="ngForm">
+        <ion-card class="card-panel">
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label>Record Date/Time</ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="Record Date/Time" placeholder="Select Record Date/Time" [(value)]="tmp.timestamp" [readonly]="viewOnly" 
+                displayFormat="HH:mm, d MMM yyyy">
+                <ion-datetime name="datetime" presentation="time-date"
+                  [max]="maxDate"
+                  [(ngModel)]="tmp.timestamp"
+                  [showDefaultButtons]="true"
+                  required
+                  hourCycle="h23"
+                  ></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+        <ion-card class="card-panel-mini" *ngIf="!setting.model || !setting.number || !setting.remaining">
+          <ion-card-content>
+            <ion-row>
+              <ng-container *ngIf="!setting.model">
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Machine Model</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Machine Model</ion-label>
+                    <ion-input name="model" placeholder="Enter Machine Model" [(ngModel)]="tmp.model" [readonly]="viewOnly"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ng-container>
+              <ng-container *ngIf="!setting.number">
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Machine Number</ion-label>
+                </ion-col>
+                <ion-col col-auto>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Machine Number</ion-label>
+                    <ion-input name="number" placeholder="Enter Machine Number" [(ngModel)]="tmp.number" [readonly]="viewOnly"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ng-container>
+            </ion-row>
+    
+            <ion-row class="ion-hide-sm-up" *ngIf="!setting.remaining">
+              <ion-col style="padding-left: 20px;">
+                <ion-label>Remaining Time</ion-label>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="!setting.remaining">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label>Remaining Time</ion-label>
+              </ion-col>
+              <ion-col size-sm="4" style="max-height: 66px;">
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> Hours </ion-label>
+                  <ion-input name="h" placeholder="Hours" min="0" max="12" pattern="[0-9]*" type="number" [(ngModel)]="Hour" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col col-auto *ngIf="width > 576">
+                <span>H</span>
+              </ion-col>
+              <ion-col col-auto size-sm="4" style="max-height: 66px;">
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> Minutes </ion-label>
+                  <ion-input name="m" placeholder="Minutes" min="0" max="59" pattern="[0-9]*" type="number" [(ngModel)]="Minute" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col col-auto *ngIf="width > 576">
+                <span>M</span>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="card-panel">
+          <ion-row class="ion-hide-sm-up" *ngIf="!setting.bps">
+            <ion-col style="padding-left: 20px;">
+              <ion-label> BP (Blood Pressure)</ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ng-container *ngIf="!setting.bps">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> BP (Blood Pressure) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> BPS </ion-label>
+                  <ion-input name="bps" type="number" min="0" pattern="[0-9]*" placeholder="bps" [(ngModel)]="tmp.bps" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+            <ng-container *ngIf="!setting.bpd">
+              <ion-col size="1" size-sm="2" >
+                <ion-label> / </ion-label>
+              </ion-col>
+              <ion-col col-auto>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> BPD </ion-label>
+                  <ion-input name="bpd" type="number" min="0" pattern="[0-9]*" placeholder="bpd" [(ngModel)]="tmp.bpd" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+          <ion-row>
+            <ng-container *ngIf="!setting.hr">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> HR (Pulse) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> HR (bpm) </ion-label>
+                  <ion-input name="hr" type="number" min="0" pattern="[0-9]*" placeholder="Heart Rate (bpm)" [(ngModel)]="tmp.hr" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+            <ng-container *ngIf="!setting.rr">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> RR (Breath) </ion-label>
+              </ion-col>
+              <ion-col col-auto>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> RR (/min) </ion-label>
+                  <ion-input name="rr" type="number" min="0" pattern="[0-9]*" placeholder="Respiration Rate (/min)" [(ngModel)]="tmp.rr" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+          <ion-row>
+            <ng-container *ngIf="!setting.bfr">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> BFR (Blood Flow Rate) (ml/min) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> BFR (Blood Flow Rate) (ml/min) </ion-label>
+                  <ion-input name="bfr" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Blood Flow Rate (ml/min)" [(ngModel)]="tmp.bfr" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+            <ng-container *ngIf="!setting.temp">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Temperature (°C) </ion-label>
+              </ion-col>
+              <ion-col col-auto>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> Temperature (°C) </ion-label>
+                  <ion-input name="temp" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Temp. (°C)" [(ngModel)]="tmp.temp" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+        </ion-card>
+
+        <ion-card class="card-panel">
+          <ion-row *ngIf="!setting.vp || !setting.ap">
+            <ng-container *ngIf="!setting.vp">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Venous Pressure (mmHg) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> VP (mmHg) </ion-label>
+                  <ion-input name="vp" type="number" [pattern]="decimalPattern" inputmode="decimal" placeholder="Venous Pressure (mmHg)" [(ngModel)]="tmp.vp" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+            <ng-container *ngIf="!setting.ap">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Arterial Pressure (mmHg) </ion-label>
+              </ion-col>
+              <ion-col col-auto>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> AP (mmHg) </ion-label>
+                  <ion-input name="ap" type="number" [pattern]="decimalPattern" inputmode="decimal" placeholder="Arterial Pressure (mmHg)" [(ngModel)]="tmp.ap" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+          <ion-row *ngIf="!setting.dp">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Pressure (mmHg) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Pressure (mmHg) </ion-label>
+                <ion-input name="dp" type="number" [pattern]="decimalPattern" inputmode="decimal" placeholder="Dialysate Pressure (mmHg)" [(ngModel)]="tmp.dp" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.tmp">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> TMP (mmHg) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> TMP (mmHg) </ion-label>
+                <ion-input name="tmp" type="number" [pattern]="decimalPattern" inputmode="decimal" placeholder="TMP (mmHg)" [(ngModel)]="tmp.tmp" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ufRate">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> UF Rate (L/hr) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> UF Rate (L/hr) </ion-label>
+                <ion-input name="ufRate" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="UF Rate (L/hr)" [(ngModel)]="tmp.ufRate" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ufTotal">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> UF Total (Accumulated Volume) (L) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> UF Total (Accumulated Volume) (L) </ion-label>
+                <ion-input name="ufTotal" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="UF Total (L)" [(ngModel)]="tmp.ufTotal" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ufTarget">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> UF Target (L) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> UF Target (L) </ion-label>
+                <ion-input name="ufTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="L" [(ngModel)]="tmp.ufTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-hide-sm-up" *ngIf="!setting.acLoading || !setting.acMaintain">
+            <ion-col style="padding-left: 20px;">
+              <ion-label> Anticoagulant (Heparin)</ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.acLoading || !setting.acMaintain">
+            <ng-container *ngIf="!setting.acLoading">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Anticoagulant Loading (ml) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> Loading (ml) </ion-label>
+                  <ion-input name="acLoading" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Anticoagulant (ml)" [(ngModel)]="tmp.acLoading" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+            <ng-container *ngIf="!setting.acMaintain">
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Maintaining Rate (ml/hr) </ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up"> Main. Rate (ml/hr) </ion-label>
+                  <ion-input name="acMaintain" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Anticoagulant (ml/hr)" [(ngModel)]="tmp.acMaintain" [readonly]="viewOnly"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ng-container>
+          </ion-row>
+          <ion-row *ngIf="!setting.hav">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Anticoagulant Accumulated Volume (ml) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Anticoagulant Accumulated Volume (ml) </ion-label>
+                <ion-input name="hav" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="ml" [(ngModel)]="tmp.hav" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dialysate">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate (K/Ca) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate (K/Ca) </ion-label>
+                <ion-input name="dialysate" pattern="[0-9]*(\.[0-9]*)?\s*/\s*[0-9]*(\.[0-9]*)?" placeholder="K/Ca" [(ngModel)]="tmp.dialysate" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dfrTarget">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Flow Rate Target (ml/min) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Flow Rate Target (ml/min) </ion-label>
+                <ion-input name="dfrTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="ml/min" [(ngModel)]="tmp.dfrTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dfr">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Flow Rate (ml/min) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Flow Rate (ml/min) </ion-label>
+                <ion-input name="dfr" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="ml/min" [(ngModel)]="tmp.dfr" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dtTarget">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Temperature Target (°C) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Temperature Target (°C) </ion-label>
+                <ion-input name="dtTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="°C" [(ngModel)]="tmp.dtTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dt">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Temperature (°C) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Temperature (°C) </ion-label>
+                <ion-input name="dt" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="°C" [(ngModel)]="tmp.dt" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dcTarget">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Conductivity Target (mS/cm) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Conductivity Target (mS/cm) </ion-label>
+                <ion-input name="dcTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Dialysate Conductivity Target (mS/cm)" [(ngModel)]="tmp.dcTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.dc">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Dialysate Conductivity (mS/cm) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Dialysate Conductivity (mS/cm) </ion-label>
+                <ion-input name="dc" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Dialysate Conductivity (mS/cm)" [(ngModel)]="tmp.dc" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.bc">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Bicarbonate Conductivity (mS/cm) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Bicarbonate Conductivity (mS/cm) </ion-label>
+                <ion-input name="bc" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Bicarbonate Conductivity (mS/cm)" [(ngModel)]="tmp.bc" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.nss">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Saline Solution Drip (NSS) (ml) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Saline Solution Drip (NSS) (ml) </ion-label>
+                <ion-input name="nss" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="NSS (ml)" [(ngModel)]="tmp.nss" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.glucose50">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> 50% w/v (ml) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> 50% w/v (ml) </ion-label>
+                <ion-input name="glucose50" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="ml" [(ngModel)]="tmp.glucose50" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.hco3">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> HCO<sub>3</sub>- </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> HCO<sub>3</sub>- </ion-label>
+                <ion-input name="hco3" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="HCO3" [(ngModel)]="tmp.hco3" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.naTarget">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Na<sup>+</sup> Target </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Na<sup>+</sup> Target </ion-label>
+                <ion-input name="naTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Na Target" [(ngModel)]="tmp.naTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.naProfile">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Na<sup>+</sup> Profile </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Na<sup>+</sup> Profile </ion-label>
+                <ion-input name="naProfile" placeholder="Na Profile" [(ngModel)]="tmp.naProfile" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ufProfile">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> UF Profile </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> UF Profile </ion-label>
+                <ion-input name="ufProfile" placeholder="UF Profile" [(ngModel)]="tmp.ufProfile" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.mode">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Mode </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Mode </ion-label>
+                <ion-input name="mode" placeholder="Mode" [(ngModel)]="tmp.mode" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.bfav">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Blood Flow Accumulated Volume (L) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Blood Flow Accumulated Volume (L) </ion-label>
+                <ion-input name="bfav" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="L" [(ngModel)]="tmp.bfav" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.sRate && !isHD">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Substitution Rate (L/hr) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Substitution Rate (L/hr) </ion-label>
+                <ion-input name="sRate" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="L/hr" [(ngModel)]="tmp.sRate" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.sTotal && !isHD">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Substitution Total (Accumulated Volume) (L) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Substitution Total (L) </ion-label>
+                <ion-input name="sTotal" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="L" [(ngModel)]="tmp.sav" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.sTarget && !isHD">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Substitution Target (L) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Substitution Target (L) </ion-label>
+                <ion-input name="sTarget" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="L" [(ngModel)]="tmp.sTarget" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.sTemp && !isHD">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Substitution Temperature (°C) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Substitution Temp. (°C) </ion-label>
+                <ion-input name="st" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="°C" [(ngModel)]="tmp.sTemp" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+        </ion-card>
+
+        <ion-card class="card-panel" *ngIf="!setting.ktv || !setting.prr || !setting.recirculationRate || !setting.dbv">
+          <ion-row *ngIf="!setting.ktv">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Kt/V </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Kt/V </ion-label>
+                <ion-input name="ktv" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="Kt/V" [(ngModel)]="tmp.ktv" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.urr">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> URR </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> URR </ion-label>
+                <ion-input name="urr" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="URR" [(ngModel)]="tmp.urr" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ktv">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> dBV (%) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> dBV (%) </ion-label>
+                <ion-input name="dbv" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="dBV (%)" [(ngModel)]="tmp.dbv" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.prr">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> PRR </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> PRR </ion-label>
+                <ion-input name="prr" type="number" min="0" [pattern]="decimalPattern" inputmode="decimal" placeholder="PRR" [(ngModel)]="tmp.prr" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!setting.ktv">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Recirculation Rate (%) </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Recirculation Rate (%) </ion-label>
+                <ion-input name="rcr" type="number" min="0" [pattern]="decimalPattern" placeholder="%" [(ngModel)]="tmp.recirculationRate" [readonly]="viewOnly"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+        <ion-card class="card-panel" *ngIf="!viewOnly && hasAssessment">
+          <ion-card-title class="assessment-title">
+            Extra Assessments
+            <ion-button color="danger" size="small" class="ion-float-right" (click)="clearMode=!clearMode">Toggle Clear Mode</ion-button>
+          </ion-card-title>
+          <ion-row>
+            <ion-col>
+              <ng-container *ngIf="dialysisAssessments | async as list; else loading">
+                <ion-row class="assessment-content" >
+                  <ng-container #dialysis></ng-container>
+                </ion-row>
+              </ng-container>
+              <ion-spinner *ngIf="!(dialysisAssessments | async)"></ion-spinner>
+            </ion-col>
+          </ion-row>
+          <ng-template #loading>
+            <ion-skeleton-text animated style="width: 10%; margin-bottom: 20px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 5%; margin-bottom: 10px;"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width: 2%"></ion-skeleton-text>
+          </ng-template>
+        </ion-card>
+
+        <ion-card class="card-panel" *ngIf="!viewOnly" >
+          <ion-card-title>
+            Note
+          </ion-card-title>
+          <ion-row>
+            <ion-col>
+              <ion-item>
+                <ion-textarea name="note" placeholder="Enter note" rows="5" [(ngModel)]="tmp.note"></ion-textarea>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="misc-panel" *ngIf="!editMode">
+            <ion-col>
+              <ion-toggle (ionChange)="copyToNurse=$event.detail.checked" labelPlacement="end">Copy to Nurse Record</ion-toggle>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-text id="error-text" color="danger">{{error}}</ion-text>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="audit-panel" *ngIf="tmp.createdBy">
+          
+            <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2">
+              <ion-label>Established : </ion-label>
+            </ion-col>
+            <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4">
+               <audit-name [id]="tmp.createdBy" [date]="tmp.created"></audit-name>
+            </ion-col>
+            
+            <ng-container *ngIf="tmp.updatedBy!==tmp.createdBy">
+              <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2">
+                <ion-label>Modified : </ion-label>
+              </ion-col>
+              <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4">
+                <audit-name [id]="tmp.updatedBy" [date]="tmp.updated"></audit-name>
+              </ion-col>
+            </ng-container>
+            
+        </ion-row>
+
+        <ion-row class="ion-justify-content-center ion-align-items-center" *ngIf="!viewOnly" >
+          <ion-col class="ion-text-center">
+            <ion-button size="large" color="secondary" type="submit" (click)="save()" [disabled]="form.invalid">
+              Save
+            </ion-button>
+            <ion-button color="danger" class="ion-margin-left" (click)="delete()" *ngIf="editMode && canDelete">Delete</ion-button>
+          </ion-col>
+        </ion-row>
+
+      </form>
+    </ion-col>
+  </ion-row>
+</ion-content>
+ 
+<!-- ======================= Template for Assessments =============================== -->
+
+<ng-template #groupHeader let-name="name">
+  <ion-col size="12">
+    <ion-card-title>{{name}}</ion-card-title>
+  </ion-col>
+</ng-template>
+
+<ng-template #assessment let-list="list" let-re="reassessment" let-item="item" let-clearMode="clearMode">
+  <ion-col size="12" size-sm="6" [attr.size-lg]="width > 1500 ? '4' : '6'">
+    <!-- Binding Data Version -->
+    <ng-container *ngIf="getData(list, item, re) as data; else init">
+      <ion-label>
+        <h2>{{ item.displayName }} <span *ngIf="item.optionType === types.Checkbox && !item.multi">{{data? ' : ' : '' }}{{ getLabel(data, item) }}</span></h2>
+      </ion-label>
+      <ion-label color="medium">
+        {{ item.note ? item.note + ' ' : '' }}
+        <ion-text *ngIf="!item.isMulti && getSelectedOption(item, data) as selected">{{ selected.note ? '(' + selected.note + ')' : '' }}</ion-text>
+      </ion-label>
+      <ion-item-divider></ion-item-divider>
+      <!-- Checkbox -->
+      <ion-checkbox *ngIf="item.optionType === types.Checkbox && !item.multi" [checked]="data.checked" (ionChange)="toggleCheck(list, data, item, re)" [class.readonly]="viewOnly"></ion-checkbox>
+      <ng-container *ngIf="item.optionType === types.Checkbox && item.multi">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-checkbox [checked]="data.selected.includes(option.id)" (ionChange)="select(list, option, data, item, re)" [class.readonly]="viewOnly"></ion-checkbox> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ng-container>
+      <!-- Radio -->
+      <ion-radio-group *ngIf="item.optionType === types.Radio" [value]="data.selected[0]" (ionChange)="select(list, $event, data, item, re)">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-radio [value]="option.id" [class.readonly]="viewOnly"></ion-radio> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ion-radio-group>
+      <!-- Value Type -->
+      <ion-select *ngIf="item.optionType === types.Text && item.multi && !data.custom" [value]="data.text" (ionChange)="selectOption(list, $event, data, item, re)">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.textValue">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      <ion-select *ngIf="item.optionType === types.Number && item.multi && !data.custom" [value]="data.value" (ionChange)="selectOption(list, $event, data, item, re)">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.value">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      
+    </ng-container>
+    <!-- Empty Data Version -->
+    <ng-template #init>
+      <ion-label>
+        <h2>{{ item.displayName }}</h2>
+      </ion-label>
+      <ion-label color="medium">{{ item.note }}</ion-label>
+      <ion-item-divider></ion-item-divider>
+      <!-- Checkbox -->
+      <ion-checkbox *ngIf="item.optionType === types.Checkbox && !item.multi" (ionChange)="toggleCheck(list, null, item, re)" [class.readonly]="viewOnly"></ion-checkbox>
+      <ng-container *ngIf="item.optionType === types.Checkbox && item.multi">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-checkbox (ionChange)="select(list, option, null, item, re)" [class.readonly]="viewOnly"></ion-checkbox> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ng-container>
+      <!-- Radio -->
+      <ion-radio-group *ngIf="item.optionType === types.Radio" (ionChange)="select(list, $event, null, item, re)">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-radio [value]="option.id" [class.readonly]="viewOnly"></ion-radio> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ion-radio-group>
+      <!-- Value Type -->
+      <ion-select *ngIf="item.optionType === types.Text && item.multi" (ionChange)="selectOption(list, $event, null, item, re)" placeholder="Choose value">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.textValue">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      <ion-select *ngIf="item.optionType === types.Number && item.multi" (ionChange)="selectOption(list, $event, null, item, re)" placeholder="Choose value">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.value">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+    </ng-template>
+
+    <!-- Value Type (single) & Extra Input -->
+    <ion-item *ngIf="(!item.multi && isValueType(item)) || (isOther(getData(list, item, re)) && !item.hasText && !item.hasNumber) || isCustom(getData(list, item, re))">
+      <ion-input class="text" *ngIf="item.optionType !== types.Number"
+        [value]="getData(list, item, re)?.text" (ionChange)="textInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+
+      <ion-input class="text" *ngIf="item.optionType === types.Number" type="number"
+        [value]="getData(list, item, re)?.value" (ionChange)="valueInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="item.hasText">
+      <ion-label position="floating">{{ getTextLabel(item) }}</ion-label>
+      <ion-input [value]="getData(list, item, re)?.text" (ionChange)="textInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="item.hasNumber">
+      <ion-label position="floating">{{ getNumberLabel(item) }}</ion-label>
+      <ion-input [value]="getData(list, item, re)?.value" (ionChange)="valueInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <!-- custom value -->
+    <ng-container *ngIf="isValueType(item) && item.hasOther">
+      <ion-label *ngIf="getData(list, item, re) as data; else init" class="other"><ion-checkbox [(ngModel)]="data.custom"></ion-checkbox> Other Value {{ item.optionType === types.Number ? '(number)' : ''}}</ion-label>
+      <ng-template #init>
+        <ion-label class="other"><ion-checkbox (ionChange)="customToggle(list, getData(list, item, re), item, re)"></ion-checkbox> Other Value {{ item.optionType === types.Number ? '(number)' : ''}}</ion-label>
+      </ng-template>
+    </ng-container>
+    
+    <ion-button class="ion-margin-top clear-btn" 
+    [class.ion-float-right]="item.optionType === types.Checkbox && !item.multi" 
+    color="danger" 
+    size="small" 
+    fill="outline"
+    *ngIf="clearMode()"
+    (click)="clearItem(getData(list, item, re));">
+      Clear
+    </ion-button>
+
+  </ion-col>
+  
+</ng-template>

@@ -1,0 +1,992 @@
+<app-header *ngIf="!isModal" pageName = "Hemosheet" [searchBar]="false" prev="/patients"></app-header>
+<ion-header appHeaderTheme *ngIf="isModal">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="newspaper" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Hemosheet</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12" [attr.size-xl]="width > 1499? '6':'12'">
+          <ion-card class="card-panel">
+            <ion-card-header>
+              <ion-card-title>Basic</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Outside Unit?</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="outside" [(ngModel)]="hemosheet.outsideUnit"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-label>Outside Unit? <ion-checkbox name="outside" [(ngModel)]="hemosheet.outsideUnit"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="hemosheet.outsideUnit">
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Ward</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Ward</ion-label>
+                    <ion-input name="ward" placeholder="Enter ward name" [(ngModel)]="hemosheet.ward"
+                    [appSuggestionList]="wards" (onSelect)="onWard($event)"
+                    ></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Is ICU</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Is ICU</ion-label>
+                    <ion-checkbox name="icu" [(ngModel)]="hemosheet.isICU" ></ion-checkbox>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Bed</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Bed</ion-label>
+                    <ion-input name="bed" placeholder="Enter bed" [(ngModel)]="hemosheet.bed"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Dialysis Type</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Dialysis Type</ion-label>
+                    <ion-select name="dType" placeholder="Select dialysis type" [(ngModel)]="hemosheet.type" interface="action-sheet" class="full-h-sm-up">
+                      <ion-select-option *ngFor="let item of dialysisTypes" [value]="item.v"> {{ item.t | pretty }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Admission Type</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Admission Type</ion-label>
+                    <ion-select name="admission" placeholder="Select admission type" [(ngModel)]="hemosheet.admission" interface="action-sheet" class="full-h-sm-up">
+                      <ion-select-option *ngFor="let item of admissionTypes" [value]="item"> {{ item | pretty }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Cycle Start Time </ion-label>
+                </ion-col>
+                <ion-col>
+                  <hemo-datetime-item title="Cycle Start Time" [(value)]="hemosheet.cycleStartTime"
+                    placeholder="Select cycle start time" displayFormat="hh:mm a, dd MMM YY" >
+                    <ion-datetime name="start" presentation="time-date"
+                      [(ngModel)]="hemosheet.cycleStartTime"
+                      [max]="maxDate"
+                      [showDefaultButtons]="true">
+                    </ion-datetime>
+                  </hemo-datetime-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label [style.opacity]="!hemosheet.completedTime? '0.5':'1'"> Cycle End Time </ion-label>
+                </ion-col>
+                <ion-col>
+                  <hemo-datetime-item title="Cycle End Time" [(value)]="hemosheet.cycleEndTime"
+                    [placeholder]="!hemosheet.completedTime?'Hemosheet not completed yet.':'Select cycle completed time'"
+                    displayFormat="hh:mm a, dd MMM YY" [disabled]="!hemosheet.completedTime" >
+                    <ion-datetime name="end" presentation="time-date"
+                      [(ngModel)]="hemosheet.cycleEndTime"
+                      [max]="maxDate"
+                      [showDefaultButtons]="true">
+                    </ion-datetime>
+                  </hemo-datetime-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-card-title>
+                Anticogulant
+              </ion-card-title>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Not Used </ion-label>
+                </ion-col>
+                <ion-col >
+                  <ion-item class="ion-hide-sm-down" [disabled]="isPrescriptionAcNotUsed">
+                    <ion-checkbox name="ac-no-use" [(ngModel)]="isPrescriptionAcNotUsed?true:hemosheet.acNotUsed"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up" [disabled]="isPrescriptionAcNotUsed">
+                    <ion-label>Not Used <ion-checkbox name="ac-no-use" [(ngModel)]="isPrescriptionAcNotUsed?true:hemosheet.acNotUsed"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="hemosheet.acNotUsed || isPrescriptionAcNotUsed">
+                <ion-col size="3"  class="ion-hide-sm-down">
+                  <ion-label> Reason for refraining </ion-label>
+                </ion-col>
+                <ion-col size="12" size-sm="9" >
+                  <ion-item [disabled]="isPrescriptionAcNotUsed">
+                    <ion-label position="floating" class="ion-hide-sm-up"> Reason for refraining </ion-label>
+                    <ion-input name="ac-rfr" placeholder="Enter the reason for not using" 
+                    [(ngModel)]="isPrescriptionAcNotUsed?hemosheet.dialysisPrescription.reasonForRefraining:hemosheet.reasonForRefraining"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-card-title>
+                Flush NSS
+              </ion-card-title>
+              <ion-row>
+                <ion-col >
+                  <ion-item>
+                    <ion-checkbox name="has-flush-nss" [(ngModel)]="hasFlushNSS"></ion-checkbox>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ng-container *ngIf="hasFlushNSS">
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Total Flush Amount (ml)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Total Flush Amount (ml)</ion-label>
+                      <ion-input name="tfa" placeholder="Enter Total NSS (ml)" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="totalFlush"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Flush Amount (ml)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Flush Amount (ml)</ion-label>
+                      <ion-input name="fa" placeholder="Enter NSS per interval (ml)" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.flushNSS"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Flush Times</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Flush Times</ion-label>
+                      <ion-input name="ft" placeholder="Enter number of rep. time" type="number" inputmode="numeric" min="1" pattern="[0-9]+" [(ngModel)]="hemosheet.flushTimes"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Flush Interval (min)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Flush Interval (min)</ion-label>
+                      <ion-input name="fi" placeholder="Enter Interval (min)" type="number" inputmode="numeric" min="1" pattern="[0-9]+" [(ngModel)]="hemosheet.flushNSSInterval"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col size="auto">
+                    <ion-button color="secondary-alt" [disabled]="!canAutoCalculateFlush" (click)="calculateFlush()">Auto-Calculate</ion-button>
+                  </ion-col>
+                  <ion-col size="auto">
+                    <div class="flush-indicator">
+                      <ul>
+                        <ion-text [class.active]="hemosheet.flushNSSInterval"><li>Interval</li></ion-text>
+                        <ion-text [class.active]="hemosheet.flushTimes"><li>Times</li></ion-text>
+                        <ion-text [class.active]="hemosheet.flushNSS"><li>NSS</li></ion-text>
+                        <ion-text [class.active]="totalFlush"><li>Total</li></ion-text>
+                      </ul>
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+
+            </ion-card-content>
+          </ion-card>
+
+          <ng-container *ngIf="width > 1499">
+            <ion-col *ngIf="!hemosheet.completedTime">
+              <ng-container *ngTemplateOutlet="prescription"></ng-container>
+            </ion-col>
+
+            <ion-col>
+              <ng-container *ngTemplateOutlet="avShuntCard"></ng-container>
+            </ion-col>
+
+            <ion-row size="auto" *ngIf="width > 1499 && hemosheet.completedTime" class="ion-justify-content-center">
+              <ion-col size="auto">
+                <ng-container *ngTemplateOutlet="bloodCollection"></ng-container>
+              </ion-col>
+              <ion-col size="auto">
+                <ng-container *ngTemplateOutlet="dialyzer"></ng-container>
+              </ion-col>
+            </ion-row>
+            
+          </ng-container>
+          
+        </ion-col>
+
+        <ion-col size="12" [attr.size-xl]="width > 1499? '6':'12'">
+          <ion-card class="card-panel">
+            <ion-card-header>
+              <ion-card-title>Weight & Dehydration</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Check-in Time</ion-label>
+                </ion-col>
+                <ion-col>
+                  <hemo-datetime-item title="Check-in Time" [(value)]="hemosheet.dehydration.checkInTime"
+                    placeholder="Choose check-in time"
+                    displayFormat="hh:mm a, dd MMM YY">
+                    <ion-datetime name="checkinTime" presentation="time-date"
+                      [(ngModel)]="hemosheet.dehydration.checkInTime"
+                      [max]="maxDate"
+                      [showDefaultButtons]="true">
+                    </ion-datetime>
+                  </hemo-datetime-item>
+                </ion-col>
+              </ion-row>
+              
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Last Post-Dialysis Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Last Post-Dialysis Weight (Kg)</ion-label>
+                    <ion-input name="lpw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.lastPostWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Pre-Total Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Pre-Total Weight (Kg)</ion-label>
+                    <ion-input name="ptw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.preTotalWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Wheelchair Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Wheelchair Weight (Kg)</ion-label>
+                    <ion-input name="whw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.wheelchairWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Cloth Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Cloth Weight (Kg)</ion-label>
+                    <ion-input name="cw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.clothWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <!-- Calculated -->
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label class="hilight">Pre-Dialysis Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up hilight">Pre-Dialysis Weight (Kg)</ion-label>
+                    <ion-input name="cal-pw" [value]="(preWeight | number: decimal)" placeholder="Enter Pre-Total Weight first" readonly></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label class="hilight">Intra Dialytic Weight Gain (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up hilight">Intra Dialytic Weight Gain (Kg)</ion-label>
+                    <ion-input name="idwg" [value]="hemosheet.dehydration.lastPostWeight? (idwg | number: decimal) || 'N/A' : null" placeholder="Enter Last Post-Dialysis Weight first" readonly></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>{{ temporary ? 'Target Fluid Removal Amount (L)' : 'Target Dry Weight (Kg)' }}</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item *ngIf="targetDryWeight">
+                    <ion-label position="floating" class="ion-hide-sm-up">{{ temporary ? 'Target Fluid Removal Amount (L)' : 'Target Dry Weight (Kg)' }}</ion-label>
+                    <ion-input name="ctw" [value]="targetDryWeight | number: decimal" readonly></ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="!targetDryWeight">
+                    <ion-label position="floating" class="ion-hide-sm-up">{{ temporary ? 'Target Fluid Removal Amount (L)' : 'Target Dry Weight (Kg)' }}</ion-label>
+                    <ion-input value="Please update your Dialysis Prescription" readonly style="--color:var(--ion-color-danger); overflow: visible;"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="!temporary">
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>UF Net (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item *ngIf="ufNet">
+                    <ion-label position="floating" class="ion-hide-sm-up">UF Net (Kg)</ion-label>
+                    <ion-input name="cal-pw" [value]="hemosheet.dehydration.preTotalWeight ? (ufNet | number: decimal) || 'N/A' : null"  placeholder="Enter Pre-Total Weight first" readonly></ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="!ufNet">
+                    <ion-label position="floating" class="ion-hide-sm-up">UF Net (Kg)</ion-label>
+                    <ion-input value="Cannot calculate UF Net, please update your Dialysis Prescription" readonly style="--color:var(--ion-color-danger)"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <!-- input -->
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Food and Drink Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Food and Drink Weight (Kg)</ion-label>
+                    <ion-input name="fw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.foodDrinkWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Blood Transfusion (ml)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item *ngIf="!customBloodTrans">
+                    <ion-label position="floating" class="ion-hide-sm-up float">Blood Transfusion (ml)</ion-label>
+                    <ion-input readonly>{{hemosheet.dialysisPrescription?.bloodTransfusion || '0'}} ml</ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="customBloodTrans">
+                    <ion-label position="floating" class="ion-hide-sm-up">Blood Transfusion (ml)</ion-label>
+                    <ion-input name="bt" placeholder="Enter volume (ml)" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.bloodTransfusion"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox">
+                  <ion-checkbox name="cbt" [(ngModel)]="customBloodTrans" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Extra Fluid (ml)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item *ngIf="!customExtraFluid">
+                    <ion-label position="floating" class="ion-hide-sm-up float">Extra Fluid (ml)</ion-label>
+                    <ion-input readonly>{{hemosheet.dialysisPrescription?.extraFluid || '0'}} ml</ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="customExtraFluid">
+                    <ion-label position="floating" class="ion-hide-sm-up">Extra Fluid (ml)</ion-label>
+                    <ion-input name="ef" placeholder="Enter volume (ml)" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.extraFluid"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox">
+                  <ion-checkbox name="cef" [(ngModel)]="customExtraFluid" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                </ion-col>
+              </ion-row>
+
+              <!-- calculated -->
+              <ion-row *ngIf="!temporary">
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Estimated UF Goal (L)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item *ngIf="ufEstimate">
+                    <ion-label position="floating" class="ion-hide-sm-up">Estimated UF Goal (L)</ion-label>
+                    <ion-input name="cal-eUFGoal" [value]="hemosheet.dehydration.preTotalWeight ? (ufEstimate | number: decimal) || 'N/A' : null" placeholder="Enter Pre-Total Weight first" readonly></ion-input>
+                  </ion-item>
+                  <ion-item *ngIf="!ufEstimate">
+                    <ion-label position="floating" class="ion-hide-sm-up">Estimated UF Goal (L)</ion-label>
+                    <ion-input value="Cannot calculate Estimated UF Goal, please update your Dialysis Prescription" readonly style="--color:var(--ion-color-danger)"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>UF Goal (L)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">UF Goal (L)</ion-label>
+                    <ion-input name="UFGoal" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.ufGoal"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>Post-Dialysis Total Weight (Kg)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Post-Dialysis Total Weight (Kg)</ion-label>
+                    <ion-input name="post-tw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.postTotalWeight"></ion-input>
+                  </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4" class="ion-hide-sm-down">
+                <ion-label>Post-Dialysis Wheelchair Weight (Kg)</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up">Post-Dialysis Wheelchair Weight (Kg)</ion-label>
+                  <ion-input name="post-whw" placeholder="Enter weight" type="number" inputmode="decimal" min="0" [pattern]="decimalPattern" [(ngModel)]="hemosheet.dehydration.postWheelchairWeight"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <!-- calculated -->
+            <ion-row>
+              <ion-col size="4" class="ion-hide-sm-down">
+                <ion-label class="hilight">Post-Dialysis Weight (Kg)</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up hilight">Post-Dialysis Weight (Kg)</ion-label>
+                  <ion-input name="post-w" [value]="hemosheet.dehydration.postTotalWeight ? (postWeight | number: decimal) : null" placeholder="Enter Post-Total Weight first" readonly></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="4" class="ion-hide-sm-down">
+                <ion-label class="hilight">Actual Weight Loss (Kg)</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up hilight">Actual Weight Loss (Kg)</ion-label>
+                  <ion-input name="post-aefr" [value]="hemosheet.dehydration.postTotalWeight ? (actualWeightLoss | number: decimal) || 'N/A' : null" placeholder="Enter Post-Total Weight first" readonly></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label>Abnormal Weight</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item class="ion-hide-sm-down">
+                  <ion-checkbox name="abnormal" [(ngModel)]="hemosheet.dehydration.abnormal"></ion-checkbox>
+                </ion-item>
+                <ion-item class="ion-hide-sm-up">
+                  <ion-label>Abnormal Weight <ion-checkbox name="abnormal" [(ngModel)]="hemosheet.dehydration.abnormal"></ion-checkbox></ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="hemosheet.dehydration.abnormal">
+              <ion-col size="4" class="ion-hide-sm-down">
+                <ion-label>Abnormal Weight Reason</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-label position="floating" class="ion-hide-sm-up">Abnormal Weight Reason</ion-label>
+                  <ion-input name="abnormal-reason" placeholder="Enter abnormal weight reason" [(ngModel)]="hemosheet.dehydration.reason"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        
+        <ion-col size="auto" *ngIf="width > 1499 && !hemosheet.completedTime">
+          <ion-col size="12" size-xl="auto">
+            <ng-container *ngTemplateOutlet="dialyzer"></ng-container>
+          </ion-col>
+  
+          <ion-col size="12" [attr.size-xl]="width < 1500 ? '4' : 'auto'">
+            <ng-container *ngTemplateOutlet="bloodCollection"></ng-container>
+          </ion-col>
+        </ion-col>
+
+        <ion-col size="12" [attr.size-xl]="width < 1500 ? '12' : '6.5'" >
+          <ng-container *ngTemplateOutlet="vitalSign"></ng-container>
+        </ion-col>
+
+        <ng-container *ngIf="width < 1500">
+          <ion-col size="12" size-md="6" size-xl="auto">
+            <ng-container *ngTemplateOutlet="dialyzer"></ng-container>
+          </ion-col>
+  
+          <ion-col size="12" size-md="6" [attr.size-xl]="width < 1500 ? '4' : 'auto'">
+            <ng-container *ngTemplateOutlet="bloodCollection"></ng-container>
+          </ion-col>
+        </ng-container>
+
+        <ion-col *ngIf="width < 1500" size="12" size-lg="7">
+          <ng-container *ngTemplateOutlet="avShuntCard"></ng-container>
+        </ion-col>
+
+        <ion-col *ngIf="width < 1500 && !hemosheet.completedTime" size="12" size-xl="7">
+          <ng-container *ngTemplateOutlet="prescription"></ng-container>
+        </ion-col>
+
+        <ng-template #dialyzer>
+          <ion-card class="card-panel dialyzer">
+            <ion-card-header>
+              <ion-card-title>Dialyzer</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>New</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="new" [(ngModel)]="newDialyzer"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-checkbox name="new" [(ngModel)]="newDialyzer" (ionChange)="hemosheet.dialyzer.useNo=null" labelPlacement="start" justify="start">New</ion-checkbox>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="!newDialyzer">
+                <ion-col size="4" class="ion-hide-sm-down">
+                  <ion-label>TCV (%)</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">TCV (%)</ion-label>
+                    <ion-input name="tcv" placeholder="Enter TCV %" type="number" inputmode="decimal"  min="0" pattern="[0-9]*.[0-9]{0,3}" [(ngModel)]="hemosheet.dialyzer.tcv"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="!newDialyzer">
+                <ion-col size="3" size-xl="2" class="ion-hide-sm-down">
+                  <ion-label>Use No.</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Use No.</ion-label>
+                    <ion-input name="useNo" placeholder="Enter number of used" type="number" inputmode="numeric" min="1" pattern="[0-9]*" [(ngModel)]="hemosheet.dialyzer.useNo"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+
+        <ng-template #bloodCollection>
+          <ion-card class="card-panel blood-collection">
+            <ion-card-header>
+              <ion-card-title>Blood Collection</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="2.5" class="ion-hide-sm-down">
+                  <ion-label>Pre</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Pre</ion-label>
+                    <ion-select name="preBlood" [(ngModel)]="hemosheet.bloodCollection.pre" interface="action-sheet" class="full-h-sm-up">
+                      <ion-select-option *ngFor="let item of ['1M','3M','6M']" [value]="item"> {{ item }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="auto" >
+                  <ion-button color="danger" size="small" (click)="hemosheet.bloodCollection.pre=null">Clear</ion-button>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2.5" class="ion-hide-sm-down">
+                  <ion-label>Post</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up">Post</ion-label>
+                    <ion-select name="postBlood" [(ngModel)]="hemosheet.bloodCollection.post" interface="action-sheet" class="full-h-sm-up">
+                      <ion-select-option *ngFor="let item of ['1M','3M','6M']" [value]="item"> {{ item }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="auto" >
+                  <ion-button color="danger" size="small" (click)="hemosheet.bloodCollection.post=null">Clear</ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+        
+        <ng-template #avShuntCard>
+          <ion-card class="card-panel">
+            <ion-card-header>
+              <ion-card-title>AV Shunt</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label>AV Shunt Site</ion-label>
+                </ion-col>
+                <ion-col>
+                  <app-select #avSelect [dataList]="avShuntList" [(ngModel)]="hemosheet.avShunt.avShuntId" (onChange)="updateAvShunt()" placeholder="Choose AV Shunt Site" name="avShuntSite" label="AV Shunt Site" buttonName="AV Shunt"
+                    [addPage]="avPage" [addPageProps]="avProps" [addedCallback]="avAdded">
+                    <ion-select-option *appListData="let item" [value]="item.id">
+                      {{ getAVShuntName(item) }}
+                    </ion-select-option>
+                  </app-select>
+                </ion-col>
+              </ion-row>
+              <ng-container *ngIf="this.hemosheet.avShunt.avShuntId && isAv">
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Arterial Needle</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item *ngIf="!customASize && isPlannedAv !== undefined && isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up float">Arterial Needle</ion-label>
+                      <ion-input readonly>{{hemosheet.dialysisPrescription.arterialNeedle}}</ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="customASize || !isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up">Arterial Needle</ion-label>
+                      <ion-select name="an" interface="popover" placeholder="Needle Size No." [(ngModel)]="hemosheet.avShunt.aSize" class="full-h-sm-up">
+                        <ion-select-option *ngFor="let item of needleList" [value]="item"> {{item}} </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox" *ngIf="isPlannedAv">
+                    <ion-checkbox name="caf" [(ngModel)]="customASize" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Venous Needle</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item *ngIf="!customVSize && isPlannedAv !== undefined && isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up float">Venous Needle</ion-label>
+                      <ion-input readonly>{{hemosheet.dialysisPrescription.venousNeedle}}</ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="customVSize || !isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up">Venous Needle</ion-label>
+                      <ion-select name="vn" interface="popover" placeholder="Needle Size No." [(ngModel)]="hemosheet.avShunt.vSize" class="full-h-sm-up">
+                        <ion-select-option *ngFor="let item of needleList" [value]="item"> {{item}} </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox" *ngIf="isPlannedAv">
+                    <ion-checkbox name="caf" [(ngModel)]="customVSize" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Arterial Needle (times)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Arterial Needle (times)</ion-label>
+                      <ion-input name="aNeedleTimes" placeholder="Enter amount (times)" type="number" inputmode="numeric" min="0" pattern="[0-9]*" [(ngModel)]="hemosheet.avShunt.aNeedleTimes"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Venous Needle (times)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Venous Needle (times)</ion-label>
+                      <ion-input name="vNeedleTimes" placeholder="Enter amount (times)" type="number" inputmode="numeric" min="0" pattern="[0-9]*" [(ngModel)]="hemosheet.avShunt.vNeedleTimes"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+              <ng-container *ngIf="this.hemosheet.avShunt.avShuntId && !isAv">
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Arterial Volume (ml)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item *ngIf="!customAFillCC && isPlannedAv !== undefined && !isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up float">Arterial Volume (ml) </ion-label>
+                      <ion-input readonly>{{hemosheet.dialysisPrescription.aNeedleCC || '0'}} ml</ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="customAFillCC || isPlannedAv || isPlannedAv === undefined">
+                      <ion-label position="floating" class="ion-hide-sm-up">Arterial Volume (ml)</ion-label>
+                      <ion-input name="aNeedleCc" placeholder="Enter amount (cc)" type="number" inputmode="decimal" min="0" pattern="[0-9]*.[0-9]{0,3}" [(ngModel)]="hemosheet.avShunt.aNeedleCC"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox" *ngIf="isPlannedAv !== undefined && !isPlannedAv">
+                    <ion-checkbox name="caf" [(ngModel)]="customAFillCC" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Venous Volume (ml)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item *ngIf="!customVFillCC && isPlannedAv !== undefined && !isPlannedAv">
+                      <ion-label position="floating" class="ion-hide-sm-up float">Venous Volume (ml)</ion-label>
+                      <ion-input readonly>{{hemosheet.dialysisPrescription.vNeedleCC || '0'}} ml</ion-input>
+                    </ion-item>
+                    <ion-item *ngIf="customVFillCC || isPlannedAv || isPlannedAv === undefined">
+                      <ion-label position="floating" class="ion-hide-sm-up">Venous Volume (ml)</ion-label>
+                      <ion-input name="vNeedleCc" placeholder="Enter amount (cc)" type="number" inputmode="decimal" min="0" pattern="[0-9]*.[0-9]{0,3}" [(ngModel)]="hemosheet.avShunt.vNeedleCC"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col [size]="width > 422 ? '3' : '5'" size-sm="2" [offset]="width > 422 ? '0':'1'" offset-sm="0" class="custom-checkbox" *ngIf="isPlannedAv !== undefined && !isPlannedAv">
+                    <ion-checkbox name="cafa" [(ngModel)]="customVFillCC" labelPlacement="end" justify="start">Custom</ion-checkbox>
+                  </ion-col>
+                </ion-row>
+                
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Arterial Length (cm)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Arterial Length (cm)</ion-label>
+                      <ion-input name="alength" placeholder="Enter length (cm)" type="number" inputmode="decimal" min="0" pattern="[0-9]*.[0-9]{0,3}" [(ngModel)]="hemosheet.avShunt.aLength"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4" class="ion-hide-sm-down">
+                    <ion-label>Venous Length (cm)</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Venous Length (cm)</ion-label>
+                      <ion-input name="vlength" placeholder="Enter length (cm)" type="number" inputmode="decimal" min="0" pattern="[0-9]*.[0-9]{0,3}" [(ngModel)]="hemosheet.avShunt.vLength"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+              
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+
+        <ng-template #prescription>
+          <ion-card class="card-panel">
+            <ion-card-header>
+              <ion-card-title>Dialysis Prescription</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label>Prescription</ion-label>
+                </ion-col>
+                <ion-col>
+                  <app-select #prescSelect [dataList]="prescriptionList" [(ngModel)]="hemosheet.dialysisPrescriptionId" (onChange)="updatePrescription()" placeholder="Choose prescription" name="prescription" label="Prescription" required
+                    [addPage]="pPage" [addPageProps]="pProps" [addedCallback]="pAdded" [disabled]="!hasPermission">
+                    <ion-select-option *appListData="let item" [value]="item.id">
+                      {{ item.created | date: 'd/MM/yy HH:mm' }} / {{ item.mode }} / {{ item.temporary? 'Temp' : 'Long-Term' }}
+                    </ion-select-option>
+                  </app-select>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="!hasPermission">
+                <ion-col>
+                  <ion-text color="danger"><i>Permission restricted, requires head nurse or doctor to change this value.</i></ion-text>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+        
+        <ng-template #vitalSign>
+          <ion-card class="card-panel vital-sign">
+            <ion-card-header>
+              <ion-card-title>Vital Sign</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-text color="dark"><b>Pre-Dialysis</b></ion-text>
+              </ion-row>
+              
+              <ng-container *ngTemplateOutlet="vitalGroup; context: { list: hemosheet.preVitalsign, type: 'pre' }"></ng-container>
+
+              <ion-row style="margin-top: 10px;">
+                <ion-text color="dark"><b>Post-Dialysis</b></ion-text>
+              </ion-row>
+              
+              <ng-container *ngTemplateOutlet="vitalGroup; context: { list: hemosheet.postVitalsign, type: 'post' }"></ng-container>
+            </ion-card-content>
+          </ion-card>
+        </ng-template>
+
+        <ng-template #vitalGroup let-list="list" let-t="type">
+          <ion-col>
+            <ion-row *ngFor="let item of list; let i=index; trackBy:trackVitalSign;">
+              <ion-col>
+                <ion-row>
+                  <ion-col size="2" class="ion-hide-sm-down">
+                    <ion-label>Timestamp</ion-label>
+                  </ion-col>
+                  <ion-col>
+                    <hemo-datetime-item title="Timestamp" [(value)]="item.timestamp"
+                      placeholder="Timestamp"
+                      displayFormat="hh:mm a, dd MMM YY">
+                      <ion-datetime name="{{t}}-time-{{i}}" presentation="time-date"
+                        [(ngModel)]="item.timestamp"
+                        [max]="maxDate"
+                        [showDefaultButtons]="true">
+                      </ion-datetime>
+                    </hemo-datetime-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="1.2" class="ion-hide-sm-down">
+                    <ion-label>BPS</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '3.5'" size-sm="2.8">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">BPS</ion-label>
+                      <ion-input name="{{t}}-bps-{{i}}" placeholder="Enter" type="number" inputmode="numeric" pattern="[0-9]*" min="0" [(ngModel)]="item.bps" ></ion-input>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="1.2" class="ion-hide-sm-down">
+                    <ion-label>BPD</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '3.5'" size-sm="2.8">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">BPD</ion-label>
+                      <ion-input name="{{t}}-bpd-{{i}}" placeholder="Enter" type="number" inputmode="numeric" pattern="[0-9]*" min="0" [(ngModel)]="item.bpd"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  
+                  <ion-col [size]="width < 350 ? '6' : '5'" size-sm="3">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Posture</ion-label>
+                      <ion-select name="{{t}}-posture-{{i}}" placeholder="Posture" [(ngModel)]="item.posture" interface="action-sheet" class="full-h-sm-up">
+                        <ion-select-option *ngFor="let item of postures" [value]="item.v"> {{ item.t }} </ion-select-option>
+                      </ion-select>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="1.5" class="ion-hide-sm-down">
+                    <ion-label>Temperature</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '4'" size-sm="2.5">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">Temperature</ion-label>
+                      <ion-input name="{{t}}-temp-{{i}}" placeholder="Temp." type="number" inputmode="decimal" [pattern]="decimalPattern" [(ngModel)]="item.temp"></ion-input>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="1.2" class="ion-hide-sm-down">
+                    <ion-label>HR</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '4'" size-sm="2.8">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">HR</ion-label>
+                      <ion-input name="{{t}}-hr-{{i}}" placeholder="Enter" type="number" inputmode="numeric" pattern="[0-9]*" min="0" [(ngModel)]="item.hr"></ion-input>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="1.2" class="ion-hide-sm-down">
+                    <ion-label>RR</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '4'" size-sm="2.8">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">RR</ion-label>
+                      <ion-input name="{{t}}-rr-{{i}}" placeholder="Enter" type="number" inputmode="numeric" pattern="[0-9]*" min="0" [(ngModel)]="item.rr"></ion-input>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="1.2" class="ion-hide-sm-down">
+                    <ion-label>SpO2</ion-label>
+                  </ion-col>
+                  <ion-col [size]="width < 350 ? '6' : '4'" size-sm="2.8">
+                    <ion-item>
+                      <ion-label position="floating" class="ion-hide-sm-up">SpO2</ion-label>
+                      <ion-input name="{{t}}-spo2-{{i}}" placeholder="Enter (%)" type="number" inputmode="decimal" [pattern]="decimalPattern" min="0" [(ngModel)]="item.spO2"></ion-input>
+                    </ion-item>
+                  </ion-col>
+
+                  <ion-col size="auto">
+                    <ion-button size="small" color="secondary-alt" (click)="pickRecordToFill(item, t === 'post')">Select</ion-button>
+                  </ion-col>
+
+                </ion-row>
+              </ion-col>
+              <ion-col size="auto" *ngIf="list.length > 1" (click)="list.splice(list.indexOf(item), 1)"> <ion-fab-button size="small" color="medium" class="vital-sign-del"><ion-icon name="close"></ion-icon></ion-fab-button> </ion-col>
+              <ion-item-divider></ion-item-divider>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button (click)="list.push({timestamp: newDate})" color="greenish" size="small">Add</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ng-template>
+        
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text id="error-text" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="ion-justify-content-center ion-align-items-center">
+        <ion-col class="ion-text-center">
+          <ion-button size="medium" color="danger" (click)="deleteHemosheet()" *ngIf="canDelete" style="margin-right: 25px;">
+            Delete
+          </ion-button>
+          <ion-button size="large" color="secondary" type="submit" (click)="save()" [disabled]="form.invalid">
+            Save
+          </ion-button>
+          <ion-button size="medium" color="orange" type="submit" (click)="complete()" [disabled]="form.invalid" style="margin-left: 25px; height: 50px;" *ngIf="!viewMode">
+            Save & Complete
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+    </ion-grid>
+  </form>
+</ion-content>
+
+<ng-template #dialysisRecord let-item="item">
+  <ion-label>{{ item.timestamp | date: 'hh:mm a' }}</ion-label>
+  <ion-label>BP: {{ item.bps || '-' }}/{{ item.bpd || '-' }}</ion-label>
+  <ion-label>RR: {{ item.rr || '-' }}</ion-label>
+  <ion-label>HR: {{ item.hr || '-' }}</ion-label>
+  <ion-label>Temp: {{ item.temp || '-' }}</ion-label>
+</ng-template>
+

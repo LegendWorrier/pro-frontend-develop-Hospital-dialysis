@@ -1,0 +1,197 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Dialysis Record Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">Hiding List</ion-title>
+          <ion-card-subtitle>Mark any item(s) that you don't use, and all the selected item(s) will be ignored and hidden from view.</ion-card-subtitle>
+          <ion-button color="secondary-alt" size="small" class="toggle-btn" (click)="toggleAll()"   >Toggle All</ion-button>
+          <ion-item>
+            <ion-label> Machine Model</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.model"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Machine Number</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.number"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Remaining Time</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.remaining"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> BPS</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.bps"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> BPD</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.bpd"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> HR (Heart Rate)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.hr"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> RR (Respiration Rate)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.rr"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Temperature</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.temp"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> BFR (Blood Flow Rate)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.bfr"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> VP (Venous Pressure)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.vp"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> AP (Arterial Pressure)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ap"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DP (Dialysate Pressure)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dp"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> TMP</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.tmp"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> UF Rate</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ufRate"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> UF Total (Accumulated Volume)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ufTotal"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> AC Loading (Initial Heparin/Anticoagulant)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.acLoading"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> AC Maintain (Maintaining Heparin/Anticoagulant)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.acMaintain"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> HAV (Heparin Accumulated Volume)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.hav"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DFR (Dialysate Flow Rate)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dfr"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Dialysate (K/Ca)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dialysate"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DT Target (Dialysate Temperature Target)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dtTarget"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DT (Dialysate Temperature)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dt"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DC Target (Dialysate Conductivity Target)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dcTarget"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> DC (Dialysate Conductivity)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dc"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> BC (Bicarbonate Conductivity)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.bc"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> NSS (Saline Solution Drip)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.nss"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Glucose 50 (50% w/v)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.glucose50"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> HCO3</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.hco3"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Na Target</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.naTarget"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Na Profile</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.naProfile"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> UF Profile</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ufProfile"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Mode</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.mode"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> BFAV (Blood Flow Accumulated Volume)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.bfav"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> UF Target</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ufTarget"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Substitution Rate</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.sRate"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Substitution Total (Accumulated Volume)</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.sTotal"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Substitution Target</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.sTarget"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Substitution Temperature</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.sTemp"></ion-checkbox>
+          </ion-item>
+
+          <ion-item>
+            <ion-label> KTV</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.ktv"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> PRR</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.prr"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> Recirculation Rate</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.recirculationRate"></ion-checkbox>
+          </ion-item>
+          <ion-item>
+            <ion-label> dBV</ion-label>
+            <ion-checkbox slot="end" [(ngModel)]="dialysisRecord.dbv"></ion-checkbox>
+          </ion-item>
+
+        </ion-list>
+        <ion-button class="save-btn" size="large" color="secondary" (click)="save()">
+          Save
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,132 @@
+{
+    local_certs
+    #auto_https off
+}
+
+(frontend) {
+    reverse_proxy {
+        to 192.168.0.21:3080 # hemoweb # change to node name for docker and kubernetes
+
+        header_down -x-powered-by
+    }
+    
+    route /assets/ssltest.js {
+        header Cache-Control                     no-cache
+        header Access-Control-Allow-Origin       {header.origin}
+        header Access-Control-Allow-Credentials  true
+    }
+
+    route /*cert/ca.crt {
+        header Content-Description 'File Transfer'
+        header Content-Type application/octet-stream
+        header Content-Disposition 'attachment; filename=ca.crt'
+    }
+
+    header -server
+    header -x-powered-by
+    
+    # try_files {path} /index.html
+    encode zstd gzip
+    # file_server
+}
+(backend) {
+    header -server
+
+    reverse_proxy /api/report/* {
+        to 192.168.0.21:8400 # hemoreport
+        
+        header_down Access-Control-Allow-Origin       {header.origin}
+        header_down Access-Control-Allow-Credentials  true
+    }
+
+    @api {
+        path /api/*
+        path /health
+    }
+    reverse_proxy @api {
+        to 192.168.0.21:8200 # hemoserver
+        
+        header_down Access-Control-Allow-Origin       {header.origin}
+        header_down Access-Control-Allow-Credentials  true
+    }
+
+    @auth {
+        path /api/Authentication
+        path /api/Authentication/refresh-token
+    }
+    header @auth {
+        Set-Cookie (.*) $1;SameSite=none;Secure
+        defer
+    }
+    
+    @log {
+        header referer */log
+    }
+    handle_path /log {
+        reverse_proxy 192.168.0.21:5341 # seq
+    }
+    route @log {
+        reverse_proxy 192.168.0.21:5341 # seq
+    }
+
+    @backplane {
+        header referer */backplane
+    }
+    handle_path /backplane {
+        reverse_proxy http://redis:8001
+    }
+    route @backplane {
+        reverse_proxy http://redis:8001
+    }
+
+    # handle_path /db {
+    #     reverse_proxy db:5431 
+    # }
+}
+
+# need to have portal for user to access without ssl (in case of internal network)
+:80 {
+    # @knownhost {
+    #     host {env.domain} # hospital's prefered domain
+    #     host 127.0.0.1
+    #     host localhost
+    # }
+    # redir @knownhost https://{host}{uri} permanent
+    
+    import frontend
+}
+:443 {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import frontend
+}
+
+# Backend Access
+:9000 {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import backend
+}
+
+:9010 { # backward compat when user choose to skip init and use http
+    import backend
+}
+
+# support special subdomain: backend
+backend.{env.domain} {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import backend
+}
+
+http://backend.{env.domain} { # backward compat when user choose to skip init and use http
+    import backend
+}
+
+# need to explicitly defined here to generate tls for the domain
+{env.domain}:443 {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import frontend
+}
+

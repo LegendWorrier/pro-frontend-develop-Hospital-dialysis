@@ -1,0 +1,16 @@
+:host {
+    bottom: 10px;
+    right: calc(10px + var(--ion-safe-area-right, 0px));
+}
+
+
+ion-fab {
+    position: relative;
+    ion-label {
+        display: inline-block;
+        vertical-align: middle;
+    }
+    ion-toggle.ios {
+        margin-left: 8px;
+    }
+}

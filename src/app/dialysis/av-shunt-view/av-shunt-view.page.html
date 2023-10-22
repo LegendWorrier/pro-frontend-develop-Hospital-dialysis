@@ -1,0 +1,25 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="butterfly-needle" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title>AV Shunt</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <app-segment-tabs [tabs]="tabList" [(value)]="tab" ></app-segment-tabs>
+  <ng-container [ngSwitch]="tab">
+    <ng-container *ngSwitchDefault><av-shunt-list [list]="shuntList" [patient]="patient" [nav]="nav" (onEdit)="edit($event)" (onDelete)="delete($event)"></av-shunt-list></ng-container>
+    <ng-container *ngSwitchCase="'issue'"><av-shunt-issue [list]="issueList" [patient]="patient" [nav]="nav" (onEdit)="edit($event)" (onDelete)="delete($event)"></av-shunt-issue></ng-container>
+  </ng-container>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed" *ngIf="canEdit" >
+    <ion-fab-button (click)="addNew()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <show-delete-toggle [(ngModel)]="showDeleted" (onChange)="updateList()" ></show-delete-toggle>
+
+</ion-content>

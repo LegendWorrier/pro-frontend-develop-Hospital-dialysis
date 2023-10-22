@@ -1,0 +1,91 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      User Detail
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label> Username: </ion-label>
+          <ion-label> {{user.userName}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <ion-item>
+          <ion-label> Fisrt Name: </ion-label>
+          <ion-label> {{user.firstName || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm>
+        <ion-item>
+          <ion-label> Last Name: </ion-label>
+          <ion-label> {{user.lastName || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <ion-item>
+          <ion-label> Email: </ion-label>
+          <ion-label> {{user.email || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm>
+        <ion-item>
+          <ion-label> Phone Number: </ion-label>
+          <ion-label> {{user.phoneNumber || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label> Role: </ion-label>
+          <ion-label> {{(user.role | pretty) || '-' }} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item>
+          <ion-label> Status: </ion-label>
+          <ion-label> {{ user.isPartTime ? 'Part Time' : 'Full Time' }} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="6" *ngIf="!user.isPowerAdmin">
+        <ion-item>
+          <ion-label> Employee ID: </ion-label>
+          <ion-label> {{user.employeeId || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!-- Units -->
+    <ion-row>
+      <ion-col size="12" size-sm="6" *ngIf="!user.isPowerAdmin">
+        <ion-item>
+          <ion-label> Unit(s): </ion-label>
+          <ion-label> {{ user.units | dataname : unitList }} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!-- Signature -->
+    <ion-row class="signature-row">
+      <ion-col size="12" size-sm="2.5" class="signature-label">
+        <ion-label>Signature: <span *ngIf="!user.signature" >-</span></ion-label>
+      </ion-col>
+      <ion-col size="auto">
+        <ion-img *ngIf="src" [src]="src" [style.height]="src?(width > 376?'150px':'90px'):''" style="max-width: 300px;"></ion-img>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

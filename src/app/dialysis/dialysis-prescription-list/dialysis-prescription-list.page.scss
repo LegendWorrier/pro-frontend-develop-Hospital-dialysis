@@ -1,0 +1,144 @@
+ion-content {
+    --padding-bottom: 100px;
+}
+
+.data-header {
+    padding-top: 5px;
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+    background-color: var(--ion-color-panel);
+    position: fixed;
+    width: 100%;
+    z-index: 110;
+
+    display: flex;
+    
+    --padding-start: 16px;
+    --padding-end: 16px;
+    
+    @media (max-width: 768px) {
+        --padding-start: 10px;
+    }
+    @media (max-width: 577px) {
+        --padding-start: 0px;
+    }
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+        .ios & {
+            padding-right: 8px;
+        }
+    }
+
+    .date-col {
+        min-width: 100px;
+        .ios & {
+            min-width: 108px;
+        }
+    }
+    
+}
+
+ion-chip.temporary {
+    height: 18px;
+    font-size: 10pt;
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    pointer-events: none;
+    position: static;
+
+    @media (max-width: 1200px) {
+        font-size: 8pt;
+        white-space: nowrap;
+        margin-left: 0;
+    }
+}
+
+:host ::ng-deep {
+
+    ion-item {
+        position: relative;
+        ion-label {
+            position: unset !important;
+            white-space:normal !important;
+        }
+
+        .modal-card & {
+
+            ion-chip.temporary {
+                font-size: 8pt;
+                white-space: nowrap;
+                margin-left: 0;
+            }
+            
+        }
+
+        --min-height: 110px;
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0%;
+        }
+
+        .wrapper {
+            display: flex;
+            flex: 1 1 0%;
+            flex-direction: row;
+            align-self: stretch;
+            text-overflow: ellipsis;
+            overflow: inherit;
+            box-sizing: border-box;
+            align-items: center;
+            
+            ion-label {
+                flex-basis: 0px;
+                flex-grow: 1;
+            }
+        }
+
+        .dialysis-nurse {
+            display: flex;
+            align-items: center;
+
+            ion-text {
+                vertical-align: middle;
+            }
+            ion-button {
+                vertical-align: middle;
+            }
+        }
+    }
+
+    .unused {
+        .item {
+            --ion-item-background: rgba(var(--ion-color-base-rgb), 0.55);
+            .dark & {
+                --ion-item-background: rgba(var(--ion-color-base-rgb), 0.3);
+            }
+            @media (prefers-color-scheme: dark) {
+                --ion-item-background: rgba(var(--ion-color-base-rgb), 0.3);
+            }
+
+            --ion-color-base: var(--ion-color-brown);
+            --ion-color-base-rgb: var(--ion-color-brown-rgb);
+            --ion-color-contrast: var(--ion-color-brown-contrast);
+            --ion-color-contrast-rgb: var(--ion-color-brown-contrast-rgb);
+            --ion-color-shade: var(--ion-color-brown-shade);
+            --ion-color-tint: var(--ion-color-brown-tint);
+
+            .unused-label {
+                position: absolute !important;
+                bottom: -5px;
+                width: 100%;
+                text-align: center;
+                background-color: rgba($color: black, $alpha: 0.4);
+            }
+        }
+    }
+    
+}
+

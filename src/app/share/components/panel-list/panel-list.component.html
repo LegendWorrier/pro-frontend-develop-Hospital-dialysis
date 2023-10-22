@@ -1,0 +1,6 @@
+<ion-list class="list-panel">
+  <ion-item button *ngFor="let item of list" (click)="onSelect(item.url || item.component, item)" [disabled]="item.disabled" >
+    <ion-icon *ngIf="item.icon" [name]="item.icon"></ion-icon>
+    {{ item.title }}
+  </ion-item>
+</ion-list>

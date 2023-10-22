@@ -1,0 +1,99 @@
+ion-avatar {
+    width: 100px;
+    height: 100px;
+}
+
+ion-radio.ios {
+    &::part(container) {
+        width: 20px;
+        height: 20px;
+    
+        border: 2px solid #ddd;
+        border-radius: 4px;
+    }
+
+    &::part(mark) {
+        height: 60%;
+    }
+    
+}
+
+.identity-group {
+    ion-row, ion-col {
+        padding: 0px;
+    }
+
+    ion-label, ion-radio {
+        vertical-align: middle;
+    }
+    ion-label {
+        padding-left: 5px;
+    }
+}
+
+.medicine-select {
+    min-width: 25px;
+    @media(max-width: 1299px) {
+        min-width: 65%;
+    }
+    @media(max-width: 992px) {
+        min-width: 80%;
+    }
+}
+
+.medicine-divider {
+    min-height: 5px;
+}
+
+.medicine-item {
+    ion-text {
+        vertical-align: sub;
+    }
+    ion-badge {
+        margin-right: 6px;
+        cursor: pointer;
+    }
+    ion-badge:hover {
+        background: var(--ion-color-tint);
+    }
+    ion-badge:active {
+        background: var(--ion-color-shade);
+    }
+}
+
+
+@media(max-width: 576px) {
+    ion-card {
+        padding-left: 5px;
+        padding-right: 10px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    ion-item {
+        --padding-start: 8px;
+    }
+
+    .ios ion-card {
+        padding-left: 10px;
+    }
+    .ios ion-item {
+        --padding-start: 0px;
+    }
+}
+
+.delete-btn {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+
+.delete-label {
+    font-size: x-small;
+}
+
+:root {
+    --ion-grid-columns: 20
+}

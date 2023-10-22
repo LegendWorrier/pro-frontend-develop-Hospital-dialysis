@@ -1,0 +1,4 @@
+<ion-item [routerLink]="'/' + data.url" routerLinkActive="selected" (appRouterLinkEvent)="onRouterChange($event)" >
+  <ion-icon [name]="isActive ? data.iconActive : data.icon"></ion-icon>
+  {{ data.title }}
+</ion-item>

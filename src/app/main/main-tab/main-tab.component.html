@@ -1,0 +1,9 @@
+<ion-tabs id="tabs" #tabs >
+  <ion-tab-bar slot="bottom" class="ion-hide-lg-up">
+    <ion-tab-button *ngFor="let item of appTabs" [tab]="item.url">
+      <ion-icon [name]="item.isActive? item.iconActive : item.icon"></ion-icon>
+      <ion-label>{{ item.title }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+<!-- Tabs has built-in 'ion-router-outlet' in itself -->

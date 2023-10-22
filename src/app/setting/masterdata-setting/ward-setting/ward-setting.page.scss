@@ -1,0 +1,16 @@
+.icu-col {
+    margin-left: 10px;
+    max-width: 35%;
+    @media(max-width: 780px) {
+        max-width: 110px;
+    }
+    @media(max-width: 720px) {
+        max-width: 200px;
+        --padding-start: 0px;
+        margin-left: 0px;
+    }
+}
+
+.icu-label {
+    max-width: 60px;
+}

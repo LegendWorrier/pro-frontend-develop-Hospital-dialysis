@@ -1,0 +1,61 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>User Permission & Role</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-row class="title">
+    <ion-col>
+      <ion-title style="width: unset;">Username: {{ user.userName }} ({{ getName(user) || 'N/A' }})</ion-title>
+    </ion-col>
+  </ion-row>
+  <ion-row class="title">
+    <ion-col>
+      <ion-title>Roles</ion-title>
+    </ion-col>
+  </ion-row>
+  <ion-row class="safe-area" *ngIf="isPowerAdmin">
+    <ion-col size="auto">
+      <ion-item>
+        <ion-select #addRoleSelect class="role-select" justify="end">
+          <ion-select-option *ngFor="let item of getSelectableRoles()" [value]="item.name">{{ item.name }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      
+    </ion-col>
+    <ion-col>
+      <ion-button class="role-btn" (click)="addRole(addRoleSelect.value)" [disabled]="!addRoleSelect.value" color="greenish" >Add</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row class="safe-area">
+    <ion-col *ngFor="let item of roles" size="auto">
+      <ion-chip class="role">{{ item }}</ion-chip>
+      <ion-button class="role-btn" (click)="removeRole(item)" color="danger" *ngIf="isPowerAdmin">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row class="safe-area">
+    <ion-col>
+      <app-permission-edit [permissions]="permissions" [fixed]="fixedPermissions" ></app-permission-edit>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="safe-area">
+    <ion-col>
+      <ion-text id="error">{{ error }}</ion-text>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="safe-area ion-justify-content-center" *ngIf="isPowerAdmin">
+    <ion-col size="auto">
+      <ion-button color="greenish" (click)="save()">Update</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

@@ -1,0 +1,10 @@
+<ion-list>
+  <ion-item-divider>{{ patient?.name || '-' }}</ion-item-divider>
+  <ion-item button (click)="patientInfo()" >Patient Info</ion-item>
+  <ion-item button (click)="patientSchedule()" [disabled]="isCross">Patient Schedule</ion-item>
+  <ion-item button (click)="reschedule($event)" *ngIf="!isSchedule">Reschedule {{ multiUnit ? '/Transfer' : ''}}</ion-item>
+  <ion-item button (click)="transfer($event)" *ngIf="!isSchedule && !multiUnit" [disabled]="!authorized">Transfer Request</ion-item>
+  <ion-item button (click)="swap()" *ngIf="!isSchedule">Swap</ion-item>
+  <ion-item button (click)="audit($event)">Audit Detail</ion-item>
+  <ion-item button class="delete" (click)="delete()">Delete</ion-item>
+</ion-list>

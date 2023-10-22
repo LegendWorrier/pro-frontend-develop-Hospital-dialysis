@@ -1,0 +1,55 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="library" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Shift History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-grid *ngIf="!isLoading; else loading">
+    <app-sheet-control [content]="content"
+      (onSheetChange)="onSheetChange($event)"
+      (onFilter)="updateFilter($event)"
+    ></app-sheet-control>
+
+    <app-shifts-table #table
+      [colors]="colors"
+      [isMain]="isMain"
+      [multiUnit]="multiUnit"
+      [isEditable]="isEditable"
+      [allNurseUsers]="allNurseUsers"
+      [unitList]="unitList"
+    
+      [data]="userShifts"
+
+      (onExport)="excel()"
+    
+      [days]="days"
+      [month]="month"
+    ></app-shifts-table>
+
+    <app-control-helper #control [autoSetup]="false" [step]="304.4"></app-control-helper>
+
+  </ion-grid>
+
+  <ng-template #loading>
+    <ion-grid class="loading-grid">
+      <ion-row>
+        <ion-col>
+          <div class="no-record-middle">
+            <ion-spinner *ngIf="isLoading" ></ion-spinner>
+            <div class="retry">
+              <ion-icon *ngIf="!isLoading" name="reload" (click)="reload()"></ion-icon>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
+
+</ion-content>

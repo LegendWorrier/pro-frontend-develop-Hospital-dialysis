@@ -1,0 +1,45 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>
+      Permissions
+    </ion-card-title>
+  </ion-card-header>
+  <ion-card-content class="content">
+    <ion-row>
+      <ion-col>
+
+        <ng-container *ngIf="!loading && permissions; else init">
+          <ion-row>
+            <ion-col size="12">
+              <ion-checkbox [checked]="hasPermission(global)" (ionChange)="setPermission(global)" labelPlacement="end">Can manage all (power admin)
+                <ion-text color="danger" style="white-space: normal;"> : Set this permission with care. Only give it to owner or highest responsible person. And as few people as possible.</ion-text>
+              </ion-checkbox>
+            </ion-col>
+            <ion-col *ngFor="let item of individualPermissions()" size="12">
+              <ion-checkbox [checked]="hasPermission(item.name) || checkParentPermission(item)" (ionChange)="setPermission(item.name)" labelPlacement="end"
+              [disabled]="checkDisable(item)" >{{ item.description }}</ion-checkbox>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let group of all.groups">
+            <ion-col>
+              <ion-text class="title">{{ group.name }}</ion-text>
+              <ion-text class="sub-title">{{ group.description }}</ion-text>
+              <ion-row>
+                <ion-col *ngFor="let item of permissionsInGroup(group)" size="12">
+                  <ion-checkbox [checked]="hasPermission(item.name) || checkParentPermission(item)" (ionChange)="setPermission(item.name)" labelPlacement="end" 
+                    [disabled]="checkDisable(item)">{{ item.description }}</ion-checkbox>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <ng-template #init>
+          <ion-skeleton-text animated ></ion-skeleton-text>
+          <ion-skeleton-text animated ></ion-skeleton-text>
+          <ion-skeleton-text animated ></ion-skeleton-text>
+        </ng-template>
+        
+      </ion-col>
+    </ion-row>
+  </ion-card-content>
+</ion-card>

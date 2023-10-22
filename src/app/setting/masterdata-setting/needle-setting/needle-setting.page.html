@@ -1,0 +1,28 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Needle {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div class="content-container">
+    <app-masterdata-list [content]="content" [hasName]="false" name="needle" [get]="getDataList" [add]="addData" [edit]="editData" [delete]="deleteData" [canEdit]="canEdit">
+
+      <ng-template #display let-item="item">
+        <ion-label style="text-align: center;"> Number: {{ item.number }} </ion-label>
+      </ng-template>
+      
+      <ng-template #edit let-item="item">
+        <ion-label> Number:  </ion-label>
+        <ion-input style="text-align: center;" [(ngModel)]="item.number" inputmode="nemeric" type="number" min="0" placeholder="Enter needle number" required></ion-input>
+      </ng-template>
+
+    </app-masterdata-list>
+  </div>
+</ion-content>

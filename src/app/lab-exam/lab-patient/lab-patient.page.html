@@ -1,0 +1,158 @@
+<app-header *ngIf="!isModal"  pageName = "Lab Exam : {{patient.name}}" [searchBar]="false" prev="/lab-exam"></app-header>
+<ion-header appHeaderTheme *ngIf="isModal" >
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="flask" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title> Lab Exam : {{patient.name}}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-row class="header-panel" [appScrollHide]="configHeader" [content]="content" [canScrollSelf]="true">
+    <ion-col class="custom-col" [class.ion-hide-sm-down]="filterDate">
+      <ng-container *ngIf="!filterDate">
+        <ion-label>From: </ion-label>
+        <div class="select-date" (click)="dt.present()" >
+          <ion-label>{{ (customFilterDate | date: 'd MMM yy') || 'Select...' }}</ion-label>
+          <ion-popover #dt [keepContentsMounted]="true" class="hemo-calendar">
+            <ng-template>
+              <ion-datetime presentation="date" [(ngModel)]="customFilterDate" (ionChange)="updateUpper()" [showDefaultButtons]="true" >
+                
+              </ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ng-container>
+    </ion-col>
+    <ion-col *ngIf="!filterDate" >
+      <ion-label>Up until: </ion-label>
+      <div class="select-date" [class.active]="customFilterDate" (click)="dt.present()">
+        <ion-label>{{ (upperlimit | date: 'd MMM yy') || 'Select...' }}</ion-label>
+        <ion-popover #dt [keepContentsMounted]="true" class="hemo-calendar">
+          <ng-template>
+            <ion-datetime presentation="date" [(ngModel)]="upperlimit" [min]="customFilterDate" [showDefaultButtons]="true" >
+
+            </ion-datetime>
+          </ng-template>
+        </ion-popover>
+      </div>
+    </ion-col>
+    
+    <ion-col size="12" size-sm="7" class="ion-no-padding">
+      <ion-row class="ion-align-items-center">
+        <ion-col *ngIf="!filterDate" class="search-btn ion-text-center" size="3.5" >
+          <ion-button color="secondary" (click)="update(true)" >
+            Search
+          </ion-button>
+        </ion-col>
+        <ion-col class="filter-box" size="5" [sizeXl]="width>1600?'3':'4'" push="3.5" push-sm="0" >
+          <ion-item>
+            <ion-select placeholder="Select filter" interface="popover" [(ngModel)]="filterDate" (ionChange)="update()">
+              <ion-select-option *ngFor="let item of filterList" [value]="item.v">{{ item.t }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col class="excel-btn-col">
+          <ion-button fill="clear" (click)="excel()">
+            <ion-icon name="excel-file"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+    
+  </ion-row>
+  <app-segment-tabs #segment [tabs]="[{name: 'table', display: 'table', icon: 'server'},{name: 'graph', display: 'graph', icon: 'stats-chart'}]"
+   initTab="table" [autoFixed]="false" [appScrollHide]="configSegment" [content]="content" [canScrollSelf]="true" ></app-segment-tabs>
+
+  <ion-grid class="main">
+    <ion-row class="main-row">
+      <ion-col class="main-col">
+        <ng-container *ngIf="labExamResult; else loading">
+          <div *ngIf="segment.value === 'table'" class="table-wrapper">
+            <table mat-table #table [dataSource]="labExamResult.data" aria-label="lab-exam">
+              <ng-container matColumnDef="name" sticky>
+                <th mat-header-cell *matHeaderCellDef> Name/Date </th>
+                <td mat-cell *matCellDef="let row"> {{ row.key.name }} </td>
+              </ng-container>
+              <ng-container *ngFor="let item of labExamResult.columns; let colIndex = index" matColumnDef={{item}}>
+                <th mat-header-cell *matHeaderCellDef> {{item|date: 'MMM dd, yyyy'}} </th>
+                <td mat-cell *matCellDef="let row" [class.exceed-limit]="checkLimit(row.key, row.value[colIndex][row.value[colIndex].length-1]?.labValue) !== 0">
+                  <ion-item button lines="none" (click)="detail(row.key, row.value[colIndex][0])" *ngIf="row.value[colIndex].length == 1" >
+                    <ion-label>
+                      {{ row.value[colIndex][0].labValue }}
+                    </ion-label>
+                  </ion-item>
+                  <ion-item button lines="none" (click)="detailMulti($event, row.key, row.value[colIndex])" *ngIf="row.value[colIndex].length > 1" >
+                    <ion-label>
+                      {{ row.value[colIndex][row.value[colIndex].length-1].labValue }} <ion-text color="medium" class="multi-value"><em>(...more)</em></ion-text>
+                    </ion-label>
+                  </ion-item>
+                  
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="getColumns(); sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: getColumns();"></tr>
+            </table>
+            <div *ngIf="labExamResult && labExamResult.data.length === 0" class="no-record no-record-middle"> <ion-text>No Data</ion-text> </div>
+          </div>
+          <div *ngIf="segment.value === 'graph'" class="chart-wrapper">
+            <ion-row *ngIf="labExamResult && labExamResult.data.length !== 0">
+              <ion-col class="ion-text-center">
+                <ion-button color="secondary" (click)="printBtn.click()">Print Graph</ion-button>
+                <button #printBtn style="display: none;" 
+                printSectionId="chart" 
+                [printTitle]="'Lab : ' + patient.name"
+                styleSheetFile="assets/chart.css"
+                
+                ngxPrint></button>
+              </ion-col>
+            </ion-row>
+            
+            <ngx-charts-line-chart
+              id="chart"
+              [scheme]="colorScheme"
+              [legend]="legend"
+              [legendTitle]="legendTitle"
+              [legendPosition]="width > 1200 ? 'right': 'below'"
+              [showXAxisLabel]="true" 
+              [showYAxisLabel]="true"
+              [xAxis]="true"
+              [yAxis]="true"
+              [xAxisLabel]="xAxisLabel"
+              [yAxisLabel]="yAxisLabel"
+              
+              [timeline]="true"
+              
+              yScaleMin="0"
+
+              [results]="chartdata"
+              (select)="onSelectChart($event)"
+              >
+            </ngx-charts-line-chart>
+            <div *ngIf="labExamResult && labExamResult.data.length === 0" class="no-record no-record-top"> <ion-text>No Data</ion-text> </div>
+          </div>
+        </ng-container>
+
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <div class="loading-div">
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="newLabExam()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

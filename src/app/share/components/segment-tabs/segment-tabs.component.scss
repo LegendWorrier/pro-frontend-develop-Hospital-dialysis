@@ -1,0 +1,29 @@
+:host {
+    position: relative;
+    ion-segment {
+        background: var(--ion-color-white);
+    }
+    
+    ion-segment-button {
+        ion-label {
+            vertical-align: sub;
+            margin-top: 12px;
+        }
+        span {
+            vertical-align: middle;
+        }
+        ion-icon {
+            vertical-align: text-top;
+            font-size: 14pt;
+        }
+        @media (max-width: 576px) {
+            ion-label {
+                font-size: 10pt;
+                margin-top: 0;
+            }
+            ion-icon {
+                font-size: 20pt;
+            }
+        }
+    }
+}

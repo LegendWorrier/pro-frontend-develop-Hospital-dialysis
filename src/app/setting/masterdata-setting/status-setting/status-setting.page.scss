@@ -1,0 +1,12 @@
+@media(min-width: 1200px) {
+    ion-select.cat {
+        min-width: 50%;
+    }
+}
+
+@media(max-width: 1199px) {
+    ion-select.cat {
+        min-width: 150px;
+    }
+}
+

@@ -1,0 +1,19 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar class="ion-text-center ion-padding-vertical">
+    <ion-row>
+      <ion-col [size]="width > 1560 ? '2' : '3'">
+        <img class="logo" src="/assets/Logo.svg" alt="" >
+      </ion-col>
+      <ion-col class="container">
+        <ion-label class="hospital-title">
+          {{ centerName ? centerName + ( isHospital ? ' Hospital' : '' )
+          : 'Hemodialysis Pro' }}
+        </ion-label>
+        <ion-chip class="welcome">
+          <ion-label color="light">Welcome {{username || "dummy"}}</ion-label>
+        </ion-chip>
+      </ion-col>
+    </ion-row>
+    
+  </ion-toolbar>
+</ion-header>

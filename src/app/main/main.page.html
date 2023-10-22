@@ -1,0 +1,55 @@
+<ion-split-pane id="main-split" contentId="main-content">
+  <!--  the side menu  -->
+  <ion-menu #menu contentId="main-content">
+    <app-menu-header></app-menu-header>
+    <ion-content class="menu-content">
+      <ion-list class="ion-hide-lg-down">
+        <app-item-link *ngFor="let item of appPages" [data]="item" [(isActive)]="item.isActive" >
+        </app-item-link>
+      </ion-list>
+
+      <ion-list class="spacing-lg-up">
+        <app-item-link [data]="{ title: 'Reports', url: '/reports', icon: 'document-text-outline', iconActive: 'document-text' }" ></app-item-link>
+
+        <app-item-link [data]="{ title: 'Stocks', url: '/stocks', icon: 'stock-outline', iconActive: 'stock' }" *ngIf="hasStockPermission"></app-item-link>
+        <ion-item *ngIf="trtEnabled" button (click)="hemoConnect()"
+          [hidden]="true"
+        >
+          <ion-icon name="monitor-outline"></ion-icon>
+          Hemo Connect
+        </ion-item>
+        <!-- <ion-item [routerLink]="['']" disabled><ion-icon name="alert-circle-outline"></ion-icon> RO record</ion-item> -->
+        
+      </ion-list>
+      
+      <ng-container *ngTemplateOutlet="footerMenu;context:{class: 'ion-hide-lg-up spacing'}"></ng-container>
+    </ion-content>
+    <ion-footer no-shadow>
+      <ng-container *ngTemplateOutlet="footerMenu;context:{class: 'ion-hide-lg-down'}"></ng-container>
+    </ion-footer>
+
+    <ng-template #footerMenu let-class="class">
+      <ion-list [class]="class">
+        <div class="install-btn">
+          <ion-button *ngIf="showInstall" color="secondary-alt" size="small" (click)="install()" >
+            {{isIOS? 'How to Install App' : 'Install App'}}
+          </ion-button>
+          <ion-checkbox *ngIf="showForceInstalled" labelPlacement="end" (click)="setInstalled()">Already installed</ion-checkbox>
+        </div>
+        
+        <ion-item button (click)="setting()"  ><ion-icon name="settings-outline" class="ion-margin-end"></ion-icon> Setting</ion-item>
+        <ion-item button (click)="logout()"><ion-icon name="log-out-outline" class="ion-margin-end"></ion-icon> Log out</ion-item>
+      </ion-list>
+    </ng-template>
+    
+  </ion-menu>
+  
+  <!-- the main content -->
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+  
+</ion-split-pane>
+
+<iframe id="l" #l width="1" height="1" style="display:none;" title="not-for-user"></iframe>
+
+
+

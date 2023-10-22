@@ -1,0 +1,90 @@
+
+<ion-card-header>
+  <ion-card-title>
+    Approval
+  </ion-card-title>
+</ion-card-header>
+<ion-card-content>
+  <div *ngIf="requestInfo && ready; else loading">
+    <ng-container *ngIf="requestInfo.type === TYPE.TRANSFER">
+      <p style="text-indent: 10px;">
+        <ion-text>
+          Confirm and allow to transfer patient <b>{{extraInfo[0]}}</b> from <b>'{{extraInfo[1]}}'</b>
+          <ion-text *ngIf="!isMulti"> to this unit</ion-text>
+          <ion-text *ngIf="isMulti"> to <b>'{{extraInfo[2]}}'</b></ion-text>?
+        </ion-text>
+      </p>
+      <br>
+      <p>
+        <ion-text>
+          Target slot: <b>{{extraInfo[3] | date: 'EEEE, hh:mm a' }}</b>
+        </ion-text>
+      </p>
+    </ng-container>
+    <ng-container *ngIf="requestInfo.type === TYPE.TRANSFER_TEMP">
+      <p style="text-indent: 10px;">
+        Confirm and allow temporary transfer of patient <b>{{extraInfo[0]}}</b> from <b>'{{extraInfo[1]}}'</b>
+        <ion-text *ngIf="isMulti"> to <b>'{{extraInfo[2]}}'</b></ion-text> on <b>{{extraInfo[3] | date: 'd MMM, EEE hh:mm a'}}</b>?
+      </p>
+    </ng-container>
+    <ng-container *ngIf="requestInfo.type === TYPE.COSIGN_HEMO || requestInfo.type === TYPE.COSIGN_EXE">
+      <p class="middle">
+        Please review <br> <ion-button class="middle" color="secondary" size="small" (click)="viewHemosheetInfo(extraInfo[1], extraInfo[0])">this hemosheet</ion-button> <br> before you approve the co-sign request
+      </p>
+      <br>
+      <p>Patient: <b>{{extraInfo[0].name}}</b></p>
+      <p *ngIf="requestInfo.type === TYPE.COSIGN_EXE">
+        <ng-container *ngIf="extraInfo[2].type === exeType.Medicine">
+          Medicine name: <b>{{extraInfo[2].prescription.medicine.name}}</b>
+        </ng-container>
+      </p>
+      <p>Date: <ion-text color="medium"><i>
+        {{ formatDateDistance(extraInfo[1].completedTime ?? extraInfo[1].cycleStartTime ?? extraInfo[1].created) }}
+         ({{extraInfo[1].completedTime ?? extraInfo[1].cycleStartTime ?? extraInfo[1].created | date: 'dd/MM/YY hh:mm a'}})
+      </i></ion-text></p>
+      
+      <br>
+      <p class="middle">
+       (Go to  <ion-button class="middle" color="secondary" size="small" (click)="viewPatientInfo(extraInfo[0].id)" > patient page </ion-button>  )
+      </p>
+    </ng-container>
+    <ng-container *ngIf="requestInfo.type === TYPE.PRESC_NURSE">
+      <p class="middle">
+        Please review <br> <ion-button class="middle" color="secondary" size="small" (click)="viewPrescription(extraInfo[1], extraInfo[0])">this prescription</ion-button> <br> and sign as dialysis nurse.
+      </p>
+      <br>
+      <p>Patient: <b>{{extraInfo[0].name}}</b></p>
+      
+      <p>Date: <ion-text color="medium"><i>
+        {{ formatDateDistance(extraInfo[1].completedTime ?? extraInfo[1].cycleStartTime ?? extraInfo[1].created) }}
+         ({{extraInfo[1].completedTime ?? extraInfo[1].cycleStartTime ?? extraInfo[1].created | date: 'dd/MM/YY hh:mm a'}})
+      </i></ion-text></p>
+      
+      <br>
+      <p class="middle">
+       (Go to  <ion-button class="middle" color="secondary" size="small" (click)="viewPatientInfo(extraInfo[0].id)" > patient page </ion-button>  )
+      </p>
+    </ng-container>
+    
+  </div>
+</ion-card-content>
+
+<ion-row>
+  <ion-col>
+    <ion-footer>
+      <p *ngIf="!hasPermission">
+        <ion-text color="danger">You don't have the right permission for this</ion-text>
+      </p>
+      <ion-button color="greenish" (click)="approve()" [disabled]="!hasPermission || needReview">
+        Approve
+      </ion-button>
+      <ion-button color="danger" (click)="deny()" [disabled]="!hasPermission || needReview">
+        Reject
+      </ion-button>
+    </ion-footer>
+  </ion-col>
+</ion-row>
+
+<ng-template #loading>
+  <div class="ion-text-center ion-margin-top" ><ion-spinner></ion-spinner></div>
+</ng-template>

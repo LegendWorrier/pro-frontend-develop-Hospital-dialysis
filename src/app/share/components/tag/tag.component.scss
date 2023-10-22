@@ -1,0 +1,12 @@
+.hemo-tag {
+    height: 23px;
+    font-size: 9pt;
+    width: auto;
+}
+
+.chip-outline {
+    background: transparent !important;
+}
+ion-chip {
+    background: rgba(var(--ion-color-base-rgb), 0.08);
+}

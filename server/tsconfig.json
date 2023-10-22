@@ -1,0 +1,65 @@
+{
+  "compileOnSave": true,
+  "include": [
+    "./src/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDirs": [
+      "./src",
+      "../src/app/patients",
+      "../src/app/dialysis",
+      "../src/app/enums"
+    ],
+    "declaration": false,
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+    "target": "ES2020",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2020"
+    ],
+    "allowSyntheticDefaultImports": true, // To provide backwards compatibility, Node.js allows you to import most CommonJS packages with a default import. This flag tells TypeScript that it's okay to use import on CommonJS modules.
+    "resolveJsonModule": false, // ESM doesn't yet support JSON modules.
+    "jsx": "preserve",
+    "pretty": true,
+    "newLine": "lf",
+    "stripInternal": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "strictPropertyInitialization": false,
+    "noImplicitReturns": false,
+    "noImplicitOverride": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noEmitOnError": true,
+    "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "references": [
+    {
+      "path": "../src/app/enums"
+    },
+    {
+      "path": "../src/app/patients"
+    },
+    {
+      "path": "../src/app/dialysis"
+    }
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "esm": true
+  }
+}

@@ -1,0 +1,65 @@
+<ng-template #header>
+  <ion-col class="text-wrasp">Surface Area</ion-col>
+  <ion-col class="text-wrasp ion-hide-sm-down">Brand Name</ion-col>
+  <ion-col class="text-wrasp ion-hide-sm-down">Classified</ion-col>
+</ng-template>
+
+<ng-template #detail let-item="item">
+  <ion-label> {{ item.surfaceArea || 'N/A' }} {{ item.surfaceArea ? 'm²' : ''}} </ion-label>
+  <ion-label class="ion-hide-sm-down"> {{ item.brandName || 'N/A' }} </ion-label>
+  <ion-label class="ion-hide-sm-down"> {{ getClassifiedName(item) }} </ion-label>
+</ng-template>
+
+<ng-template #edit let-item="item" let-canEdit="canEdit">
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Surface Area: </ion-label>
+      <ion-input 
+        name="sa" 
+        inputmode="numeric" type="number" min="0" 
+        placeholder="Enter value (m²)" 
+        [(ngModel)]="item.surfaceArea" 
+        [readonly]="!canEdit">
+      </ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Brand Name: </ion-label>
+      <ion-input 
+        name="bn"
+        placeholder="Enter brand name" 
+        [(ngModel)]="item.brandName" 
+        [readonly]="!canEdit">
+      </ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Membrane: </ion-label>
+      <ion-select 
+        name="mem"
+        placeholder="Select membrane type" 
+        [(ngModel)]="item.membrane" 
+        [disabled]="!canEdit">
+        <ion-select-option *ngFor="let item of membraneTypeList" [value]="item.v" >
+          {{ item.txt | pretty }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Dialyzer Type: </ion-label>
+      <ion-select 
+        name="flux"
+        placeholder="Select dialyzer type" 
+        [(ngModel)]="item.flux" 
+        [disabled]="!canEdit">
+        <ion-select-option *ngFor="let item of fluxList" [value]="item.v" >
+          {{ item.txt | pretty }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+</ng-template>

@@ -1,0 +1,153 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Hemosheet Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngIf="tmp; else loading">
+      <ion-col>
+        <ion-card>
+          <ion-card-content>
+            <!-- auto complete -->
+            <ion-row>
+              <ion-col>
+                <ion-title>Auto Complete</ion-title>
+              </ion-col>
+            </ion-row>
+            <ion-row class="setting-grp">
+              <ion-col size="12" size-sm="6">
+                <ion-item>
+                  <ion-select interface="action-sheet" placeholder="Select Type" [(ngModel)]="tmp.basic.auto">
+                    <ion-select-option *ngFor="let item of autoCompleteOptions" [value]="item.v"> {{ item.txt }} </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col [hidden]="!tmp.basic.auto || tmp.basic.auto === 'none'">
+                <ion-label class="ion-margin-end">
+                  With Delay:
+                </ion-label>
+                <ion-item>
+                  <ion-select placeholder="Select Delay" [(ngModel)]="tmp.basic.delay">
+                    <ion-select-option *ngFor="let item of delayOptions" [value]="item.v"> {{ item.txt }} </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <!-- auto fill record -->
+            <ion-row>
+              <ion-col>
+                <ion-title>Auto fill records</ion-title>
+              </ion-col>
+            </ion-row>
+            <ion-row class="setting-grp">
+              <ion-col>
+                <ion-item>
+                  <ion-select interface="action-sheet" placeholder="Select Type" [(ngModel)]="tmp.basic.autoFillRecord" style="min-width: 150px;">
+                    <ion-select-option *ngFor="let item of intervalOptions" [value]="item.v"> {{ item.txt }} </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <!-- auto fill medicine -->
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="tmp.basic.autoFillMedicine"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Auto fill medicine(s) from prescription
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button color="secondary" (click)="updateBasic()">Save Setting</ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-card>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-title>Rules</ion-title>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="tmp.rules.changeCompleteTimePermissionRequired"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Change complete time requires to be Head Nurse or Admin
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="tmp.rules.headNurseCanApproveDoctorSignature"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Head Nurse can approve doctor signature
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="tmp.rules.changePrescriptionSensitive"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Changing dialysis prescription will require doctor consent (signature approve) again
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="tmp.rules.dialysisPrescriptionRequireHeadNurse"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Create/edit/delete dialysis prescription requires user to be HeadNurse or Doctor
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button color="secondary" (click)="updateRules()">Update Rules</ion-button>
+          </ion-col>
+        </ion-row>
+        
+        <ion-list class="list-panel spacing">
+          <ion-item button (click)="labSetting()">
+            <ion-icon name="flask"></ion-icon>
+            <ion-label>Hemosheet's Lab Setting</ion-label>
+          </ion-item>
+        </ion-list>
+
+        
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <div>
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+
+</ion-content>

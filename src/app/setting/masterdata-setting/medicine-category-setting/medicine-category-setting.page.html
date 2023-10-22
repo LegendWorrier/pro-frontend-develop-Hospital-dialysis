@@ -1,0 +1,18 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Medicine Category {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <app-masterdata-list [content]="content" name="category" [preLoad]="categories" 
+  [add]="addData" [edit]="editData" [delete]="deleteData" [canEdit]="canEdit"
+  (onUpdateList)="categoriesChange.emit($event)">
+
+  </app-masterdata-list>
+</ion-content>

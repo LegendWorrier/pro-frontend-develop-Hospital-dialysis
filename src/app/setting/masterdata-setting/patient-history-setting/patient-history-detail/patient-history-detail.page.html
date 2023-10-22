@@ -1,0 +1,144 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Patient History's Entry Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-content>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Name </ion-label>
+                    <ion-input name="name" placeholder="Enter key name" [(ngModel)]="entry.name" required
+                    [disabled]="!canEdit"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Display Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Display Name </ion-label>
+                    <ion-input name="displayName" placeholder="Enter the name to be shown" [(ngModel)]="entry.displayName" required 
+                    [disabled]="!canEdit"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="trtEnable">
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> TRT </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> TRT </ion-label>
+                    <ion-select name="trt" placeholder="Choose TRT Mapping" interface="action-sheet" [(ngModel)]="entry.trt" class="full-h-sm-up"
+                      [disabled]="!canEdit">
+                      <ion-select-option *ngFor="let item of trtMaps" [value]="item.v"> {{ item.t | pretty }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Entry Type </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Entry Type </ion-label>
+                    <ion-select name="entryType" placeholder="Choose Entry Type" interface="action-sheet" [(ngModel)]="type" (ngModelChange)="onTypeChange()" class="full-h-sm-up"
+                      [disabled]="!canEdit">
+                      <ion-select-option *ngFor="let item of entryType" [value]="item.v"> {{ item.txt }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Option Type </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item [disabled]="!canHaveChoice">
+                    <ion-label position="floating" class="ion-hide-sm-up"> Option Type </ion-label>
+                    <ion-select name="optionType" placeholder="Choose Option Type" interface="action-sheet" [(ngModel)]="option" (ngModelChange)="onOptionChange()" class="full-h-sm-up"
+                      [disabled]="!canEdit">
+                      <ion-select-option *ngFor="let item of optionType" [value]="item.v"> {{ item.txt }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <!-- Options -->
+      <ion-row *ngIf="showOption">
+        <ion-col>
+          <ion-card>
+            <ion-card-header><ion-card-title>Options</ion-card-title></ion-card-header>
+            <ion-card-content>
+              <ion-row *ngFor="let item of entry.choices as data; let i=index;">
+                <ion-col>
+                  <ion-item>
+                    <ion-label>Value:</ion-label>
+                    <ion-input name="o-{{i}}" [(ngModel)]="item.text" required [disabled]="!canEdit" ></ion-input>
+                  </ion-item>
+                  <div class="option-ctl" *ngIf="canEdit">
+                    <ion-button class="icon-button" (click)="data.splice(i, 1)" color="danger" *ngIf="data.length > 1">
+                      <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="canEdit">
+                <ion-col class="center">
+                  <ion-fab-button (click)="addNewOption()" size="small" color="medium">
+                    <ion-icon name="add"></ion-icon>
+                  </ion-fab-button>
+                </ion-col>
+              </ion-row>
+              
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-text color="danger">
+            {{ error }}
+          </ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="canEdit">
+        <ion-col class="btn-group">
+          <ion-button type="submit" (click)="save()" color="greenish" [disabled]="form.invalid" >Save</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="editMode" >Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+  
+</ion-content>

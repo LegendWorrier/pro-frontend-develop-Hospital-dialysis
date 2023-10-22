@@ -1,0 +1,15 @@
+<div class="mat-calendar-header">
+  <div class="mat-calendar-controls">
+    <div class="mat-calendar-spacer ion-text-center ion-align-self-center">
+      <span>{{ periodLabel }}</span>
+    </div>
+    <button mat-icon-button color="primary"
+      class="mat-calendar-previous-button mat-icon-button mat-button-base"
+      aria-label="Previous month" (click)="previous()" [disabled]="!isPrevious">
+    </button>
+    <button mat-icon-button color="primary"
+      class="mat-calendar-next-button mat-icon-button mat-button-base"
+      aria-label="Next month" (click)="next()" [disabled]="!isNext">
+    </button>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+.data-header {
+    padding-top: 5px;
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+    background-color: var(--ion-color-panel);
+    position: fixed;
+    width: 100%;
+    z-index: 110;
+
+    display: flex;
+
+    --padding-start: 16px;
+    --padding-end: 16px;
+    .ios & {
+        --padding-end: 26px;
+    }
+    @media (max-width: 768px) {
+        --padding-start: 10px;
+    }
+    @media (max-width: 577px) {
+        --padding-start: 0px;
+    }
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+        .ios & {
+            padding-right: 8px;
+        }
+    }
+}
+
+ion-spinner {
+    margin-top: 10px;
+}
+
+ion-chip.temporary {
+    pointer-events: none;
+    position: static;
+    margin-left: 0;
+
+    @media (max-width: 576px) {
+        height: 18px;
+        padding-left: 7px;
+        padding-right: 7px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        font-size: 8pt;
+        white-space: nowrap;
+    }
+}
+
+.filter-label {
+    margin-left: max(15px, var(--ion-safe-area-left, 0));
+}
+.filter-select {
+    max-width: 140px;
+}
+.filter-toolbar {
+    --min-height: 40px;
+}
+
+ion-content {
+    --padding-bottom: 70px;
+}
+
+//:host ::ng-deep {
+
+    ion-item {
+        position: relative;
+    }
+    ion-item ion-label {
+        position: unset !important;
+        white-space:normal !important;
+    }
+
+    ion-list {
+        margin-bottom: 0 !important;
+    }
+
+    .col-date {
+        max-width: 300px;
+        min-width: 100px;
+    }
+    .col-type {
+        flex-grow: 0.8;
+    }
+    .col-mode {
+        flex-grow: 0.4;
+    }
+
+//}
+
+.select-date {
+
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+
+    cursor: pointer;
+
+    ion-icon {
+        font-size: 1.2em;
+        margin-right: 5px;
+        color: white;
+    }
+
+    ion-label.placeholder {
+        font-style: italic;
+    }
+}
+
+.report-btn {
+    margin-right: 80px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    @media (max-width: 576px) {
+        margin-right: 10px;
+    }
+}

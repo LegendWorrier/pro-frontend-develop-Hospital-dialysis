@@ -1,0 +1,12 @@
+{
+  "name": "hemopro-server",
+  "version": "1.2.0",
+  "description": "Node Server for Hemo frontend",
+  "exports": "./index.js",
+  "engines": {
+    "node": ">=14.16"
+  },
+  "author": "Wasenshi",
+  "license": "ISC",
+  "type": "module"
+}

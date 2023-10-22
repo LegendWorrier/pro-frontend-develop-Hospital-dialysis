@@ -1,0 +1,9 @@
+<ion-list>
+  <ion-item *ngFor="let item of data.unitList" button (click)="onSelect(item)" 
+  [class.current]="item.id === data.current" 
+  [detail]="false" >
+    <ion-label>
+      {{ item.name }}
+    </ion-label>
+  </ion-item>
+</ion-list>

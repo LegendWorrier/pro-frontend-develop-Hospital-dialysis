@@ -1,0 +1,97 @@
+<app-header pageName = "Hemosheet List"
+[content]="content"
+[searchBar]="true"
+placeholder="Search by Date, Mode, Name, ID, HN or use custom search"
+prev="/reports"
+(onSearch)="onSearch($event)"></app-header>
+
+<ion-content #content>
+  <ion-grid style="height: 100%;" *ngIf="firstLoad || hemoRecords?.length === 0">
+    <ion-row style="height: 100%;">
+      <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <h1 *ngIf="!firstLoad">No Hemosheets Available</h1>
+        <ion-spinner *ngIf="firstLoad"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+    
+  <ion-grid [class.hide]="!(hemoRecords?.length > 0)">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+
+          <ion-row>
+            <ion-col *ngFor="let h of hemoRecords" size="12" [attr.size-md]="hemoRecords.length > 1 ? '6' : '12'">
+
+              <ion-item button (click)="showReport(h)" >
+                
+                <ion-label class="main-label">
+                  <ion-row>
+                    <ion-col>
+                      <h2>
+                        <ion-text ><b> {{ h.record.created | date: 'dd MMM yyyy' }} </b></ion-text>
+                        <span style="margin-left: 10px;"></span>
+                        <ion-text color="secondary-alt"><b> {{ h.patient.name }} </b></ion-text>
+                      </h2>
+                    </ion-col>
+                    <ion-col >
+                      <ion-label>
+                        <p>{{ h.patient.hospitalNumber }}</p>
+                      </ion-label>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-label>
+                        <p> {{ h.record.ward || 'Unknown Ward' }} </p>
+                      </ion-label>
+                    </ion-col>
+                    <ion-col >
+                      <ion-label class="ion-text-center">
+                        <p>{{ (h.record.cycleStartTime || h.record.cycleEndTime) ?
+                           'Cycle Time: ' + ((h.record.cycleStartTime | date: 'HH:mm') || '?') + ' - ' + ((h.record.cycleEndTime | date: 'HH:mm') || '?')
+                          : 'Cycle Time: Unknown' }}</p>
+                      </ion-label>
+                    </ion-col>
+                    <ion-text color="tertiary" *ngIf="multiUnit" class="ion-float-right"><p>{{ getUnit(h.patient.unitId) }}</p></ion-text>
+                  </ion-row>
+                  <ion-row>
+                    <ng-container *ngIf="h.record.dialysisPrescription">
+                      <ion-col>
+                        <ion-label color="secondary">
+                          {{ h.record.dialysisPrescription.mode }}
+                        </ion-label>
+                      </ion-col>
+                      <ion-col>
+                        <ion-label [color]="h.record.dialysisPrescription.temporary ? 'pink' : 'primary'">
+                          {{ h.record.dialysisPrescription.temporary ? 'Temporary' : 'Long-Term' }}
+                        </ion-label>
+                      </ion-col>
+                    </ng-container>
+                    <ion-col class="no-prescription ion-align-self-center" *ngIf="!h.record.dialysisPrescription">
+                      <ion-badge color="danger" class="alert" >
+                        <ion-icon name="warning"></ion-icon> <span> No Dialysis Prescription</span>
+                      </ion-badge>
+                    </ion-col>
+                    <ion-col class="ion-text-center">
+                      <ion-chip color="warning" class="in-progress" *ngIf="!h.record.completedTime">
+                        In-Progress
+                      </ion-chip>
+                    </ion-col>
+                  </ion-row>
+                </ion-label>
+
+              </ion-item>
+
+            </ion-col>
+          </ion-row>
+          
+        </ion-list>
+        <!-- loading -->
+        <app-page-loader #loader label="Hemosheets" [(dataList)]="hemoRecords" [retryable]="true" [autoRefresh]="true"
+        [loadCall]="loadHemosheet$" (firstLoadEvent)="firstLoad = $event" [filter]="searchString" ></app-page-loader>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

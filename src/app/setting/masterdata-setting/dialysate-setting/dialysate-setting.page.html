@@ -1,0 +1,29 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    
+    <ion-title>Dialysate {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <app-masterdata-list [content]="content" [hasName]="false" name="formula" [get]="getDataList" [add]="addData" [edit]="editData" [delete]="deleteData" [canEdit]="canEdit">
+
+    <ng-template #display let-item="item">
+      <ion-label> K: {{ item.k }} </ion-label>
+      <ion-label> Ca: {{ item.ca }} </ion-label>
+    </ng-template>
+    
+    <ng-template #edit let-item="item">
+      <ion-label> K:  </ion-label>
+      <ion-input style="text-align: center;" [(ngModel)]="item.k" inputmode="decimal" type="number" min="0" placeholder="Enter K amount" required></ion-input>
+      <ion-label> Ca:  </ion-label>
+      <ion-input style="text-align: center;" [(ngModel)]="item.ca" inputmode="decimal" type="number" min="0" placeholder="Enter Ca amount" required></ion-input>
+    </ng-template>
+
+  </app-masterdata-list>
+</ion-content>

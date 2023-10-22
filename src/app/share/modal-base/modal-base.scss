@@ -1,0 +1,24 @@
+
+
+@media (max-width: 992px) {
+    #close-btn.ios {
+        --padding-start: 12px;
+        --padding-end: 20px;
+    }
+    #close-btn.md {
+        --padding-start: 12px;
+        --padding-end: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    #close-btn.ios {
+        --padding-start: 2px;
+        --padding-end: 16px;
+    }
+
+    #close-btn.md {
+        --padding-start: 2px;
+        --padding-end: 2px;
+    }
+}

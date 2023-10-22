@@ -1,0 +1,78 @@
+.list-item{
+    height: 100%;
+    color: white;
+    ion-icon {
+        font-size: 20px;
+        margin-right: 0;
+        color: white;
+    }
+    z-index: 200;
+}
+
+.compact-container {
+    width: 100%;
+}
+.compact-grp {
+    display: list-item;
+}
+
+ion-list {
+    padding-bottom: 70px;
+}
+
+ion-fab {
+    position: fixed;
+}
+
+ion-note {
+    font-size: large;
+    min-width: 20px;
+    padding-right: 0;
+    margin-inline-end: 16px;
+}
+
+#error {
+    margin: auto;
+    display: table;
+    margin-top: 10px;
+}
+
+ion-skeleton-text {
+    margin-left: 20px;
+    margin-top: 10px;
+    width: min(20%, 150px);
+}
+
+ion-spinner {
+    position: absolute;
+    left: calc(50% - 14px);
+    top: calc(50% - 14px);
+}
+
+.no-data {
+    position: absolute;
+    left: calc(50% - 60px);
+    top: calc(50% - 30px);
+    color: var(--ion-color-medium);
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+.network-error {
+    position: absolute;
+    left: calc(50% - 60px);
+    top: calc(50% - 30px);
+    color: var(--ion-color-medium);
+    font-weight: bold;
+    font-size: xx-large;
+}
+
+:host {
+    flex: 1 1 auto;
+}
+
+:host ::ng-deep {
+    ion-input {
+        --background: var(--ion-color-light);
+    }
+}

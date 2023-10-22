@@ -1,0 +1,44 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Schedule Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngIf="tmp; else loading">
+      <ion-col>
+        <ion-card>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox labelPlacement="end" justify="start" [(ngModel)]="tmp.autoSchedule">Auto Schedule</ion-checkbox>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button color="secondary" (click)="save()">Save Setting</ion-button>
+          </ion-col>
+        </ion-row>
+       
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <div>
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+
+</ion-content>

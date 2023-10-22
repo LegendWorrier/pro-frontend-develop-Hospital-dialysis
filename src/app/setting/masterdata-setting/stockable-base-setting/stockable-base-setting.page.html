@@ -1,0 +1,43 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ name }} {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div class="content-container">
+    <ng-container *ngTemplateOutlet="beforeHeader; context: { canEdit: canEdit }"></ng-container>
+  
+    <ion-list-header class="spacing">
+      {{ name }} List
+    </ion-list-header>
+    <ion-row class="list-header">
+      <ion-col class="text-wrasp">Name</ion-col>
+      <ion-col class="text-wrasp">Code</ion-col>
+      <ng-container *ngTemplateOutlet="extraHeader; context: { canEdit: canEdit }"></ng-container>
+    </ion-row>
+    
+    <app-masterdata-list #list [content]="content" [name]="name.toLowerCase()" [get]="getCall" [delete]="deleteCall"
+    [editPage]="editPage"
+    [params]="getParams"
+    [warning]="warning"
+    [canEdit]="canEdit"
+    [gotoAdd]="gotoAdd"
+    >
+      <ng-template #display let-item="item">
+        <ion-label> {{item.code || '-'}} </ion-label>
+      </ng-template>
+      <ng-container *ngFor="let tp of detailList">
+        <ng-template #display let-item="item">
+          <ng-container *ngTemplateOutlet="tp; context: { item: item, canEdit: canEdit }"></ng-container>
+        </ng-template>
+      </ng-container>
+    </app-masterdata-list>
+  </div>
+  
+</ion-content>

@@ -1,0 +1,62 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Unit Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Name: </ion-label>
+            <ion-input name="name" placeholder="Enter unit name" [(ngModel)]="tmp.name" [readonly]="!canEdit" required></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Code: </ion-label>
+            <ion-input name="code" placeholder="Enter unit code" [(ngModel)]="tmp.code" [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Head Nurse: </ion-label>
+            <ion-select name="head" placeholder="Select Head Nurse" [(ngModel)]="tmp.headNurse" [disabled]="!canEdit">
+              <ion-select-option *ngFor="let u of getSelectableHeadNurses()" [value]="u.id">{{ getName(u) }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text id="error" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="editMode" class="spacing">
+        <ion-col>
+          <ion-list class="list-panel">
+            <ion-item button (click)="settings()">
+             <ion-icon name="toggle" ></ion-icon> Unit Rules & Settings
+            </ion-item>
+          </ion-list>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="canEdit" class="spacing">
+        <ion-col class="btn-group">
+          <ion-button type="submit" (click)="save()" color="greenish" [disabled]="form.invalid">Save</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="editMode && canDelete" >Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

@@ -1,0 +1,42 @@
+.checkbox-grp {
+  ion-label {
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  ion-checkbox {
+    vertical-align: middle;
+  }
+}
+
+.ac-indicator {
+  display: flex;
+  flex-direction: column;
+
+  margin-left: 10px;
+
+  ion-text {
+    opacity: .5;
+  }
+
+  ion-text.active {
+    opacity: unset;
+    color: var(--ion-color-warning);
+  }
+}
+
+.audit-panel {
+  padding-left: max(var(--ion-safe-area-left), 10px);
+  padding-right: max(var(--ion-safe-area-right), 10px);
+  padding-top: 5px;
+  padding-bottom: 15px;
+
+  display: flex;
+  align-items: center;
+
+  ion-text {
+      vertical-align: middle;
+  }
+  ion-button {
+      vertical-align: middle;
+  }
+}

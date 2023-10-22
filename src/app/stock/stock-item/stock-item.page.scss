@@ -1,0 +1,40 @@
+ion-radio {
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    .ios & {
+        &::part(container) {
+            width: 22px;
+            height: 22px;
+            padding-left: 3px;
+            padding-right: 3px;
+            border-radius: 999px;
+            border: 2px solid rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.23);
+        }
+    
+        &::part(mark) {
+            transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+    }
+    
+}
+
+ion-radio-group {
+    ion-row, ion-col {
+        padding: 0;
+    }
+}
+
+.item-select, .item-type-select {
+    min-width: 250px;
+}
+
+ion-col {
+    align-self: center;
+}
+
+ion-chip {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    pointer-events: none;
+}

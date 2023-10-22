@@ -1,0 +1,18 @@
+.popup-head {
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--ion-item-border-color, var(--ion-border-color, var(--ion-color-step-150, rgba(0, 0, 0, 0.13))));
+    text-align: center;
+}
+
+.popup-title {
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+}
+
+.popup-sub-title {
+    margin: 5px 0 0;
+    padding: 0;
+    font-weight: 400;
+    font-size: 12px;
+}

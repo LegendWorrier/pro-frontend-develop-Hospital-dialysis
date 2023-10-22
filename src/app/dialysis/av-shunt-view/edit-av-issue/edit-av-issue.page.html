@@ -1,0 +1,143 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="butterfly-needle" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title> {{ editMode? 'AV Issue Edit' : 'New AV Issue' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down">
+                  <ion-label> Abnormal Datetime </ion-label>
+                </ion-col>
+                <ion-col>
+                  <hemo-datetime-item title="Abnormal Datetime" placeholder="Choose Date" [(value)]="dataTmp.abnormalDatetime"
+                    displayFormat="dd/MM/YYYY HH:mm">
+                    <ion-datetime name="abDatetime" presentation="date-time"
+                      [max]="maxDate"
+                      [(ngModel)]="dataTmp.abnormalDatetime"
+                      [showDefaultButtons]="true"
+                      required>
+                    </ion-datetime>
+                  </hemo-datetime-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down">
+                  <ion-label> Complications </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Complications </ion-label>
+                    <ion-select name="complications" [(ngModel)]="dataTmp.complications" placeholder="Choose complications" interface="action-sheet" required>
+                      <ion-select-option *ngFor="let item of complicationList" [value]="item"> {{ item }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down">
+                  <ion-label> Treatment Method </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Treatment Method </ion-label>
+                    <ion-select name="method" [(ngModel)]="dataTmp.treatmentMethod" placeholder="Choose treatment method" interface="action-sheet" required>
+                      <ion-select-option *ngFor="let item of treatmentMethodList" [value]="item"> {{ item }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down">
+                  <ion-label> Hospital </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Hospital </ion-label>
+                    <ion-input name="hospital" placeholder="Enter Hospital" [(ngModel)]="dataTmp.hospital" ></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down treatment">
+                  <ion-label> Treatment Result </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Treatment Result </ion-label>
+                    <ion-textarea rows="5" name="result" [(ngModel)]="dataTmp.treatmentResult" required></ion-textarea>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="2"  class="ion-hide-sm-down">
+                  <ion-label> Catheter </ion-label>
+                </ion-col>
+                <ion-col>
+                  <app-select #avSelect [dataList]="cathList" [(ngModel)]="dataTmp.cathId" (onChange)="avUpdate()" 
+                  placeholder="Choose Catheter" name="cath" label="Catheter" buttonName="AV Shunt"
+                  [addPage]="avPage" [addPageProps]="avProps" [addedCallback]="avAdded"
+                  [required]="true">
+                    <ion-select-option *appListData="let item" [value]="item.id">
+                      {{ getAVShuntName(item) }}
+                    </ion-select-option>
+                  </app-select>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text id="error-text" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="audit-panel" *ngIf="dataTmp.createdBy">
+          
+        <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2">
+          <ion-label>Established : </ion-label>
+        </ion-col>
+        <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4">
+           <audit-name [id]="dataTmp.createdBy" [date]="dataTmp.created"></audit-name>
+        </ion-col>
+        
+        <ng-container *ngIf="dataTmp.updatedBy!==dataTmp.createdBy">
+          <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2">
+            <ion-label>Modified : </ion-label>
+          </ion-col>
+          <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4">
+            <audit-name [id]="dataTmp.updatedBy" [date]="dataTmp.updated"></audit-name>
+          </ion-col>
+        </ng-container>
+        
+      </ion-row>
+
+      <ion-row class="ion-justify-content-center ion-align-items-center" *ngIf="!deleted">
+        <ion-col class="ion-text-center">
+          <ion-button size="large" color="secondary" type="submit" (click)="save()" [disabled]="form.invalid">
+            Save
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+  <ion-backdrop class="deleted" [tappable]="false" [visible]="true" *ngIf="deleted"></ion-backdrop>
+</ion-content>

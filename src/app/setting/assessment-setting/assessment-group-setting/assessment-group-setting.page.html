@@ -1,0 +1,135 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Assessment Group Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Pre
+          </ion-title>
+          <ion-item-divider style="min-height: 5px;"></ion-item-divider>
+          <ng-container *ngIf="preGroups | async as data; else loading">
+            <ion-item button *ngFor="let item of data; let i=index;"  (click)="edit(item)">
+              <ion-label>
+                {{ item.displayName }}
+  
+                <p class="name">{{ item.name }}</p>
+              </ion-label>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i-1])" [disabled]="i === 0">
+                <ion-icon name="arrow-up"></ion-icon>
+              </ion-button>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                <ion-icon name="arrow-down"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <ion-label color="medium" *ngIf="data.length === 0"><i>No group</i></ion-label>
+          </ng-container>
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Other
+          </ion-title>
+          <ion-item-divider style="min-height: 5px;"></ion-item-divider>
+          <ng-container *ngIf="otherGroups | async as data; else loading">
+            <ion-item button *ngFor="let item of data; let i=index;" (click)="edit(item)">
+              <ion-label>
+                {{ item.displayName }}
+  
+                <p class="name">{{ item.name }}</p>
+              </ion-label>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i-1])" [disabled]="i === 0">
+                <ion-icon name="arrow-up"></ion-icon>
+              </ion-button>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                <ion-icon name="arrow-down"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <ion-label color="medium" *ngIf="data.length === 0"><i>No group</i></ion-label>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Post
+          </ion-title>
+          <ion-item-divider style="min-height: 5px;"></ion-item-divider>
+          <ng-container *ngIf="postGroups | async as data; else loading">
+            <ion-item button *ngFor="let item of data; let i=index;" (click)="edit(item)">
+              <ion-label>
+                {{ item.displayName }}
+  
+                <p class="name">{{ item.name }}</p>
+              </ion-label>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i-1])" [disabled]="i === 0">
+                <ion-icon name="arrow-up"></ion-icon>
+              </ion-button>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                <ion-icon name="arrow-down"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <ion-label color="medium" *ngIf="data.length === 0"><i>No group</i></ion-label>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Dialysis
+          </ion-title>
+          <ion-item-divider style="min-height: 5px;"></ion-item-divider>
+          <ng-container *ngIf="dialysisGroups | async as data; else loading">
+            <ion-item button *ngFor="let item of data; let i=index;" (click)="edit(item)">
+              <ion-label>
+                {{ item.displayName }}
+  
+                <p class="name">{{ item.name }}</p>
+              </ion-label>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i-1])" [disabled]="i === 0">
+                <ion-icon name="arrow-up"></ion-icon>
+              </ion-button>
+              <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                <ion-icon name="arrow-down"></ion-icon>
+              </ion-button>
+            </ion-item>
+            <ion-label color="medium" *ngIf="data.length === 0"><i>No group</i></ion-label>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab slot="fixed" horizontal="center" vertical="bottom">
+    <ion-fab-button (click)="add()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ng-template #loading>
+  <ion-spinner></ion-spinner>
+</ng-template>

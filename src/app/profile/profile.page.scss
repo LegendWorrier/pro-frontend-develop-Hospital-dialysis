@@ -1,0 +1,40 @@
+ion-content {
+    --padding-bottom: 80px;
+}
+
+ion-card-header {
+    display: block;
+}
+
+.panel {
+    ion-col {
+        align-self: center;
+    }
+}
+
+.btn-group {
+    margin-top: 50px;
+}
+
+.error-txt {
+    margin-top: 20px;
+    min-height: 30px;
+}
+
+#qr-holder {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+
+    ion-button {
+        width: 250px;
+    }
+}
+
+.sig-display {
+    max-width: 300px;
+    @media(prefers-color-scheme: dark) {
+        background: white;
+    }
+}
+

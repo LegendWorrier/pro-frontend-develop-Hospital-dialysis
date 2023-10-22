@@ -1,0 +1,96 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="stats-chart" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title>Dialysis Adequacy</ion-title>
+
+  </ion-toolbar>
+  <ion-toolbar class="filter-toolbar">
+    <ion-text class="filter-label" slot="start">Select Month: </ion-text>
+    <div slot="start" class="select-date" (click)="dt.present()">
+      <ion-icon icon="calendar-outline"></ion-icon>
+      <ion-label [class.placeholder]="!selectedMonth">{{ (selectedMonth | date: 'MMM yyyy') || 'Select Month' }}</ion-label>
+    </div>
+
+    <ion-button icon-only color="secondary" class="report-btn ion-float-right" (click)="openReport()">
+      <ion-icon name="reader-outline"></ion-icon>
+    </ion-button>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="data-header">
+    <ion-col class="col-date">
+      Date
+    </ion-col>
+    <ion-col >
+      Ward
+    </ion-col>
+    <ion-col class="col-type">
+      Type
+    </ion-col>
+    <ion-col class="col-mode">
+      Mode
+    </ion-col>
+  </ion-row>
+  <ion-grid>
+    <ion-row style="margin-top: 24px;">
+      <ion-col class="ion-text-center">
+        <ion-list>
+          <h4 *ngIf="!firstLoad && recordList.length === 0"> No Data </h4>
+          <ion-spinner *ngIf="firstLoad"></ion-spinner>
+          <ng-container *ngIf="recordList.length !== 0" >
+            <ion-item button *ngFor="let item of recordList as list; let i=index;" (click)="onSelect([item, i, list])" >
+              <ng-container *ngTemplateOutlet="content; context: { item: item }"></ng-container>
+            </ion-item>
+          </ng-container>
+
+          <!-- loading -->
+          <app-page-loader #loader label="Hemo Records" [(dataList)]="recordList" [retryable]="true"
+          [loadCall]="loadHemosheet$" (firstLoadEvent)="firstLoad = $event"></app-page-loader>
+
+        </ion-list>
+        <ng-template #content let-item="item">
+          <ion-label class="col-date">
+            {{ (item.completedTime || item.created) | date: 'dd MMM yy (EE) HH:mm'}}
+          </ion-label>
+          <ion-label class="col-ward-label">
+            {{ item.ward || '-'}}
+          </ion-label>
+          <ng-container *ngIf="!item.dialysisPrescription">
+            <ion-label color="danger" class="no-prescription-label">
+              <i>No Dialysis Prescription</i>
+            </ion-label>
+          </ng-container>
+          
+          <ng-container *ngIf="item.dialysisPrescription">
+            <ion-label class="col-type">
+              <ion-chip color="pink" class="temporary tag" *ngIf="item.dialysisPrescription.temporary">
+                Temporary
+              </ion-chip>
+              <ion-chip color="primary" class="temporary tag" *ngIf="!item.dialysisPrescription.temporary">
+                Long-Term
+              </ion-chip>
+            </ion-label>
+            <ion-label class="col-mode">
+              {{ item.dialysisPrescription.mode || '-'}}
+            </ion-label>
+          </ng-container>
+          
+        </ng-template>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-popover #dt [keepContentsMounted]="true" class="hemo-calendar">
+  <ng-template>
+    <ion-datetime presentation="month-year"
+      [max]="maxDate"
+      [(ngModel)]="selectedMonth" (ionChange)="onFilter()"
+      [showDefaultButtons]="true"></ion-datetime>
+  </ng-template>
+</ion-popover>

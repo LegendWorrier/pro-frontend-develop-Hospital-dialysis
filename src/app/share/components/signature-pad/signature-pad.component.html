@@ -1,0 +1,16 @@
+<ion-content>
+  <ion-row class="pad safe-area">
+    <ion-col>
+      <canvas #sigPad width="1200" height="600" >
+      </canvas>
+    </ion-col>
+  </ion-row>
+  <ion-row class="safe-area">
+    <ion-col>
+      <ion-buttons style="justify-content: center;">
+        <ion-button color="greenish" (click)="confirm()" >Confirm</ion-button>
+        <ion-button color="danger" (click)="cancel()">Cancel</ion-button>
+      </ion-buttons>
+    </ion-col>
+  </ion-row>
+</ion-content>

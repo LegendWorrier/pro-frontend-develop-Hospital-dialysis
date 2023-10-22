@@ -1,0 +1,35 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Language Change</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-text color="danger">* This feature is still experimental. (only few set of response texts from server is translated, 
+          and no UI will be translated as of current version.)</ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="spacing">
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of langList" button (click)="isCurrent(item.id)? undefined : change(item)">
+            <ion-text class="checkmark-panel">
+              <ion-icon *ngIf="isCurrent(item.id)" name="checkmark-circle" color="greenish"></ion-icon>
+            </ion-text>
+            <ion-text>{{ item.id | pretty }}</ion-text>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

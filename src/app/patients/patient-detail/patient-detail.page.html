@@ -1,0 +1,22 @@
+<app-header pageName = "Patient" [searchBar]="false" prev="/patients">
+  <ion-buttons slot="end">
+    <ion-button (click)="openMenu($event)">
+      <ion-icon slot="icon-only" name="chevron-down-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</app-header>
+<ion-content>
+  <app-segment-tabs [tabs]="tabList" [(value)]="tab" [disableTab]="disableTab"></app-segment-tabs>
+
+  <ng-container [ngSwitch]="tab">
+    <ng-container *ngSwitchDefault><hemo-basic-info [patient]="patient" [doctorName]="doctorName" [medicineList]="medicineList" [(admit)]="admit" [(medOverview)]="medOverview"></hemo-basic-info></ng-container>
+    <ng-container *ngSwitchCase="'overview'"><hemo-dialysis-info #sheetInfo [patient]="patient" [hemosheet]="hemosheet" (hemosheetChange)="hemosheetChange.emit($event)" [thisMonth]="thisMonth" [total]="total" (onCalulated)="updateCalculation($event)" [(executeRecords)]="executionRecords" [dialysisRecords]="dialysisRecords" ></hemo-dialysis-info></ng-container>
+    <ng-container *ngSwitchCase="'assessment'"><hemo-assessment #assessCom [hemosheet]="hemosheet" [assessments]="assessments" [assessmentGroups]="assessmentGroups" [(items)]="assessItems" [clearEvent]="clearBtnClick"></hemo-assessment></ng-container>
+    <ng-container *ngSwitchCase="'record'"><hemo-record #recordCom [hemosheet]="hemosheet" [patient]="patient" [(dialysisRecords)]="dialysisRecords" [(nurseRecords)]="nurseRecords" [(doctorRecords)]="doctorRecords" [(executionRecords)]="executionRecords" [(progressNotes)]="progressNotes" [machineRecords]="machineRecords" [hemoSetting]="setting" [assessments]="assessments" [assessmentGroups]="assessmentGroups"></hemo-record></ng-container>
+  </ng-container>
+  
+  <div class="clear-btn" slot="fixed" *ngIf="!isPN">
+    <ion-button *ngIf="tab === 'assessment'" (click)="clearBtnClick.emit()" color="danger" size="small" shape="round">Toggle Clear Mode</ion-button>
+  </div>
+</ion-content>
+

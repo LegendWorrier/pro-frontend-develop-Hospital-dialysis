@@ -1,0 +1,23 @@
+#loading-txt {
+    font-size: larger;
+}
+
+ion-grid {
+    height: 100%;
+}
+
+ion-row {
+    height: 100%;
+    align-content: center;
+    
+    ion-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+ion-spinner {
+    transform: scale(1.5);
+    margin-bottom: 10px;
+}

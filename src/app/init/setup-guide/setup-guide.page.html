@@ -1,0 +1,114 @@
+<ion-content color="quaternary" class="ion-text-center">
+  <div *ngIf="isSetup">
+    <h1>You're already set!</h1>
+    <h2>Now, let's start using secure domain that the server suggests :</h2>
+    <ion-button color="secondary" (click)="changeDomain()">{{ secureUrl }}</ion-button>
+  </div>
+  <ion-grid *ngIf="!isSetup">
+    <ion-row>
+      <ion-col size-xs="12" size-sm="12" size-md="8"  size-lg="6" >
+        <h2>Install a certificate</h2>
+        <ion-button [href]="['assets/cert/ca.crt']" color="secondary" download="ca.crt" >Download</ion-button>
+        <div *ngIf="isIOS" class="content">
+          <ol>
+            <li>Make sure you are using Safari browser.</li>
+            <li>Download the certificate file from the above.</li>
+            <li>There should be a pop-up asking for permission, tap 'Allow'.</li>
+            <li>The another pop-up will show, indicating you need to continue on the setting, tap 'Close'.</li>
+            <li>Open your Settings app.</li>
+            <ng-container *ngIf="isIpad" >
+              <li>Underneath the User details for the device, tap 'More for Your iPad'.</li>
+              <li>Under 'Profile Downloaded', tap 'View Profile'.</li>
+            </ng-container>
+            <ng-container *ngIf="!isIpad" >
+              <li>Underneath the User details for the device, tap 'Profile Downloaded'.</li>
+            </ng-container>
+            <li>Tap 'Install'.</li>
+            <li>After enter your PIN, tap 'Install' again.</li>
+            <li>Continue tapping 'Install' until done.</li>
+            <li>Go to Settings > General > About > 'Certificate Trust Settings' (at the bottom of the page).</li>
+            <li>Tap the slide button next to the certificate you just installed.</li>
+            <li>Tap 'Continue'. Done.</li>
+          </ol> 
+        </div>
+        <div *ngIf="isAndroid || isOthers" class="content">
+          <ol>
+            <li>Download the certificate file from the above.</li>
+            <li>Open your Settings app.</li>
+            <li>Tap Security > Advanced > 'Encryption & credentials'.</li>
+            <li>Under "Credential storage", tap 'Install a certificate'.</li>
+            <li>Tap 'CA certificate'.</li>
+            <li>Tap 'Install anyway'.</li>
+            <li>After enter your PIN, choose the ca.crt file you just download (tap on it).</li>
+            <li>The certificate will be auto installed. Done.</li>
+          </ol>
+        </div>
+        <div *ngIf="isHuawei" class="content">
+          <ol>
+            <li>Download the certificate file from the above.</li>
+            <li>Open your Files app.</li>
+            <li>Under 'source', tap 'Downloads/Received files'.</li>
+            <li>Tap on 'Download Manager'.</li>
+            <li>Select the ca.crt file you just download (tap on it).</li>
+            <li>Name the certificate as anything you like.</li>
+            <li>Then tap 'OK', The certificate will be auto installed. Done.</li>
+          </ol>
+        </div>
+        <div *ngIf="isSamsung" class="content">
+          <ol>
+            <li>Download the certificate file from the above. (The pop-up will show saying some error, that's ok just continue.)</li>
+            <li>Open your Settings app.</li>
+            <li>Tap 'Biometrics and Security' > 'Other security settings'.</li>
+            <li>Under 'Credential Storage' panel, Tap 'Install from device storage'.</li>
+            <li>Tap 'CA certificate'.</li>
+            <li>Tap 'Install anyway'.</li>
+            <li>After enter your PIN, tap on 'Download'.</li>
+            <li>Select the ca.crt file you just download (tap on it).</li>
+            <li>Tap on 'Done', The certificate will be auto installed. Done.</li>
+          </ol>
+        </div>
+        <div *ngIf="!isMobileOrTablet" class="content desktop">
+          <ol>
+            <li>Download the certificate file from the above.</li>
+            <li>Open the downloaded file.</li>
+            <li>Click Install Certificate... button.</li>
+            <li>Choose 'Local Machine' then click next.</li>
+            <li>Choose 'Place all certificates in the following store'.</li>
+            <li>Click 'Browse...' button.</li>
+            <li>Choose 'Trusted Root Certification Authorities' then click 'OK'.</li>
+            <li>Click 'Next'.</li>
+            <li>Click 'Finish'.</li>
+            <li>Click 'OK' for all.</li>
+          </ol>
+        </div>
+        <p *ngIf="isMobileOrTablet" class="italic" >The detail and step may vary, depending on your device and OS version. 
+          Please try to update the version to latest as possible and refer to your device's manual for how to 'Install certificate'.</p>
+
+        <swiper-container pagination="true" [modules]="swiperModules">
+          <swiper-slide *ngFor="let item of items">
+            <ion-skeleton-text animated *ngIf="!item.loaded"></ion-skeleton-text>
+            <ion-img [src]="item.path" (ionImgDidLoad)="load(item)"></ion-img>
+          </swiper-slide>
+        </swiper-container>
+
+        <div id="firefox" *ngIf="isFirefox" class="content desktop">
+          <h4 style="font-weight: bold;">Now, it looks like you are using 'firefox' browser,</h4>
+          <h4>You will need to add certificate to the browser manually (please search and refer to 'how to install cert for firefox browser' and add your platform (e.g. android, samsung, window))</h4>
+          <ng-container *ngIf="!isMobileOrTablet" >
+            <h4><span style="text-decoration: underline; font-weight: bold;">Or</span> you can place this <a href="/assets/config/firefox-windows-truststore.js" download="firefox-windows-truststore.js">script</a> in the firefox path : </h4>
+            <h5 class="emphasize">'C:\Program Files (x86)\Mozilla Firefox\defaults\pref'</h5> or
+            <h5 class="emphasize">'C:\Program Files\Mozilla Firefox\defaults\pref'</h5>
+          </ng-container>
+        </div>
+        <p id="tip">You may need to restart the browser and come back again!</p>
+      </ion-col>
+    </ion-row>
+    
+    <ion-button id="finish" class="ion-margin-vertical" color="secondary" (click)="finish()">
+      <ion-ripple-effect></ion-ripple-effect>
+      Finish? Click Here.
+    </ion-button>
+  </ion-grid>
+  
+
+</ion-content>
