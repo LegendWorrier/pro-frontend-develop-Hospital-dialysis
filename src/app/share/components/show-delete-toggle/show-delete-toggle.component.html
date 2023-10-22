@@ -1,0 +1,4 @@
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-label color="medium" class="ion-hide-sm-down">Show Deleted</ion-label>
+  <ion-label color="medium"><span class="ion-hide-sm-up">Show Deleted <br></span><ion-toggle [(ngModel)]="checked" (ionChange)="notify($event)"></ion-toggle></ion-label>
+</ion-fab>

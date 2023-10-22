@@ -1,0 +1,19 @@
+<ion-item button (click)="modal.present()" class="item-datetime item-has-value" [disabled]="disabled || readonly" [class.readonly]="readonly" [lines]="lines">
+  <div class="datetime-grp">
+    <ion-label position="floating" class="ion-hide-sm-up datetime-label" *ngIf="hasLabel"> {{title}} <ion-text color="danger" *ngIf="required">*</ion-text></ion-label>
+    <div class="datetime-display">
+      <ion-icon icon="calendar-outline" color="primary"></ion-icon>
+      <ion-label [class.placeholder]="!value">
+        {{ (value | date: (displayFormat || 'dd MMMM yyyy')) || placeholder || 'Select Date' }}
+      </ion-label>
+    </div>
+  </div>
+  <ion-popover #modal [keepContentsMounted]="true" class="hemo-calendar">
+    <ng-template>
+      <ng-content>
+  
+      </ng-content>
+    </ng-template>
+  </ion-popover>
+</ion-item>
+

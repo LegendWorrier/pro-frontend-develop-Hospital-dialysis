@@ -1,0 +1,40 @@
+/* ion-card {
+    min-height: 80%;
+    height: 80%;
+    margin: 20px;
+} */
+
+ion-card-content {
+    min-height: 50%;
+    margin-top: 10px;
+}
+
+ion-card ion-nav {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.top-panel {
+    margin-top: 10px;
+    min-height: 46px;
+
+    ion-text {
+        margin-left: 15px;
+        font-size: larger;
+        vertical-align: middle;
+    }
+}
+
+.back-btn {
+    --border-radius: 50%;
+    height: 38px;
+    width: 38px;
+    margin-left: calc(var(--ion-safe-area-left) + 10px);
+    vertical-align: middle;
+
+    opacity: .7;
+
+    ion-icon {
+        position: absolute;
+    }
+}

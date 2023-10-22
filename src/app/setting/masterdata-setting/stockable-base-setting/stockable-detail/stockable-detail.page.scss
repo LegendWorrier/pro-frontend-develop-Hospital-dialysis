@@ -1,0 +1,30 @@
+.spacing-top {
+    margin-top: 35px;
+}
+
+.spacing-top-half {
+    margin-top: 15px;
+}
+
+.panel {
+    padding-left: calc(20px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+}
+
+ion-checkbox {
+    margin-right: 8px;
+}
+
+ion-col.checkbox {
+    
+    ion-checkbox {
+        vertical-align: middle;
+    }
+    ion-text {
+        vertical-align: middle;
+    }
+}
+
+.btn-group {
+    margin-left: max(var(--ion-safe-area-left), 10px);
+}

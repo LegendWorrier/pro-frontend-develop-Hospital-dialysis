@@ -1,0 +1,41 @@
+ion-item{
+    --background: --ion-color-primary;
+    --color: #fff;
+}
+
+a{
+    color: #fff;
+}
+
+ion-row{
+    justify-content:center;
+}
+
+.error{
+    color: #eb445a;
+}
+
+.logo {
+    height: 20vmax;
+    width: 100vw;
+    margin-top: 12vh;
+}
+
+.install {
+    text-align: center;
+    vertical-align: middle;
+    ion-button {
+        vertical-align: middle;
+    }
+    ion-checkbox {
+        vertical-align: middle;
+        margin-left: 5px;
+    }
+}
+
+#reader-container {
+    ion-col {
+        display: flex;
+        justify-content: center;
+    }
+}

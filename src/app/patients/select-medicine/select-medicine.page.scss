@@ -1,0 +1,60 @@
+.category {
+    text-align: center;
+    max-width: 25%;
+}
+
+.category-select {
+    align-self: center;
+
+    ion-item {
+        --background: rgba(var(--ion-color-medium-rgb), 0.05);
+        ion-select {
+            width: 100%;
+        }
+    }
+}
+
+.filter-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    z-index: 110;
+
+    background-color: var(--ion-color-panel);
+    height: 60px;
+}
+
+.data-header {
+    padding-top: 5px;
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+    background-color: var(--ion-color-panel);
+    position: -webkit-sticky;
+    position: sticky;
+
+    top: 60px;
+    width: 100%;
+    z-index: 110;
+
+
+    display: flex;
+    
+    --padding-start: 16px;
+    --padding-end: 16px;
+    
+    @media (max-width: 768px) {
+        --padding-start: 10px;
+    }
+    @media (max-width: 577px) {
+        --padding-start: 0px;
+    }
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+        .ios & {
+            padding-right: 8px;
+        }
+    }
+    
+}

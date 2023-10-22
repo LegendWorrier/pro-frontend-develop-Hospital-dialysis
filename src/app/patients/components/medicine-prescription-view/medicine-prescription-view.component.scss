@@ -1,0 +1,19 @@
+ion-row {
+    margin-bottom: 20px;
+}
+
+.label {
+
+    @media (max-width: 576px) {
+        font-weight: bold;
+    }
+    
+}
+
+.value {
+
+    @media (max-width: 576px) {
+        font-size: 16px;
+    }
+    
+}

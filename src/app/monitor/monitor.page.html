@@ -1,0 +1,124 @@
+<app-header pageName = "Monitor"
+[content]="content"
+[searchBar]="false"
+[back]="false"
+[showMenuBtn]="true"></app-header>
+
+<ion-content #content>
+
+  <div class="ads" *ngIf="showAds" slot="fixed">
+    <ion-fab-button class="close-btn" size="small" color="medium" (click)="closeAds()"><ion-icon name="close"></ion-icon></ion-fab-button>
+    <ion-label>Please consider supporting us by renewing maintenance & support package. Contact for more info: <a [href]="mailString" target="_top">customer@softtechmedcare.com</a></ion-label>
+    <ng-adsense adSlot="6075961753"></ng-adsense>
+  </div>
+
+  <ion-row class="unit-grp" *ngIf="multiUnit" [class.ads-margin]="showAds" >
+    <ion-col size="2.5" size-sm="2" class="unit-label">
+      <ion-label>
+        Unit:
+      </ion-label>
+    </ion-col>
+    <ion-col size="5" size-sm="3">
+      <ion-select interface="popover" [value]="selectedUnit" (ionChange)="onUnitChange($event)">
+        <ion-select-option *ngFor="let item of selectableUnits" [value]="item.id">{{item.name}}</ion-select-option>
+      </ion-select>
+    </ion-col>
+  </ion-row>
+
+  <ion-grid style="height: 100%">
+    <ion-row *ngIf="!isConnected">
+      <ion-col>
+        <ion-label color="danger" >The server is disconnected/offline.</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="isDebug">
+      <ion-col>
+        <ion-button (click)="addBed()">
+          Add BedBox
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row class="beds" *ngIf="beds.length > 0; else noData">
+      <ion-col *ngFor="let item of getBedList(selectedUnit); let i=index" style="display: flex;" class="ion-justify-content-center">
+        <div class="bed-box">
+          <!-- status and alert -->
+          <ion-row>
+            <ion-col class="header-line">
+              <!-- online status -->
+              <ion-badge [color]="!item.Online || !isConnected ? 'medium' : 'greenish'"
+                [class.online]="isOnline(item)" class="status">
+                {{ !isOnline(item) ? 'Disconnected' : 'Connected' }}
+              </ion-badge>
+              
+              <!-- alarm -->
+              <ion-label class="alarm-grp">
+                <button mat-icon-button class="alarm-menu" (click)="alarmMenu(item, $event)">
+                 <ion-icon name="ellipsis-horizontal" ></ion-icon>
+                </button>
+                <ion-badge color="danger" (click)="!isDismissAll(item) ? showAlarmList(item, $event) : undefined" 
+                  [class.alarm]="!isDismissAll(item)" [class.other]="isOtherAlarm(item)">Alarm</ion-badge>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <!-- name -->
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-label class="bed-name"> {{ item.Name || 'Bed ' + (i+1) }} </ion-label>
+              <ion-button shape="round" size="small" class="ion-float-right edit-btn" (click)="editName(item)" [disabled]="!isOnline(item) || !canEdit">
+                <ion-icon name="pencil"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-label><i> {{ item.Sending ? 'Sending' : 'Idle' }} </i></ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-item class="patient-display" button (click)="item.PatientId ? patient(item.PatientId) : pickPatient(item, $event)" [disabled]="!isOnline(item) || !canEdit || selectedUnit === 0">
+                <ion-label>{{ item.PatientId ? item.Patient.Name + ' (' + item.PatientId + ')' : 'No Patient' }}</ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-row *ngIf="selectedUnit === 0">
+            <ion-col>
+              <ion-label class="no-unit-warn">
+                Must select unit before using (or it will auto-select when choosing a patient)
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          
+          <ion-row>
+            <ion-col *ngIf="item.PatientId && selectedUnit !== 0">
+              <ion-button size="small" [disabled]="!isOnline(item) || !canEdit" (click)="changeState(item)">{{ item.Sending? 'Stop' : 'Start' }}</ion-button>
+              <ion-button size="small" [disabled]="!isOnline(item) || !canEdit" (click)="complete(item)">Finish</ion-button>
+              <ion-button size="small" [disabled]="!isOnline(item) || !canEdit" (click)="getDataNow(item)">
+                <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+              </ion-button>
+              <ion-button icon-only color="quaternary-alt" size="small" [disabled]="!isOnline(item) || !canEdit" (click)="openReport(item)">
+                <ion-icon slot="icon-only" name="reader-outline"></ion-icon>
+              </ion-button>
+            </ion-col>
+          </ion-row>
+          
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
+
+<ng-template #noData>
+  <ion-row style="height: 100%">
+    <ion-col style="height: 100%">
+      <div class="no-record-middle no-record">
+        <ion-text>
+          No HemoBox connected
+        </ion-text>
+      </div>
+    </ion-col>
+  </ion-row>
+</ng-template>
+

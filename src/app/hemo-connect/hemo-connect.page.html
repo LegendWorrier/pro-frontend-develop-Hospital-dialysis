@@ -1,0 +1,44 @@
+<app-header pageName = "Hemo Connect" [searchBar]="false" prev="/patients"></app-header>
+
+<ion-content #content>
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="auto" class="ion-text-center ion-margin-top">
+        <ion-label class="launch-txt" ><h1><b>Launching Hemo Connect...</b></h1>  </ion-label>
+        <ion-label>ถ้าโปรแกรมไม่ขึ้นให้ลองทำตามด้านล่างนี้</ion-label>
+
+        <ion-row class="spacing">
+          <ion-col >
+            <ion-label class="vertical-center" >
+              หากยังไม่เคยลงโปรแกรมในเครื่องนี้ สามารถดาวน์โหลดได้จากที่นี่ 
+            </ion-label>
+            <ion-button class="ion-margin-start vertical-center" (click)="download()" >Download</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="downloadClicked">
+          <ion-col>
+            <ion-label>ถ้าใช้ Microsoft Edge บราวเซอร์อาจจะบล็อคไฟล์ ให้กดตามรูปตัวอย่างนี้ก็จะดาว์นโหลดได้</ion-label>
+            <ion-img style="height: 20vh; min-height: 200px;" src="assets/guide/hemo-connect/download-1.png"></ion-img>
+            <ion-img style="height: 30vh; min-height: 300px;" src="assets/guide/hemo-connect/download-2.png"></ion-img>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="spacing">
+          <ion-col >
+            <ion-label class="vertical-center" >
+              หากลงโปรแกรมเสร็จแล้วให้กลับมาที่หน้านี้และกดลิงค์โปรแกรมที่นี่
+            </ion-label>
+            <ion-button class="ion-margin-start vertical-center" color="secondary" (click)="link()">Link</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="linkAppClicked">
+          <ion-col>
+            <ion-label>เมื่อขึ้น pop-up มาให้กด Open</ion-label>
+            <ion-img style="max-width: 350px; margin: auto;" src="assets/guide/hemo-connect/open.png"></ion-img>
+          </ion-col>
+        </ion-row>
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

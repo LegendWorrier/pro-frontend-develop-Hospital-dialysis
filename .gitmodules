@@ -1,0 +1,3 @@
+[submodule "ngx-charts"]
+	path = ngx-charts
+	url = git@github.com:Wasenshi123/ngx-charts.git

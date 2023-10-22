@@ -1,0 +1,51 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-right: 9px;
+}
+
+.logo {
+    height: 60px;
+}
+.hospital-title {
+    font-weight: bold;
+    font-size: large;
+}
+.welcome {
+    background: var(--ion-color-secondary);
+    pointer-events: none;
+}
+.welcome ion-label {
+    color: white;
+}
+
+@media (min-width: 1600px) {
+
+    .hospital-title {
+        font-size: x-large;
+    }
+}
+
+@media (max-width: 1599px) and (min-width: 992px) {
+
+    .hospital-title {
+        font-size: larger;
+    }
+}
+
+@media (max-width: 992px) {
+    .logo {
+        left: 0px;
+    }
+    .hospital-title {
+        padding: 0px;
+        width: auto;
+    }
+    .welcome {
+        height: 25px;
+        font-size: 9pt;
+        width: auto;
+    }
+}

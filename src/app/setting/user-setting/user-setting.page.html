@@ -1,0 +1,67 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>User Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div class="content-container">
+    <ion-row class="data-header">
+      <ion-col class="text-wrasp">
+          UserName
+      </ion-col>
+      <ion-col class="text-wrasp">
+          Employee ID
+      </ion-col>
+      <ion-col class="text-wrasp fixed-label-header">
+          Role
+      </ion-col>
+      <ion-col class="text-wrasp fixed-label-header" >
+          Status
+      </ion-col>
+    </ion-row>
+    <!-- [delete]="deleteData" -->
+    <app-data-list [content]="content" name="user" 
+      [get]="getDataList" 
+      [editPage]="editPage"
+      [params]="getParams"
+      [sort]="sorting"
+      [mobileVersion]="false"
+      [noDelete]="true"
+      class="data-list"
+    > 
+      <ng-template #display let-item="item">
+        <ion-icon [name]="mapIcon(item.role)" size="medium"></ion-icon>
+        
+        <ion-label>
+          <ion-card-subtitle>
+            {{ fullName(item) }}
+          </ion-card-subtitle>
+          <div class="sub-row">
+            <ion-label>
+              {{item.userName}} 
+            </ion-label>
+            <ion-label>
+              {{item.employeeId || '-'}} 
+            </ion-label>
+            <ion-label class="fixed-label">
+              {{ item.isPowerAdmin? 'Root' : item.role}}
+            </ion-label>
+            <ion-label class="fixed-label">
+              {{ item.isAdmin? 'Admin' : 'User' }}
+            </ion-label>
+          </div>
+        </ion-label>
+
+      </ng-template>
+  
+    </app-data-list>
+    
+  </div>
+</ion-content>

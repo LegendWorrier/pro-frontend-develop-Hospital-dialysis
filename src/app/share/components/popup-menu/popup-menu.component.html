@@ -1,0 +1,5 @@
+<ion-list>
+  <ion-item *ngFor="let item of menuList" lines="none" [detail]="false" button (click)="select(item)" [disabled]="item.disable">
+    {{ item.display }}
+  </ion-item>
+</ion-list>

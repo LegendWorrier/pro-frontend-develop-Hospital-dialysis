@@ -1,0 +1,120 @@
+@import '/src/global.scss';
+
+ion-content {
+  --padding-bottom: 100px;
+}
+
+.noti-item {
+  --padding-start: 7px;
+  --min-height: 80px;
+  margin-bottom: 5px;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-evenly;
+
+    .title {
+      font-weight: bolder;
+    }
+
+    .detail {
+      padding-top: 10px;
+      padding-bottom: 15px;
+    }
+
+    .time-label {
+      font-size: smaller;
+      color: gray;
+
+      padding-bottom: 5px;
+    }
+  }
+
+  &.new {
+    --background: rgba(var(--ion-color-warning-rgb), .5) !important;
+  }
+
+  &.expired, &.approved, &.denied, &.invalid {
+    --background: rgba(var(--ion-color-light-rgb), .35);
+    @media (prefers-color-scheme: dark) {
+      --background: rgba(var(--ion-color-light-rgb), .25);
+    }
+    .dark & {
+      --background: rgba(var(--ion-color-light-rgb), .25);
+    }
+
+    .content {
+      opacity: .35;
+      @media (prefers-color-scheme: dark) {
+        opacity: .25;
+      }
+      .dark & {
+        opacity: .25;
+      }
+    }
+    
+  }
+
+  &.invalid {
+    
+    --background: rgba(var(--ion-color-danger-rgb), .35);
+    @media (prefers-color-scheme: dark) {
+      --background: rgba(var(--ion-color-danger-rgb), .5);
+    }
+    .dark & {
+      --background: rgba(var(--ion-color-danger-rgb), .5);
+    }
+  }
+
+  .indicator {
+    position: absolute;
+    z-index: 1;
+    
+    right: 5px;
+    bottom: 5px;
+  }
+
+  @include no-select;
+  
+}
+
+.footer {
+  bottom: 0px;
+  position: absolute;
+  background: var(--ion-color-white);
+
+  min-height: 60px;
+  text-align: center;
+
+  ion-button {
+    vertical-align: bottom;
+  }
+}
+
+.no-record {
+  ion-text {
+      color: rgba(var(--ion-color-medium-rgb), 0.3);
+      font-weight: bold;
+  }
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  -o-user-select:none;
+  user-select:none;
+}
+
+.no-record-middle {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 700;
+  
+  flex-grow : 1;
+}

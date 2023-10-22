@@ -1,0 +1,87 @@
+
+<ng-template #detail let-tmp="item" let-canEdit="canEdit">
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Dose: </ion-label>
+      <ion-input name="dose" type="number" inputmode="integer" min="0" pattern="[0-9]*" 
+        placeholder="Select default dose for this med" [(ngModel)]="tmp.dose" [readonly]="!canEdit"></ion-input>
+    </ion-item>
+  </ion-col>
+  <ion-col size="12" size-sm="6">
+    <ion-item>
+      <ion-label position="floating">Category: </ion-label>
+      <ion-select name="category" placeholder="Select Category" [(ngModel)]="tmp.categoryId" [disabled]="!canEdit">
+        <ion-select-option *ngFor="let item of categories" [value]="item.id">{{item.name}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+</ng-template>
+
+<ng-template #extra let-tmp="item" let-canEdit="canEdit">
+  <ion-row class="spacing-top panel">
+    <ion-col>
+      <ion-label>Usage Ways:</ion-label>
+      <ion-row class="spacing-top-half">
+
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.PO)" (ionChange)="toggleFlag(tmp, ways.PO, $event.detail.checked)" labelPlacement="end">
+            PO - Oral
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.SL)" (ionChange)="toggleFlag(tmp, ways.SL, $event.detail.checked)" labelPlacement="end">
+            SL - Sublingual
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.SC)" (ionChange)="toggleFlag(tmp, ways.SC, $event.detail.checked)" labelPlacement="end">
+            SC - Subcutaneous injection
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.IV)" (ionChange)="toggleFlag(tmp, ways.IV, $event.detail.checked)" labelPlacement="end">
+            IV - Intravenous injection
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.IM)" (ionChange)="toggleFlag(tmp, ways.IM, $event.detail.checked)" labelPlacement="end">
+            IM - Intramuscular injection
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.IVD)" (ionChange)="toggleFlag(tmp, ways.IVD, $event.detail.checked)" labelPlacement="end">
+            IVD - Intravenous addition
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.TOPI)" (ionChange)="toggleFlag(tmp, ways.TOPI, $event.detail.checked)" labelPlacement="end">
+            TOPI - Partially rubbed
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.EXT)" (ionChange)="toggleFlag(tmp, ways.EXT, $event.detail.checked)" labelPlacement="end">
+            EXT - External use
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.AC)" (ionChange)="toggleFlag(tmp, ways.AC, $event.detail.checked)" labelPlacement="end">
+            AC - Take before meals
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.PC)" (ionChange)="toggleFlag(tmp, ways.PC, $event.detail.checked)" labelPlacement="end">
+            PC - Take after meals
+          </ion-checkbox>
+        </ion-col>
+        <ion-col size="12" size-sm="6" class="checkbox">
+          <ion-checkbox [checked]="readFlag(tmp, ways.Meal)" (ionChange)="toggleFlag(tmp, ways.Meal, $event.detail.checked)" labelPlacement="end">
+            Meal - Taken in meal
+          </ion-checkbox>
+        </ion-col>
+
+      </ion-row>
+    </ion-col>
+  </ion-row>
+</ng-template>
+      
+      

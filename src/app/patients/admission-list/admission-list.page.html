@@ -1,0 +1,108 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="admit" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title>Admission List</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="data-header" *ngIf="width > 992">
+    <ion-col>
+      AN
+    </ion-col>
+    <ion-col class="date-col">
+      {{ width > 367? 'Admit Date' : 'Admit' }}
+    </ion-col>
+    <ion-col>
+      D/C Date
+    </ion-col>
+    <ion-col>
+      Chief Complaint
+    </ion-col>
+    <ion-col>
+      Diagnosis
+    </ion-col>
+    <ion-col>
+      D/C Status
+    </ion-col>
+    
+  </ion-row>
+  <ion-grid>
+    <ion-row [style.margin-top]="width > 992 ? '40px': null">
+      <ion-col class="ion-text-center">
+        <app-option-list *ngIf="admissionList.length !== 0" 
+        hasDelete
+        [data]="admissionList" 
+        [options]="[{name:'Copy',color:'secondary-alt'}]"
+        [canEdit]="true"
+        (selectCallback)="onSelect($event)" 
+        (optionSelectCallback)="onOptionSelect($event)">
+        
+          <ng-template #listContent let-item="item" let-i="index">
+            <ng-container *ngIf="width > 992">
+              <ion-label>
+                {{ item.an }}
+              </ion-label>
+              <ion-label style="min-width: 110px;" class="ion-text-wrap">
+                {{ item.admit | date: 'dd MMM yyyy, hh:mm a' }}
+              </ion-label>
+              <ion-label class="ion-text-wrap">
+                {{ (item.discharged | date: 'dd MMM yyyy, hh:mm a') || '-' }}
+              </ion-label>
+              <ion-label class="double-line">
+                {{ item.chiefComplaint || '-' }}
+              </ion-label>
+              <ion-label class="double-line">
+                {{ item.diagnosis || '-' }}
+              </ion-label>
+              <ion-label>
+                {{ item.statusDc || '-' }}
+              </ion-label>
+            </ng-container>
+            <ng-container *ngIf="width <= 992">
+              <ion-label class="main-label">
+                <ion-row>
+                  <ion-col>
+                    {{ item.an }} <ion-text color="medium"><p>{{ item.admit | date: 'dd MMM yyyy, hh:mm a' }} </p></ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label *ngIf="item.chiefComplaint"> {{ item.chiefComplaint }} </ion-label>
+                    <ion-label color="medium" *ngIf="!item.chiefComplaint"><i>No chief complaint</i></ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label *ngIf="item.diagnosis"> {{ item.diagnosis }} </ion-label>
+                    <ion-label color="medium" *ngIf="!item.diagnosis"><i>No diagnosis</i></ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label>
+                      <p>D/C: {{ (item.discharged | date: 'dd MMM yyyy, hh:mm a') || '-' }} 
+                      <ion-text color="medium"> Status : {{ item.statusDc || '-' }}</ion-text></p></ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-label>
+              
+            </ng-container>
+          </ng-template>
+        </app-option-list>
+        <h4 *ngIf="admissionList.length === 0"> No Admission </h4>
+        <!-- loading -->
+        <app-page-loader #loader label="Admissions" [(dataList)]="admissionList" [retryable]="true"
+        [loadCall]="loadAdmission$" (firstLoadEvent)="firstLoad = $event"></app-page-loader>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="newAdmission()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

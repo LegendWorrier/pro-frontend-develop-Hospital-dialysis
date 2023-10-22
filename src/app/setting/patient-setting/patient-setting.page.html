@@ -1,0 +1,73 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Patient Record Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngIf="setting; else loading">
+      <ion-col>
+        <ion-card>
+          <ion-card-content>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-checkbox [(ngModel)]="setting.useHnOnly"></ion-checkbox>
+                  <ion-label class="ion-padding-start">
+                    Use HN as ID (show only HN)
+                  </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            
+          </ion-card-content>
+        </ion-card>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button color="secondary" (click)="save()">Save Setting</ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Rules</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ng-container *ngIf="rule; else loading">
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-checkbox [(ngModel)]="rule.doctorCanSeeOwnPatientOnly"></ion-checkbox>
+                    <ion-label class="ion-padding-start">
+                      Doctor can only see their own patients
+                    </ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              
+            </ng-container>
+          </ion-card-content>
+        </ion-card>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-button color="secondary" (click)="saveRule()">Update Rule</ion-button>
+          </ion-col>
+        </ion-row>
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <div>
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+
+</ion-content>

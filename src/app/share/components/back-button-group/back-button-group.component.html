@@ -1,0 +1,9 @@
+<!--ng-template>
+  <ion-buttons slot="start"-->
+    <ion-back-button *ngIf="!isRoot || prev" text="" [defaultHref]="prev"></ion-back-button>
+    <ion-button (click)="home()" *ngIf="isRoot && !prev">
+      <ion-icon slot="icon-only" name="home"></ion-icon>
+    </ion-button>
+  <!--/ion-buttons>
+</ng-template-->
+

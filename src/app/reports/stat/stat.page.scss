@@ -1,0 +1,309 @@
+ion-content {
+    --padding-bottom: 30px;
+}
+
+ion-grid {
+    height: 100%; /* calc(100% - 115px); */
+    min-height: 250px;
+
+    ion-row {
+        height: 100%;
+        ion-col {
+            display: flex;
+            flex-flow: column;
+
+            height: 100%;
+        }
+    }
+}
+
+.unit-grp {
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+    margin-left: 10px;
+    margin-right: 10px;
+    background-color: var(--ion-color-theme-panel);
+    ion-col {
+        align-self: center;
+    }
+
+    .unit-label {
+        text-align: end;
+    }
+
+    ion-select {
+        background-color: var(--ion-color-white);
+    }
+}
+
+.margin {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.ctl-row {
+    margin: 5px;
+    height: unset !important;
+    ion-checkbox {
+        vertical-align: top;
+    }
+}
+
+.patient-name {
+    font-size: 15pt;
+    font-weight: bold;
+}
+
+.table-wrapper {
+    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
+
+    width: calc(100% - var(--ion-safe-area-left, 0px) - var(--ion-safe-area-right, 0px));
+    height: 100%;
+    max-height: calc(100% - 30px);
+
+    margin-left: calc(var(--padding-start) + var(--ion-safe-area-left, 0px));
+    margin-right: calc(var(--padding-end) + var(--ion-safe-area-right, 0px));
+}
+
+table.mat-mdc-table {
+    min-width: 450px;
+    width: 100%;
+
+    border-collapse: separate; /* Don't collapse */
+    //border-spacing: 0;
+
+    .mat-mdc-header-cell {
+        background-color: var(--ion-color-light);
+        border-bottom: 1.5px solid;
+    }
+
+    tr {
+        
+        &:nth-child(even) {
+            td {
+                background-color: #e7f8ff;
+                @media (prefers-color-scheme: dark) {
+                    background-color: #101f24;
+                }
+                .dark & {
+                    background-color: #101f24;
+                }
+            }
+        }
+        &:nth-child(odd) {
+            td {
+                background-color: #ffffff;
+                @media (prefers-color-scheme: dark) {
+                    background-color: #000000;
+                }
+                .dark & {
+                    background-color: #000000;
+                }
+            }
+        }
+
+        td {
+            padding-right: 0;
+            text-align: center;
+
+            border-bottom-width: 1.5px;
+            border-right: 1.5px solid;
+
+            min-width: 50px;
+
+            &:last-of-type {
+                border-right-style: none;
+            }
+        }
+
+        th {
+            text-align: center;
+        }
+
+        th.mat-column-name {
+            text-align: left;
+            padding-left: 5px;
+        }
+        th.mat-column-info {
+            text-align: left;
+        }
+
+        td.mat-column-name {
+            z-index: 20 !important;
+            padding-left: 10px;
+            text-align: left;
+        }
+
+        td.mat-column-info {
+            z-index: 20 !important;
+            padding-left: 20px;
+            text-align: left;
+        }
+
+        @media (max-width: 992px) {
+            th.mat-mdc-header-cell:first-of-type, 
+            td.mat-mdc-cell:first-of-type, 
+            td.mat-mdc-footer-cell:first-of-type,
+            td.mat-column-info {
+                padding-left: 5px;
+            }
+
+            th.mat-mdc-header-cell:last-of-type, 
+            td.mat-mdc-cell:last-of-type, 
+            td.mat-mdc-footer-cell:last-of-type {
+                padding-right: 5px;
+            }
+        }
+    }
+
+    tr, th {
+        min-width: 40px;
+    }
+}
+
+ion-row.header-panel {
+    height: unset !important;
+    min-height: 40px;
+    justify-content: center;
+    
+    // position: -webkit-sticky;
+    // position: -moz-sticky;
+    // position: -ms-sticky;
+    // position: -o-sticky;
+    position: sticky;
+    top: 0px;
+    z-index: 300;
+
+    background-color: var(--ion-color-panel);
+
+    ion-col {
+        align-self: center;
+    }
+
+    ion-datetime {
+        //border: 2px solid rgba(var(--ion-color-dark-rgb), 0.25);
+        //max-width: 122px;
+        //border-radius: 10px;
+
+        max-height: 30px;
+        --padding-bottom: 0px;
+        --padding-top: 0px;
+        .ios & {
+            --padding-start: 5px;
+        }
+    }
+
+    &.multi-unit {
+        top: 50px;
+    }
+}
+
+.filter-box, .time-box {
+    @media (min-width: 992px) {
+        padding-left: 50px;
+    }
+
+    ion-item {
+        --background: rgba(var(--ion-color-medium-rgb), 0.05);
+        ion-select {
+            width: 100%;
+        }
+    }
+}
+
+:host ::ng-deep {
+    hemo-datetime-item {
+        ion-item {
+            --background: rgba(var(--ion-color-medium-rgb), 0.05);
+        }
+        .item-datetime {
+            --min-height: 48px;
+        }
+    }
+}
+
+.now {
+    ion-checkbox {
+        margin-right: 5px;
+        //vertical-align: middle;
+    }
+    span {
+        //vertical-align: middle;
+    }
+    position: absolute;
+    left: 110px;
+    @media (max-width: 767.5px) {
+        left: 10%;
+    }
+    @media (max-width: 576px) {
+        left: calc(10px + var(--ion-safe-area-left, 0px));
+    }
+
+    padding: 0;
+    height: calc(100% - 10px);
+    align-items: center;
+    display: inline-flex;
+}
+
+
+.search-btn {
+    @media (max-width: 767.5px) {
+        text-align: center;
+    }
+}
+
+.loading-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+ion-button.excel-btn-col {
+    position: absolute;
+    right: calc(2px + var(--ion-safe-area-right, 0px));
+}
+
+.no-record {
+    ion-text {
+        color: rgba(var(--ion-color-medium-rgb), 0.3);
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+}
+
+.no-record-middle {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    max-height: calc(100% - 30px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    flex-grow : 1;
+}
+
+.no-record-top {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fit-content {
+    width: fit-content;
+}

@@ -1,0 +1,146 @@
+<app-header pageName="Stocks" icon="stock" [content]="content" [searchBar]="false" prev="/patients" [showMenuBtn]="false">
+</app-header>
+
+<ion-content #content>
+  <ion-row class="unit-grp" *ngIf="multiUnit" >
+    <ion-col size="2.5" size-sm="2" class="unit-label">
+      <ion-label>
+        Unit:
+      </ion-label>
+    </ion-col>
+    <ion-col size="5" size-sm="3">
+      <ion-select interface="popover" [value]="selectedUnitId" (ionChange)="onUnitChange($event)">
+        <ion-select-option *ngFor="let item of selectableUnits" [value]="item.id">{{item.name}}</ion-select-option>
+      </ion-select>
+    </ion-col>
+  </ion-row>
+  <ion-row class="tab-header">
+    <ion-col>
+      <app-segment-tabs [autoFixed]="false" [tabs]="tabs" [(value)]="tab" (valueChange)="onTabChange()"></app-segment-tabs>
+    </ion-col>
+  </ion-row>
+
+  <ion-grid class="init-grid" [class.multi-unit]="multiUnit" *ngIf="firstLoad || dataList?.length === 0">
+    <ion-row style="height: 100%;" >
+      <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <div *ngIf="!firstLoad" class="no-record no-record-middle"><ion-text>No Stocks</ion-text></div>
+        <ion-spinner *ngIf="firstLoad"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- change item type based on tabs , don't need separate page for each tab -->
+  <ion-grid [hidden]="firstLoad || dataList?.length === 0">
+    <ion-row>
+      <ion-col>
+        <ion-list style="padding-bottom: 70px;">
+          <ion-item *ngFor="let item of dataList" button (click)="detail(item)">
+            <ion-thumbnail slot="start">
+              <ion-img *ngIf="item.img" alt="thumb-img" [src]="item.img" />
+            </ion-thumbnail>
+            <ion-label>{{ item.itemInfo.name }}</ion-label>
+            <ion-label [color]="item.sum < 1 ? 'danger' : null">{{ item.sum }}</ion-label>
+          </ion-item>
+        </ion-list>
+        <!-- loading -->
+        <app-page-loader #loader label="Stocks" [(dataList)]="dataList" [retryable]="true" [autoRefresh]="true" [limit]="pageSize"
+        [loadCall]="loadList$" (onLoadFinish)="updateImg()" ></app-page-loader>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed" class="op-grp" >
+    <ion-fab-button id="add-stock">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="remove()" >
+      <ion-icon name="remove"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="reload-btn" size="small" (click)="reload()" [class.fade]="isTotal" [disabled]="isLoading">
+      <ion-icon name="reload"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-popover #addMenu 
+    trigger="add-stock"
+    side="bottom"
+    alignment="center"
+    reference="trigger"
+    arrow="true"
+    [dismissOnSelect]="true"
+    class="add-menu">
+    <ng-template>
+        <ion-list>
+          <ion-item button (click)="addSingle()">
+            Add Single Item
+          </ion-item>
+          <ion-item button (click)="addMulti()">
+            Add Lot of Items
+          </ion-item>
+        </ion-list>
+    </ng-template>
+  </ion-popover>
+  
+</ion-content>
+
+<ion-modal #searchStock>
+  <ng-template>
+    <app-modal-search-list
+    title="Select Stock"
+    searchText="Search by name, code, barcode"
+    [data]="stockSearchCall"
+    (onSearchInput)="updateSearch($event)"
+    [hasReload]="false"
+    [templateOverride]="stock"
+    [closeBtn]="true"
+    [serverSideSearch]="true"
+    style="height: 100%;"
+    >
+    </app-modal-search-list>
+  
+    <ng-template #stock let-item="item">
+      <ion-icon [name]="getIcon(item.type)"></ion-icon>
+      <ion-col>
+        <ion-label>
+          {{ item.name }}
+        </ion-label>
+      </ion-col>
+      <ion-col>
+        <ion-card-subtitle>
+          {{ item.code }}
+        </ion-card-subtitle>
+      </ion-col>
+    </ng-template>
+    
+  </ng-template>
+</ion-modal>
+
+<ion-popover #removeStock>
+  <ng-template>
+    <ion-content>
+      <ion-row>
+        <ion-col>
+          <ion-label style="display: flex; align-items: center;" class="safe-area">
+            <ion-icon [name]="getIcon(selected.type)"></ion-icon><h2>{{ selected.name }}</h2> <ion-chip color="danger" class="ion-margin-start no-select">Remove</ion-chip>
+          </ion-label>
+          <ion-item-divider style="min-height: 1px;" ></ion-item-divider>
+          <hemo-datetime-item [hasLabel]="false" [(value)]="entryDate" displayFormat="dd MMM yyyy">
+            <ion-datetime [(ngModel)]="entryDate" presentation="date" [showDefaultButtons]="true"
+            ></ion-datetime>
+          </hemo-datetime-item>
+          <ion-item>
+            <ion-input label="Quantity" labelPlacement="start" [(ngModel)]="qt"></ion-input>
+          </ion-item>
+          <ion-button (click)="removeStock.dismiss(true, 'ok')" color="greenish" >Confirm</ion-button>
+          <ion-button (click)="removeStock.dismiss()" color="danger" >Cancel</ion-button>
+        </ion-col>
+      </ion-row>
+      
+    </ion-content>
+  </ng-template>
+</ion-popover>
+
+
+

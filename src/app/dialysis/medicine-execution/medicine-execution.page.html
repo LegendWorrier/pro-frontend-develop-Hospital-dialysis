@@ -1,0 +1,56 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="pills" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Medicine Execution</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="prescriptions.length > 0; else init">
+    <ion-item *ngFor="let item of prescriptions; let i = index;" [disabled]="item.isExpired">
+      <ion-label>
+        {{ item.medicine.name }}
+      </ion-label>
+      <ion-label>
+        {{ item.getTotalAmount() }} {{ item.getUnit() }}
+        <br>
+        <p>{{ getFreq(item) }}</p>
+      </ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="selectionMap[item.id]" ></ion-checkbox>
+      <ion-label class="top"><p>{{ item.administerDate | date: 'MMM dd, yyyy' }}</p></ion-label>
+      <ion-label class="bottom" *ngIf="!item.isExpired"><p> Until: {{ (item.getExpireDate() | date: 'MMM dd, yyyy') || '-' }} </p></ion-label>
+      <ion-badge class="bottom" color="medium" *ngIf="item.isExpired">Expired</ion-badge>
+    </ion-item>
+  </ion-list>
+  <ion-row>
+    <ion-col class="ion-text-center">
+      <ion-text id="error-text" color="danger">{{error}}</ion-text>
+    </ion-col>
+  </ion-row>
+  <div class="ctl-btn-group" slot="fixed">
+    <ion-button class="auto-btn" color="secondary-alt" (click)="autoList()" [disabled]="prescriptions.length === 0">
+      Auto Select
+    </ion-button>
+    <ion-button class="confirm-btn" size="large" color="secondary" (click)="save()" [disabled]="disableConfirm">
+      Confirm
+    </ion-button>
+  </div>
+</ion-content>
+
+<ng-template #init>
+  <ng-container *ngIf="isLoading" >
+    <ion-spinner></ion-spinner>
+  </ng-container>
+  <ng-container *ngIf="!isLoading" >
+    <ion-text class="no-data">No Prescription</ion-text>
+  </ng-container>
+  
+</ng-template>
+

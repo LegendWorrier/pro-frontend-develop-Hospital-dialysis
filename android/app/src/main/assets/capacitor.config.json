@@ -1,0 +1,24 @@
+{
+  "appId": "wasenshi.hemodialysispro",
+  "appName": "Hemodialysis Pro",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "backgroundColor": "#6dc3ee",
+      "splashImmersive": true
+    }
+  },
+  "cordova": {
+    "preferences": {
+      "ScrollEnabled": "false",
+      "BackupWebStorage": "none"
+    }
+  },
+  "server": {
+    "url": "http://192.168.0.21:8100",
+    "cleartext": true
+  }
+}

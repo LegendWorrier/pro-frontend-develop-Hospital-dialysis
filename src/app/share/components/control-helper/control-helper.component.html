@@ -1,0 +1,22 @@
+<ion-row *ngIf="!isTouchable && isScrollling" class="control-helper">
+  <ion-col size="auto">
+    <div class="btn-grp">
+      <ion-fab-button color="secondary" (click)="leftMost()">
+        <ion-icon name="play-skip-back"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="secondary" (click)="left()" style="margin-left: 10px;">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </ion-col>
+  <ion-col size="auto">
+    <div class="btn-grp">
+      <ion-fab-button color="secondary" (click)="right()" style="margin-right: 10px;">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="secondary" (click)="rightMost()">
+        <ion-icon name="play-skip-forward"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </ion-col>
+</ion-row>

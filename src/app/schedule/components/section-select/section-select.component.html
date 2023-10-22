@@ -1,0 +1,10 @@
+<ion-list>
+  <ion-item-divider>
+    <ion-label>Choose Time</ion-label>
+  </ion-item-divider>
+  <ion-item *ngFor="let item of sectionList" button (click)="onSelect(item)"
+    [disabled]="isPast(item.section) || isOccupied(item.section) || isFull(item.section)">
+    <ion-label>{{ item.section.start | date: 'hh:mm a' }} - {{ endTime(item.section) | date: 'hh:mm a' }}</ion-label>
+  </ion-item>
+  <ion-label *ngIf="sectionList.length === 0" >This unit has no rounds. Please set up rounds first.</ion-label>
+</ion-list>

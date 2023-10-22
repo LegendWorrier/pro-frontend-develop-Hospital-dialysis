@@ -1,0 +1,27 @@
+<ion-row>
+  <ion-col>
+    <ng-container *ngIf="title">
+      <ion-row>
+        <ion-col class="title" [class.color]="color">
+          <div>
+            <h3>{{ title }}</h3>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ng-container>
+    
+    <ion-row>
+      <ion-col>
+        <ion-item class="main-input" [class.color]="color">
+          <ion-input [type]="isPassword ? 'password':'text'" [placeholder]="placeholder" [(ngModel)]="value" (keyup.enter)="confirm()"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row>
+      <ion-col>
+        <ion-button class="ok-btn" [color]="color ? 'greenish' : 'primary'" (click)="confirm()">Ok</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

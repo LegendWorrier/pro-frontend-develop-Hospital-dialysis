@@ -1,0 +1,62 @@
+.content {
+    text-align: start;
+}
+
+.desktop {
+    font-size: larger;
+}
+
+li {
+    margin: .25rem 0 .5rem 1.25rem;
+}
+
+.desktop li {
+    margin: .25rem 0 1.25rem 1.25rem;
+}
+
+.italic {
+   font-style: italic;
+}
+
+ion-row {
+    justify-content: center;
+}
+
+ion-col {
+    align-self: center;
+}
+
+swiper-container {
+    height: 70vh;
+    --swiper-pagination-color: var(--ion-color-secondary);
+    --swiper-pagination-bullet-inactive-color: var(--ion-color-medium);
+}
+
+#finish {
+    --ion-margin: 50px;
+}
+
+#firefox {
+    margin-top: 35px;
+}
+
+.emphasize {
+    font-style: italic;
+    font-weight: bold;
+}
+
+#tip {
+    color: var(--ion-color-greenish);
+    font-size: medium;
+}
+
+ion-img {
+    height: 100%;
+}
+
+ion-skeleton-text {
+    position: absolute;
+    width: 80%;
+    background-color: rgb(218, 218, 218);
+    opacity: .7;
+}

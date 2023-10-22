@@ -1,0 +1,56 @@
+ion-card ion-col {
+    align-self: center;
+}
+
+ion-card-header {
+    display: block;
+}
+
+.hospital-label {
+    font-size: large;
+    ion-label {
+        padding-left: 10px;
+    }
+
+    @media (max-width: 415px) {
+        font-size: small;
+        margin-bottom: 10px !important;
+        ion-label {
+            padding-left: 5px !important;
+        }
+        
+    }
+
+    @media (max-width: 576px) {
+        align-self: end !important;
+        margin-bottom: 8px;
+        vertical-align: baseline;
+    }
+}
+
+#error {
+    white-space: pre-wrap;
+}
+
+.advance-panel {
+    transition: all 0.25s cubic-bezier(0, 0, 0.01, 1);
+    height: fit-content;
+    min-height: 355px;
+
+    &.hide {
+        min-height: 0px;
+        height: 0px;
+        padding: 0px;
+    }
+}
+
+.align {
+    ion-radio-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    ion-radio {
+        margin-right: 10px;
+    }
+}

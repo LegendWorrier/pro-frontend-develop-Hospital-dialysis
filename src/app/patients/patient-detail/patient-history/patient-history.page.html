@@ -1,0 +1,62 @@
+<app-header pageName = "Patient Profile & History" [searchBar]="false" prev="/patients">
+</app-header>
+
+<ion-content #content>
+  <ion-row>
+    <ion-col>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title style="width: fit-content;">Profile & Background</ion-card-title>
+          <ion-card-subtitle>Name - {{ patient.name }} <ion-icon
+            [color]="patient.gender?(patient.gender === 'M'?'primary':'pink'):'warning'"
+            [name]="patient.gender?(patient.gender === 'M'?'male':'female'):'help'"></ion-icon>
+          </ion-card-subtitle>
+          <ion-button *ngIf="!editMode" color="greenish" class="ion-float-left" (click)="edit()" [disabled]="!historyEntryList" >Edit</ion-button>
+          <ion-button *ngIf="editMode" color="danger" class="ion-float-left" (click)="cancel()" >Cancel</ion-button>
+          <ion-button *ngIf="editMode" color="greenish" class="ion-float-left" (click)="save()" >Save</ion-button>
+          
+        </ion-card-header>
+        <ion-card-content>
+          <ng-container *ngIf="historyEntryList; else loading">
+            <ion-row *ngFor="let item of historyEntryList">
+              <ion-col size="4" [class.ion-hide-sm-down]="editMode">
+                <ion-label>{{item.displayName}} :</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-item *ngIf="editMode">
+                  <ng-container *ngIf="getValueEntry(item) as entry">
+                    <ion-label class="ion-hide-sm-up" position="floating" >{{item.displayName}}</ion-label>
+                    <ng-container *ngIf="isInput(item)">
+                      <ion-input *ngIf="(item.choices?.length > 0) && !item.isNumber" [(ngModel)]="entry.value"
+                        [appSuggestionList]="getChoice(item)"
+                      ></ion-input>
+                      <ion-input *ngIf="(!item.choices || item.choices.length === 0) && !item.isNumber" [(ngModel)]="entry.value"
+                      ></ion-input>
+                      <ion-input *ngIf="item.isNumber" [(ngModel)]="entry.numberValue" type="number" inputmode="decimal">
+                      </ion-input>
+                    </ng-container>
+                    <ion-select *ngIf="isSelect(item)" [(ngModel)]="item.isNumber? entry.numberValue : entry.value" >
+                      <ion-select-option *ngFor="let c of item.choices" [value]="c.text ?? c.numberValue"> {{ c.text ?? c.numberValue }} </ion-select-option>
+                    </ion-select>
+                    <ion-radio-group *ngIf="isYesNo(item)" [(ngModel)]="entry.value" class="yes-no-grp" >
+                      <ion-radio value="Y" labelPlacement="end" >Yes</ion-radio>
+                      <ion-radio value="N" labelPlacement="end" >No</ion-radio>
+                    </ion-radio-group>
+                  </ng-container>
+                </ion-item>
+                <ion-label *ngIf="!editMode">{{ getValue(item) }}</ion-label>
+              </ion-col>
+            </ion-row>
+          </ng-container>
+          <ng-template #loading>
+            <ion-spinner></ion-spinner>
+          </ng-template>
+          
+        </ion-card-content>
+      </ion-card>
+
+    </ion-col>
+  </ion-row>
+  
+</ion-content>

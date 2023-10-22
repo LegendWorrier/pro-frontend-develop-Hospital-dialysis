@@ -1,0 +1,41 @@
+<ion-row>
+  <ion-col>
+    <ion-row>
+      <ion-col>
+        <div class="popup-head">
+          <h3 class="popup-title">{{ (label | pretty) || 'Proof Reader' }} Request</h3>
+          
+          <h5 class="popup-sub-title"> Please have the {{ (label | pretty) || 'Proof Reader' }} enter the password for you</h5>
+        </div>
+      </ion-col>
+      
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <app-select name="user" [dataList]="userList" [(ngModel)]="userId" placeholder="Choose {{ (label | pretty) || 'Proof Reader' }}" label="{{ (label | pretty) || 'Proof Reader' }}"
+        [custom]="true" [emptyDisplay]="'There is no any nurses in the list, please add nurses from the admin setting page first.' + (!isAdmin?'(Contact the administrator)':'')">
+          <ion-select-option *appListData="let item" [value]="item.id"> {{ getName(item) }} </ion-select-option>
+        </app-select>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="userId">
+      <ion-col>
+        <ion-item>
+          <ion-input name="password" type="password" placeholder="Enter the Password" [(ngModel)]="password" required enterkeyhint="login"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button [disabled]="!password" (click)="verifyAndSet()">
+          Go <ion-spinner *ngIf="loading"></ion-spinner>
+        </ion-button>
+      </ion-col>
+      <ion-col *ngIf="enableRequest">
+        <ion-button color="orange" [disabled]="!userId" (click)="request()">
+          Request
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

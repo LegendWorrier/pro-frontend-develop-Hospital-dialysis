@@ -1,0 +1,35 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Ward {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <app-masterdata-list
+    [content]="content" 
+    name="ward" 
+    [get]="getDataList" 
+    [add]="addData" 
+    [edit]="editData" 
+    [delete]="deleteData"
+    [canEdit]="canEdit"
+    minWidth="720"
+    >
+
+    <ng-template #display let-item="item">
+      <ion-label class="icu-label">ICU: </ion-label>
+      <ion-label >{{ item.isICU ? 'Yes' : 'No' }} </ion-label>
+    </ng-template>
+
+    <ng-template #edit let-item="item">
+      <ion-checkbox class="icu-col" labelPlacement="end" justify="start" [(ngModel)]="item.isICU">Is ICU</ion-checkbox>
+    </ng-template>
+
+  </app-masterdata-list>
+</ion-content>

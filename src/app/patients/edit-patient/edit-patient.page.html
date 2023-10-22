@@ -1,0 +1,530 @@
+<app-header [pageName] = "editMode? 'Update Patient' : 'New Patient'" [searchBar]="false" prev="/patients"></app-header>
+<ion-content>
+  
+<form #form="ngForm">
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size-md="10" style="text-align: -webkit-center;">
+        <ion-avatar>
+          <ion-img [src]="patient.img || 'assets/avatar.svg'"></ion-img>
+        </ion-avatar>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-justify-content-center" *ngIf="hisEnabled">
+      <ion-col class="ion-text-center">
+        <ion-button color="secondary" (click)="importHis()">Import from HIS</ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-justify-content-center">
+      <!-- Basic Info 1 -->
+      <ion-col size="12" [attr.size-xl]="width > 1532? '6' : '12'"> <!-- [attr.size-xl]="width > 1540? 6 : 12" -->
+        <ion-card class="card-panel">
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Name <ion-text color="danger">*</ion-text></ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Name <ion-text color="danger">*</ion-text></ion-label>
+                <ion-input name="name" placeholder="Enter the name" [(ngModel)]="patient.name" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="!useHN">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> ID <ion-text color="danger">*</ion-text></ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> ID <ion-text color="danger">*</ion-text></ion-label>
+                <ion-input name="id" placeholder="Enter the ID" [(ngModel)]="patient.id" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Hospital Number <ion-text color="danger">*</ion-text></ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Hospital Number <ion-text color="danger">*</ion-text></ion-label>
+                <ion-input name="HN" placeholder="Enter the hospital number (HN)" [(ngModel)]="patient.hospitalNumber" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Identity No / Passport No </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Identity No / Passport No </ion-label>
+                <ion-input name="identityNo" 
+                [placeholder]="identity === 'nid' ? idPlaceholder : 'Enter the passport number'" 
+                [(ngModel)]="patient.identityNo" 
+                [brmask]="identity === 'nid' ? { mask: idMasking, type: 'num', len: 17 } : { len: 9, type: 'all' }"
+                (onmask)="updateIdentity($event)"
+                [appIdentity]="identity === 'nid'"
+                #identityNoEl
+                #identityNg="ngModel"
+                ></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="7" size-sm="4" size-md="3" [attr.size-xl]="width > 1532? '4' : '2.5'">
+              <ion-radio-group name="idGrp" [(ngModel)]="identity" class="identity-group" (ionChange)="updateIdentity()">
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-radio value="nid" labelPlacement="end">ID</ion-radio>
+                  </ion-col>
+                  <ion-col>
+                    <ion-radio value="passport" labelPlacement="end">Passport</ion-radio>
+                  </ion-col>
+                </ion-row>
+              </ion-radio-group>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="identityNg.invalid">
+            <ion-col>
+              <ion-label color="danger">The identity no is not valid.</ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> DOB <ion-text color="danger">*</ion-text></ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="DOB" [(value)]="patient.birthDate" [required]="true" >
+                <ion-datetime name="dob" [max]="maxDate" presentation="date"
+                [(ngModel)]="patient.birthDate"
+                [showDefaultButtons]="true" required></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Gender </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Gender </ion-label>
+                <ion-select name="gender" placeholder="Select the gender" interface="action-sheet" [(ngModel)]="patient.gender" class="full-h-sm-up">
+                  <ion-select-option *ngFor="let g of genders" [value]="g.value">{{g.text}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Blood Type </ion-label>
+            </ion-col>
+            <ion-col width-50>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Blood Type </ion-label>
+                <ion-select name="blood" [placeholder]="placeholder('blood type')" interface="action-sheet" [(ngModel)]="patient.blood" class="full-h-sm-up">
+                  <ion-select-option *ngFor="let b of bloodType" [value]="b.value">{{b.text}}</ion-select-option>
+                </ion-select>
+                
+              </ion-item>
+            </ion-col>
+            <ion-col col-auto>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Blood Sign </ion-label>
+                <ion-select name="bloodSign" [placeholder]="placeholder('blood sign')"  interface="action-sheet" [(ngModel)]="patient.bloodSign" class="full-h-sm-up" [disabled]="disableBloodSign()">
+                  <ion-select-option *ngFor="let b of bloodSign" [value]="b.value">{{b.text}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Admission </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Admission </ion-label>
+                <ion-select name="admission" placeholder="Select admission type" interface="action-sheet" [(ngModel)]="patient.admission" class="full-h-sm-up">
+                  <ion-select-option *ngFor="let a of admissions" [value]="a.value">{{a.text | pretty}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+
+      <!-- Basic Info 2 -->
+      <ion-col>
+        <ion-card class="card-panel">
+          <!-- Unit -->
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Unit <ion-text color="danger">*</ion-text></ion-label>
+            </ion-col>
+            <ion-col>
+              <!-- unitList -->
+              <app-select #unitSelect [dataList]="unitList" [(ngModel)]="patient.unitId" (onChange)="selectUnit()" placeholder="Select unit for this patient" name="unit" label="Unit" [required]="true"
+                [custom]="true" [emptyDisplay]="'Please add units data from the admin setting page first.' + (!isPowerAdmin?'(Contact the root administrator)':'')">
+                <ion-select-option *appListData="let item" [value]="item.id"> {{ item.name }} </ion-select-option>
+              </app-select>
+            </ion-col>
+          </ion-row>
+          <!-- doctor -->
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Doctor </ion-label>
+            </ion-col>
+            <ion-col>
+              <!-- doctorList -->
+              <app-select #docterSelect [dataList]="doctorList" [(ngModel)]="patient.doctorId" (onChange)="selectDoctor()" placeholder="Select doctor for this patient" name="doctor" label="Doctor" [disabled]="(!patient.unitId && !isPowerAdmin)"
+                [custom]="true" [emptyDisplay]="'There is no any doctor in the list, please add doctors from the admin setting page first.' + (!isAdmin?'(Contact the administrator)':'')">
+                <ion-select-option *appListData="let item" [value]="item.id"> {{ getName(item) }} </ion-select-option>
+              </app-select>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Transferred From </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Transferred From </ion-label>
+                <ion-input name="transferFrom" placeholder="Where the patient is transferred from" [(ngModel)]="patient.transferFrom"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Coverage Scheme </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Coverage Scheme </ion-label>
+                <ion-select name="coverage" placeholder="Select coverage scheme" interface="action-sheet" [(ngModel)]="patient.coverageScheme" class="full-h-sm-up">
+                  <ion-select-option *ngFor="let c of coverages" [value]="c.value">{{c.text | pretty}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Telephone </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Telephone </ion-label>
+                <ion-input name="telephone" type="tel" inputmode="tel" placeholder="Enter the telephone number" [(ngModel)]="patient.telephone"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Address </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Address </ion-label>
+                <ion-input name="address" placeholder="Enter the address" [(ngModel)]="patient.address"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Emergency Contact Name </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Emergency Contact Name </ion-label>
+                <ion-input name="contactName" placeholder="Enter emergency contact name" [(ngModel)]="patient.emergencyContact.name"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Emergency Contact Number </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Emergency Contact Number </ion-label>
+                <ion-input name="contactNumber" type="tel" inputmode="tel" placeholder="Enter emergency contact phone number" [(ngModel)]="patient.emergencyContact.phoneNumber"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Emergency Contact Relationship </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Emergency Contact Relationship </ion-label>
+                <ion-input name="contactRelationship" placeholder="Enter relationship" [(ngModel)]="patient.emergencyContact.relationship"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <!-- Dialysis Information -->
+    <ion-row>
+      <ion-col size="12" [attr.size-xl]="width > 1540? 7 : 12">
+        <ion-card class="card-panel">
+          <ion-card-title class="ion-margin-bottom">Dialysis Information</ion-card-title>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Accumulated Treatment Times </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Accumulated Treatment Times </ion-label>
+                <ion-input name="treatmentTimes" type="number" min="0" pattern="[0-9]*" inputmode="numeric" placeholder="Total treatment before coming here" [(ngModel)]="patient.dialysisInfo.accumulatedTreatmentTimes"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> First Time </ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="First Time" [(value)]="patient.dialysisInfo.firstTime" placeholder="Select the first time date" >
+                <ion-datetime name="firstTime" [max]="maxDate" presentation="date"
+                [(ngModel)]="patient.dialysisInfo.firstTime"
+                [showDefaultButtons]="true"></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.firstTime = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> First Time Here </ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="First Time Here" [(value)]="patient.dialysisInfo.firstTimeAtHere" placeholder="Select the first time date in this center" >
+                <ion-datetime name="firstTimeHere" presentation="date"
+                [(ngModel)]="patient.dialysisInfo.firstTimeAtHere"
+                [showDefaultButtons]="true"></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.firstTimeAtHere = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Kidney Transplant </ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="Kidney Transplant" [(value)]="patient.dialysisInfo.kidneyTransplant" placeholder="Select the date for kidney transplant" >
+                <ion-datetime name="kidney" presentation="date"
+                [(ngModel)]="patient.dialysisInfo.kidneyTransplant"
+                [showDefaultButtons]="true"></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.kidneyTransplant = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Kidney State </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-label position="floating" class="ion-hide-sm-up"> Kidney State </ion-label>
+                <ion-select name="kidneyState" placeholder="Kidney State Level" interface="action-sheet" [(ngModel)]="patient.dialysisInfo.kidneyState" class="full-h-sm-up">
+                  <ion-select-option *ngFor="let n of kidneyStates" [value]="n.value">{{n.text | pretty}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.kidneyState = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Cause Of Kidney Disease </ion-label>
+            </ion-col>
+            <ion-col>
+              <!-- cause of Kidney Disease -->
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Cause Of Kidney Disease </ion-label>
+                <ion-input name="cokd" placeholder="Enter Cause for this patient" [(ngModel)]="patient.dialysisInfo.causeOfKidneyDisease"
+                  
+                ></ion-input>
+                <!-- [appSuggestionList]="deathCauseList" -->
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Status </ion-label>
+            </ion-col>
+            <ion-col>
+              <!-- statusList -->
+              <app-select #statusSelect [dataList]="statusList" [(ngModel)]="patient.dialysisInfo.status" (onChange)="selectStatus()" placeholder="Select status for this patient" name="status" label="Status"
+                [custom]="true" [emptyDisplay]="'There is no any status in the list, please add status from the admin setting page first.' + (!isAdmin?'(Contact the administrator)':'')">
+                <ion-select-option *appListData="let item" [value]="item.name"> {{ item.name }} </ion-select-option>
+              </app-select>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.status = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <!-- Transferred -->
+          <ion-row *ngIf="status === 'Transferred'">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Transferred To </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Transferred To </ion-label>
+                <ion-input name="transferTo" placeholder="Where is the patient transferred to" [(ngModel)]="patient.dialysisInfo.transferTo" required></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!-- End Date -->
+          <ion-row *ngIf="status === 'Transferred' || status === 'Others'">
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Last Time Here </ion-label>
+            </ion-col>
+            <ion-col>
+              <hemo-datetime-item title="Last Time Here" [(value)]="patient.dialysisInfo.endDateAtHere" placeholder="Select the last time date in this center" >
+                <ion-datetime name="firstTimeHere" presentation="date"
+                [(ngModel)]="patient.dialysisInfo.endDateAtHere"
+                [showDefaultButtons]="true"></ion-datetime>
+              </hemo-datetime-item>
+            </ion-col>
+            <ion-col size="3" size-sm="2" class="ion-align-self-center">
+              <ion-button [size]="width > 576 ? 'default':'small'" color="danger" (click)="patient.dialysisInfo.endDateAtHere = null"> Clear </ion-button>
+            </ion-col>
+          </ion-row>
+          <!-- Deceased -->
+          <ng-container *ngIf="status === 'Deceased'">
+            <ion-row>
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Time of Death </ion-label>
+              </ion-col>
+              <ion-col>
+                <hemo-datetime-item title="Time of Death" [(value)]="patient.dialysisInfo.timeOfDeath" placeholder="Select the date and time" [required]="true">
+                  <ion-datetime name="timeOfDeath" presentation="date-time"
+                  [(ngModel)]="patient.dialysisInfo.timeOfDeath"
+                  [max]="maxDate"
+                  [showDefaultButtons]="true"></ion-datetime>
+                </hemo-datetime-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="2" class="ion-hide-sm-down">
+                <ion-label> Cause of Death </ion-label>
+              </ion-col>
+              <ion-col>
+                <!-- deathCauseList -->
+                <app-select #dcSelect [dataList]="deathCauseList" [(ngModel)]="patient.dialysisInfo.causeOfDeath" placeholder="Select the cause of death" name="causeOfDeath" label="Cause of Death" required
+                  [custom]="true" [emptyDisplay]="'There is no any death causes in the list, please add death causes from the admin setting page first.' + (!isAdmin?'(Contact the administrator)':'')">
+                  <ion-select-option *appListData="let d" [value]="d.name"> {{ d.name }} </ion-select-option>
+                </app-select>
+              </ion-col>
+            </ion-row>
+          </ng-container>
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card class="card-panel">
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> Barcode </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> Barcode </ion-label>
+                <ion-input name="barcode" placeholder="Enter barcode" [(ngModel)]="patient.barcode"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col size="2" class="ion-hide-sm-down">
+              <ion-label> RFID </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-label position="floating" class="ion-hide-sm-up"> RFID </ion-label>
+                <ion-input name="RFID" placeholder="Enter RFID" [(ngModel)]="patient.rfid"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+        <ion-card class="card-panel">
+          <ion-card-title class="ion-margin-bottom">Note</ion-card-title>
+          <ion-item>
+            <ion-textarea name="note" placeholder="Add note" [(ngModel)]="patient.note" rows="5"></ion-textarea>
+          </ion-item>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <!-- medicine -->
+    <ion-row>
+      <ion-col>
+        <ion-card class="card-panel">
+          <ion-card-title class="ion-margin-bottom">Allergy</ion-card-title>
+          <ng-container *ngTemplateOutlet="medicineTemplate; context: { list: patient.allergy, medicineList: allergyList, addFunc: addAllergy, removeFunc: removeAllergy }"></ng-container>
+          
+        </ion-card>
+      </ion-col>
+      <ng-template #medicineTemplate let-list="list" let-medicineList="medicineList" let-add="addFunc" let-remove="removeFunc" >
+        <ion-item lines="none" >
+          <ion-select #medicine [appSelectSearch]="medicineList" #filter="SelectSearch" interface="popover" [interfaceOptions]="{header:'Medicine'}" placeholder="Select medicine" class="medicine-select">
+            <ion-select-option *ngFor="let item of filter.output" [value]="item.id"> {{ item.name }} </ion-select-option>
+          </ion-select>
+          <ion-button color="success" expands="block" [disabled]="!medicine.value" (click)="add(medicine.value); medicine.value=null;">
+            Add
+          </ion-button>
+        </ion-item>
+        <ion-item-divider class="medicine-divider"></ion-item-divider>
+        <ion-row>
+          <ion-col class="medicine-item" *ngFor="let item of list" size="6" size-lg="4" [attr.size-xl]="width > 1500? 3 : 4">
+            <ion-text>{{ getMedicine(item) }}</ion-text><ion-badge color="danger" (click)="remove(item)" class="ion-float-right"><ion-icon name="close"></ion-icon></ion-badge>
+          </ion-col>
+        </ion-row>
+      </ng-template>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-card class="card-panel">
+          <ion-card-title class="ion-margin-bottom">Tags</ion-card-title>
+          <ion-button color="secondary" (click)="editTag()">New Tag</ion-button>
+          <ion-row>
+            <ion-col>
+              <ion-chip *ngFor="let tag of patient.tags" [hemoTag]="tag" (click)="editTag(tag)" >
+              </ion-chip>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ion-text id="error-text" color="danger">{{error}}</ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="ion-margin-top ion-justify-content-center">
+      <ion-col class="ion-text-center">
+        <ion-button color="secondary" size="large" type="submit" (click)="save()" [disabled]="form.invalid" >
+          {{ editMode? 'Update' : 'Save' }}
+        </ion-button>
+        <div class="delete-btn" *ngIf="canDelete && editMode">
+          <ion-text color="danger" class="delete-label">Only user with permission can delete patient</ion-text>
+          <ion-button color="danger" class="ion-margin-start" (click)="deletePatient()"  >
+            Delete
+          </ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>
+
+</ion-content>

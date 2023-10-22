@@ -1,0 +1,36 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Lab Item {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-row class="list-header">
+    <ion-col class="text-wrasp name-col">Name</ion-col>
+    <ion-col class="text-wrasp">Unit</ion-col>
+    <ion-col class="text-wrasp">Category</ion-col>
+  </ion-row>
+  <app-masterdata-list [content]="content" name="lab item" [get]="getDataList" [delete]="deleteData"
+    [editPage]="editPage"
+    [params]="getParams"
+    [hasName]="false"
+    [desktopVersion]="false"
+    [deleteCheck]="deleteCheck"
+    [canEdit]="canEdit"
+  > 
+    <ng-template #display let-item="item">
+      <ion-label class="name-col"> {{item.name}} </ion-label>
+    </ng-template>
+    <ng-template #display let-item="item">
+      <ion-label> {{item.unit}} </ion-label>
+    </ng-template>
+    <ng-template #display let-item="item">
+      <ion-label> {{Categories[item.category] | pretty}} </ion-label>
+    </ng-template>
+  </app-masterdata-list>
+</ion-content>

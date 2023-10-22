@@ -1,0 +1,86 @@
+@import '@angular/material/theming';
+
+@include mat-core();
+
+$my-primary-palette: (
+ 50: #e3f5fd,
+ 100: #bae5f9,
+ 200: #90d4f4,
+ 300: #6dc3ee,
+ 400: #5bb6ea,
+ 500: #4caae8,
+ 600: #479cd9,
+ 700: #4089c5,
+ 800: #3978b1,
+ 900: #2c5990,
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+   300: rgba(black, 0.87),
+   400: rgba(black, 0.87),
+   500: rgba(black, 0.87),
+   600: rgba(black, 0.87),
+   700: white,
+   800: white,
+   900: white,
+ )
+);
+
+$my-accent-palette: (
+ 50: #dffbf7,
+ 100: #adf4e7,
+ 200: #6deed9,
+ 300: #00e4c7,
+ 400: #00d9b8,
+ 500: #00ceaa,
+ 600: #00bf9b,
+ 700: #00ad89,
+ 800: #009b7a,
+ 900: #007d5b,
+ contrast: (
+   50: rgba(black, 0.87),
+   100: rgba(black, 0.87),
+   200: rgba(black, 0.87),
+   300: rgba(black, 0.87),
+   400: rgba(black, 0.87),
+   500: rgba(black, 0.87),
+   600: rgba(black, 0.87),
+   700: white,
+   800: white,
+   900: white,
+ )
+);
+
+$my-primary: mat-palette($my-primary-palette, 300);
+$my-accent: mat-palette($my-accent-palette, 200, 50, 900);
+
+$my-theme: mat-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent
+ )
+));
+
+@include angular-material-theme($my-theme);
+
+$my-primary-dark: mat-palette($mat-blue-grey);
+$my-accent-dark:  mat-palette($mat-teal, A200, A100, A400);
+$my-warn-dark:    mat-palette($mat-deep-orange);
+$my-theme-dark:   mat-dark-theme((
+  color: (
+    primary: $my-primary-dark,
+    accent: $my-accent-dark,
+    warn: $my-warn-dark,
+  )
+));
+
+@media(prefers-color-scheme: dark) {
+
+    @include angular-material-color($my-theme-dark);
+}
+
+.dark {
+    @include angular-material-color($my-theme-dark);
+}
+

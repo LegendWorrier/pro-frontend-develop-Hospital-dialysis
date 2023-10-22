@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "naumovs.color-highlight",
+    "steoates.autoimport",
+    "ms-azuretools.vscode-docker",
+    "visualstudioexptteam.vscodeintellicode",
+    "PKief.material-icon-theme",
+    "nrwl.angular-console",
+    "angular.ng-template",
+    "dbaeumer.vscode-eslint"
+  ]
+}

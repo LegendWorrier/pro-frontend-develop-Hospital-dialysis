@@ -1,0 +1,608 @@
+<ng-container *ngIf="hemosheet" >
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header>
+            <ion-button class="ion-float-right ion-hide-sm-down" color="orange" (click)="complete()" *ngIf="!viewMode && canEdit" [disabled]="!hemosheet.dialysisPrescription">Complete</ion-button>
+            <ion-button icon-only color="quaternary-alt" class="ion-float-right report-btn" (click)="openReport()"  ><ion-icon name="reader-outline"></ion-icon></ion-button>
+            <ion-button color="secondary-alt" class="ion-float-right ion-hide-sm-down claim-btn" (click)="claim()" *ngIf="isSystemCreated" [disabled]="isClaiming" >Claim</ion-button>
+            <ion-button [color]="hemosheet.doctorConsent? 'danger' : 'success'" class="ion-float-right ion-hide-sm-down approve-btn" (click)="approve()" *ngIf="canApprove" ><ion-icon [name]="hemosheet.doctorConsent? 'close' : 'checkmark'"></ion-icon></ion-button>
+            <ion-button color="orange" class="ion-float-right ion-hide-sm-down" (click)="sendPdf()" *ngIf="canEdit && hemosheet.completedTime" ><ion-icon name="file-tray-full-outline"></ion-icon></ion-button>
+
+            <ion-label *ngIf="hemosheet.doctorConsent" color="success" >Doctor Approved.</ion-label>
+            <ion-card-title class="title">
+              <ion-text class="ion-margin-end">
+                Dialysis Overview 
+              </ion-text>
+              <div *ngIf="hemosheet.sentPDF">
+                <ion-icon class="sent" name="file-tray-full" color="primary"></ion-icon>
+                <ion-icon class="sent-checkmark" name="checkmark" color="success"></ion-icon>
+              </div>
+            </ion-card-title>
+            <ion-card-subtitle *ngIf="patient; else init">Name - {{ patient.name }} <ion-icon
+              [color]="patient.gender?(patient.gender === 'M'?'primary':'pink'):'warning'"
+              [name]="patient.gender?(patient.gender === 'M'?'male':'female'):'help'"></ion-icon>
+            </ion-card-subtitle>
+            <ng-template #init>
+              <ion-skeleton-text></ion-skeleton-text>
+            </ng-template>
+            
+            <!-- Complete btn -->
+            <ion-button class="ion-float-right ion-hide-sm-up" color="orange" size="small" (click)="complete()" *ngIf="!viewMode && canEdit" [disabled]="!hemosheet.dialysisPrescription">Complete</ion-button>
+            <!-- Edit btn -->
+            <ion-button 
+            [class.ion-float-right]="width < 576" 
+            [size]="width > 575 ? 'default' : 'small'" 
+            color="greenish" 
+            size="small" 
+            (click)="edit()"
+            *ngIf="canEdit" >Edit</ion-button>
+            <!-- Claim btn -->
+            <ion-button color="secondary-alt" class="ion-float-right ion-hide-sm-up claim-btn" size="small" (click)="claim()" *ngIf="isSystemCreated" [disabled]="isClaiming" >Claim</ion-button>
+            <!-- Approve btn -->
+            <ion-button [color]="hemosheet.doctorConsent? 'danger' : 'success'" class="ion-float-right ion-hide-sm-up approve-btn" size="small" (click)="approve()" *ngIf="canApprove" ><ion-icon [name]="hemosheet.doctorConsent? 'close' : 'checkmark'"></ion-icon></ion-button>
+            <!-- Send Pdf btn -->
+            <ion-button color="orange" class="ion-float-right ion-hide-sm-up" (click)="sendPdf()" size="small" *ngIf="canEdit && hemosheet.completedTime" ><ion-icon name="file-tray-full-outline"></ion-icon></ion-button>
+            
+            <ion-item-divider mode="md"></ion-item-divider>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-row>
+              <ion-col size="12" [attr.size-xl]="width > 1353 ? '7' : '12'" class="ion-margin-bottom">
+                <ion-card-title>Basic</ion-card-title>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Ward: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.ward || '-' }}
+                  </ion-col>
+                </ion-row>
+                <!-- <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Is ICU: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.ward || '-' }}
+                  </ion-col>
+                </ion-row> -->
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Bed: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.bed || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Dialysis Type: </ion-label>
+                  </ion-col>
+                  <ion-col class="dialysis-type-grp">
+                    <ion-label>{{ (type[hemosheet.type] | pretty) }}</ion-label>
+                    <ion-badge *ngIf="hemosheet.isICU" color="danger">ICU</ion-badge>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Admission Type: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.admission | pretty) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Cycle Start Time: </ion-label>
+                  </ion-col>
+                  <ion-col class="date-value-col">
+                    {{ (hemosheet.cycleStartTime | date: 'dd/MM/yy HH:mm') || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>Cycle End Time: </ion-label>
+                  </ion-col>
+                  <ion-col class="date-value-col">
+                    {{ (hemosheet.cycleEndTime | date: 'dd/MM/yy HH:mm') || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ng-container *ngIf="viewMode && hemosheet.completedTime">
+                  <ion-row class="complete-row">
+                    <ion-col size="4">
+                      <ion-label>Completed Time: </ion-label>
+                    </ion-col>
+                    <ion-col class="date-value-col">
+                      {{ (hemosheet.completedTime | date: 'dd/MM/yy HH:mm') }}
+                    </ion-col>
+                    <ion-col *ngIf="canChangeCompleteTime" >
+                      <ion-button color="orange" size="small" (click)="changeComplete()">Change Complete Time</ion-button>
+                    </ion-col>
+                  </ion-row>
+                </ng-container>
+                <ng-container *ngIf="!viewMode">
+                  <ion-row>
+                    <ion-col size="4">
+                      <ion-label>This Month: </ion-label>
+                    </ion-col>
+                    <ion-col>
+                      {{ thisMonth != null ? thisMonth : '?' }}
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col size="4">
+                      <ion-label>Total Treatments: </ion-label>
+                    </ion-col>
+                    <ion-col>
+                      {{ total || total === 0 ? total : '?' }}
+                      <ion-text color="medium" *ngIf="!total && total !== 0">
+                        <i>
+                          (Enter Accumulated Treatment Times to auto-calculate this value)
+                        </i>
+                      </ion-text>
+                    </ion-col>
+                  </ion-row>
+                </ng-container>
+
+                <ion-row *ngIf="hemosheet.flushNSS">
+                  <ion-col size="4">
+                    <ion-label>Flush NSS: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.flushNSS }} ml x {{ hemosheet.flushTimes }} times at every {{ hemosheet.flushNSSInterval || '?' }} mins (Total: {{ hemosheet.flushNSS * hemosheet.flushTimes }} ml)
+                  </ion-col>
+                </ion-row>
+
+                <!-- Dialysis Prescription -->
+                <ion-card-title class="ion-margin-top">Dialysis Prescription</ion-card-title>
+                
+                <dialysis-prescription #prescriptionInfo [prescription]="hemosheet.dialysisPrescription"
+                  [isAcNotUsed]="hemosheet.acNotUsed"
+                  [reasonForRefrain]="hemosheet.reasonForRefraining"
+                  *ngIf="hemosheet.dialysisPrescription"></dialysis-prescription>
+                
+                <ion-row *ngIf="!hemosheet.dialysisPrescription" style="padding-top: 10px; padding-bottom: 10px;">
+                  <ion-text color="danger"><i>No Dialysis Prescription :<br> Please create and assign a prescription to this hemosheet before it's finished and before next session, or else this hemosheet won't be able to complete.</i></ion-text>
+                </ion-row>
+              </ion-col>
+              <ion-col [attr.size-xl]="width > 1353 ? '5' : '12'">
+                <ion-card-title>Weight & Dehydration <ion-badge color="danger" *ngIf="hemosheet.dehydration.abnormal">Abnormal</ion-badge></ion-card-title>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Check-in Time: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.checkInTime | date:'mediumTime') || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Last Post-Dialysis Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.lastPostWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Pre-Dialysis Total Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.preTotalWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Wheelchair Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.wheelchairWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Cloth Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.clothWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Pre-Dialysis Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (preWeight | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Intra Dialytic Weight Gain (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (idwg | number: decimal) || 'N/A' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="!hemosheet.dialysisPrescription?.temporary">
+                  <ion-col size="5">
+                    <ion-label>Target Dry Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dialysisPrescription?.dryWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="!hemosheet.dialysisPrescription?.temporary">
+                  <ion-col [size]="ufNet? '5' : '3'">
+                    <ion-label>UF Net (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col *ngIf="ufNet">
+                    {{ (hemosheet.dehydration.preTotalWeight? (ufNet | number: decimal) : 'Please enter Pre-Dialysis Weight first') || 'N/A' }}
+                  </ion-col>
+                  <ion-col *ngIf="!ufNet">
+                    <ion-text color="danger"><i>Cannot calculate UF Net, please update your Dialysis Prescription</i></ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Food and Drink Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.foodDrinkWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.dehydration.bloodTransfusion || hemosheet.dehydration.bloodTransfusion === 0">
+                  <ion-col size="5">
+                    <ion-label>Blood Transfusion (ml): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ ((hemosheet.dehydration.bloodTransfusion !== undefined? hemosheet.dehydration.bloodTransfusion : hemosheet.dialysisPrescription.bloodTransfusion) || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.dehydration.extraFluid || hemosheet.dehydration.extraFluid === 0">
+                  <ion-col size="5">
+                    <ion-label>Extra Fluid (ml): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ ((hemosheet.dehydration.extraFluid !== undefined? hemosheet.dehydration.extraFluid : hemosheet.dialysisPrescription.extraFluid) || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="!hemosheet.dialysisPrescription?.temporary">
+                  <ion-col [size]="ufEstimate ? '5' : '3'">
+                    <ion-label>Estimated UF Goal (L): </ion-label>
+                  </ion-col>
+                  <ion-col *ngIf="ufEstimate">
+                    {{ (hemosheet.dehydration.preTotalWeight? (ufEstimate | number: decimal) : 'Please enter Pre-Dialysis Weight first') || 'N/A' }}
+                  </ion-col>
+                  <ion-col *ngIf="!ufEstimate">
+                    <ion-text color="danger"><i>Cannot calculate Estimated UF Goal, please update your Dialysis Prescription</i></ion-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>UF Goal (L): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.ufGoal || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Post-Dialysis Total Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.postTotalWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Post-Dialysis Wheelchair Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (hemosheet.dehydration.postWheelchairWeight || null | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Post-Dialysis Weight (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (postWeight | number: decimal) || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="5">
+                    <ion-label>Actual Weight Loss (Kg): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ (actualWeightLoss | number: decimal) || 'N/A' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.dehydration.abnormal">
+                  <ion-col size="5">
+                    <ion-label>Abnormal Weight Reason: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.dehydration.reason || '-' }}
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col size="12" size-xl="4"> 
+                <ion-card-title>AV Shunt</ion-card-title>
+                <ion-row>
+                  <ion-col size="4">
+                    <ion-label>AV Shunt Site: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.shuntSite || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.aSize != null">
+                  <ion-col size="6">
+                    <ion-label>Arterial Size: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.aSize || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.vSize != null">
+                  <ion-col size="6">
+                    <ion-label>Venous Size: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.vSize || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.aNeedleTimes != null">
+                  <ion-col size="6">
+                    <ion-label>Arterial Needle (times): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.aNeedleTimes || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.vNeedleTimes != null">
+                  <ion-col size="6">
+                    <ion-label>Venous Needle (times): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.vNeedleTimes || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.aNeedleCC != null">
+                  <ion-col size="6">
+                    <ion-label>Arterial Volume (ml): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.aNeedleCC || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.vNeedleCC != null">
+                  <ion-col size="6">
+                    <ion-label>Venous Volume (ml): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.vNeedleCC || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.aLength != null">
+                  <ion-col size="6">
+                    <ion-label>Arterial Length (cm): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.aLength || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row *ngIf="hemosheet.avShunt.vLength != null">
+                  <ion-col size="6">
+                    <ion-label>Venous Length (cm): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.avShunt.vLength || '-' }}
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col size="12" size-xl="4"> 
+                <ion-card-title>Dialyzer</ion-card-title>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>TVC (%): </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.dialyzer.tcv || '-' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Use No: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.dialyzer.useNo || '-' }}
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+              <ion-col size="12" size-xl="4"> 
+                <ion-card-title>Blood Collection</ion-card-title>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Pre: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.bloodCollection.pre || 'No' }}
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-label>Post: </ion-label>
+                  </ion-col>
+                  <ion-col>
+                    {{ hemosheet.bloodCollection.post || 'No' }}
+                  </ion-col>
+                </ion-row>
+              </ion-col>
+
+              <ion-col size="12">
+                <ion-card-title>Vital Signs</ion-card-title>
+                <div class="table-wrapper">
+                  <table mat-table [dataSource]="vitalSigns" aria-label="vital-sign">
+                    <ng-container matColumnDef="date">
+                      <th mat-header-cell *matHeaderCellDef> Date </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.timestamp | date: 'medium' }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="type">
+                      <th mat-header-cell *matHeaderCellDef> Pre/Post </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.type }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="posture">
+                      <th mat-header-cell *matHeaderCellDef> Posture </th>
+                      <td mat-cell *matCellDef="let v"> {{ postures[v.posture] }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="bps">
+                      <th mat-header-cell *matHeaderCellDef> BPS </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.bps }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="bpd">
+                      <th mat-header-cell *matHeaderCellDef> BPD </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.bpd }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="hr">
+                      <th mat-header-cell *matHeaderCellDef> HR </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.hr }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="rr">
+                      <th mat-header-cell *matHeaderCellDef> RR </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.rr }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="spo2">
+                      <th mat-header-cell *matHeaderCellDef> SpO2 </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.spO2 }} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="tmp">
+                      <th mat-header-cell *matHeaderCellDef> Temperature </th>
+                      <td mat-cell *matCellDef="let v"> {{ v.temp | number: decimal }} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="['date', 'type', 'posture', 'bps', 'bpd', 'hr', 'rr', 'spo2', 'tmp']; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let data; columns: ['date', 'type', 'posture', 'bps', 'bpd', 'hr', 'rr', 'spo2', 'tmp']"></tr>
+                  </table>
+                </div>
+              </ion-col>
+            </ion-row>
+            <!-- Nurse In Shift -->
+            <ion-row *ngIf="showNursesInShift" class="nurse-in-shift">
+              <ion-item-divider mode="md"></ion-item-divider>
+              <ion-col size="12">
+                <ion-card-title>Nurse In Shift</ion-card-title>
+                <ion-button *ngIf="!modifyNIS" color="greenish" size="small" (click)="editNursesInShift()">Edit</ion-button>
+                <ion-button *ngIf="modifyNIS" color="greenish" size="small" (click)="saveNursesInShift()">Save</ion-button>
+                <ion-button *ngIf="modifyNIS" color="danger" size="small" (click)="reverseNursesInShift()">Cancel</ion-button>
+                <ion-button *ngIf="modifyNIS" color="secondary-alt" size="small" (click)="updateNurseInShiftToCurrent()"
+                  [class.ion-margin-start]="width > 450"
+                  >
+                  Update to Current
+                </ion-button>
+              </ion-col>
+              <ng-container *ngIf="nursesInShift; else loadNurses">
+                <ng-container *ngIf="nursesInShift.length > 0; else noNurses">
+                  <ion-col *ngFor="let item of nursesInShift" size="auto" class="nurse">
+                    <ion-label>{{ item.name }}</ion-label>
+                    <ion-fab-button *ngIf="modifyNIS" color="danger" class="nurse-del" (click)="removeNurse(item.id)">
+                      <ion-icon name="close"></ion-icon>
+                    </ion-fab-button>
+                  </ion-col>
+                </ng-container>
+              </ng-container>
+
+              <ng-container *ngIf="modifyNIS">
+                <ion-col size="auto"><ion-fab-button color="medium" (click)="addNurse()" class="nurse-add"><ion-icon name="add"></ion-icon></ion-fab-button></ion-col>
+                <ion-col size="auto"><ion-button color="medium" size="small" (click)="clearNurse()">Clear All</ion-button></ion-col>
+              </ng-container>
+              
+              <ng-template #noNurses>
+                <ion-col *ngIf="!modifyNIS"> No Nurses </ion-col>
+              </ng-template>
+              <ng-template #loadNurses>
+                  <ion-skeleton-text animated="true" style="width: 15%;"></ion-skeleton-text>
+              </ng-template>
+              
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-row class="audit-panel">
+          <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2.2" push-md="6">
+            <ion-label>Proof Reader : </ion-label>
+          </ion-col>
+          <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="3.8" push-md="6">
+            <ng-container *ngIf="hemosheet.proofReader && !cosignFunc">
+              <audit-name [id]="hemosheet.proofReader"></audit-name>
+            </ng-container>
+            <ion-button *ngIf="!cosignFunc" size="small" color="orange" (click)="requestCosign()">
+              {{ hemosheet.proofReader? 'Change' : 'Request' }}
+            </ion-button>
+            <ng-container *ngIf="cosignFunc">
+              <ion-button color="greenish" (click)="cosignFunc(true)">
+                Approve
+              </ion-button>
+              <ion-button color="danger" (click)="cosignFunc(false)">
+                Reject
+              </ion-button>
+            </ng-container>
+            
+          </ion-col>
+
+          <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2" pull-md="6">
+            <ion-label>Established : </ion-label>
+          </ion-col>
+          <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4" pull-md="6">
+              <audit-name [id]="hemosheet.createdBy" [date]="hemosheet.created"></audit-name>
+          </ion-col>
+          
+          <ng-container *ngIf="hemosheet.updatedBy!==hemosheet.createdBy">
+            <ion-col [size]="width > 400? '3.5' : '12'" size-sm="2.5" size-md="2">
+              <ion-label>Modified : </ion-label>
+            </ion-col>
+            <ion-col [size]="width > 400? '8.5' : '12'" size-sm="9.5" size-md="4">
+              <audit-name [id]="hemosheet.updatedBy" [date]="hemosheet.updated"></audit-name>
+            </ion-col>
+          </ng-container>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-container>
+<!-- Add New -->
+<ng-container *ngIf="!hemosheet && !viewMode" >
+  <ion-grid style="height: 100%;">
+    <ion-row class="add-prescription" >
+      <ion-button (click)="addDialysisPresctription()" [disabled]="!canAddPrescription">
+        <ion-icon name="add" style="margin-right: 5px;"></ion-icon> Dialysis Prescription   
+      </ion-button>
+    </ion-row>
+    <ion-row class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
+      <ion-col class="ion-text-center">
+          
+        <ng-container *ngIf="canEdit">
+          <ion-text>
+            <h1>No Active Hemo Sheet</h1>
+          </ion-text>
+          <ion-fab-button style="display: inline-block;" (click)="addHemoSheet()">
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ng-container>
+        <ng-container *ngIf="!canEdit">
+          <h1>
+            Waiting for hemosheet
+          </h1>
+          <h6>Please wait for nurses to create today's hemosheet first.</h6>
+          <ion-text color="tertiary"><i>(You can further explore the menu on the top-right to see more actions you can do)</i></ion-text>
+            
+        </ng-container>
+          
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ng-container>

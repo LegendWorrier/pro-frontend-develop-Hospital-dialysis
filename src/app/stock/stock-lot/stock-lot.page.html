@@ -1,0 +1,128 @@
+<app-header pageName="Stock New Lot" icon="stock" [content]="content" [searchBar]="false" prev="/stocks">
+</app-header>
+
+<ion-content #content>
+  <form #form="ngForm">
+    <ion-row class="safe-area spacing">
+      <ion-col>
+
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="auto">
+            <ion-button id="add-new" color="secondary">
+              New Stock
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="spacing">
+          <ion-col size="2">
+            <ion-label>
+              <h1>Lot</h1>
+            </ion-label>
+          </ion-col>
+          <ion-col>
+            <hemo-datetime-item [hasLabel]="false" [(value)]="entryDate" displayFormat="dd MMM yyyy">
+              <ion-datetime name="entry" [(ngModel)]="entryDate"
+              presentation="date"
+              ></ion-datetime>
+            </hemo-datetime-item>
+          </ion-col>
+        </ion-row>
+        
+        <ion-row class="spacing">
+          <ion-col>
+            <ion-list>
+              <ion-item *ngFor="let item of stockItems; let i=index;">
+                <ion-icon [name]="getIcon(item.type)"></ion-icon>
+                <ion-col>
+                  <ion-label>
+                    {{ item.itemInfo.name }}
+                  </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-input name="q-{{i}}" label="Quantity" [labelPlacement]="width > 576 ? 'start': 'floating'" [(ngModel)]="item.quantity"></ion-input>
+                </ion-col>
+                <ion-col>
+                  <ion-input name="p-{{i}}" label="Unit price" [labelPlacement]="width > 576 ? 'start': 'floating'" [(ngModel)]="item.pricePerPiece"></ion-input>
+                </ion-col>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-button color="greenish" (click)="add()">
+              Add
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-text color="danger">{{ error }} </ion-text>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="auto">
+            <ion-button color="secondary" size="large" type="submit" [disabled]="form.invalid || stockItems.length === 0" (click)="save()">
+              Save
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>
+
+<ion-modal #addStock >
+  <ng-template>
+      <app-modal-search-list
+      title="Select Stock"
+      searchText="Search by name, code, barcode"
+      [data]="stockCall"
+      (onSearchInput)="updateSearch($event)"
+      [hasReload]="false"
+      [templateOverride]="stock"
+      [closeBtn]="true"
+      [serverSideSearch]="true"
+      style="height: 100%;"
+      >
+      </app-modal-search-list>
+    
+    <ng-template #stock let-item="item">
+      <ion-icon [name]="getIcon(item.type)"></ion-icon>
+      <ion-col>
+        <ion-label>
+          {{ item.name }}
+        </ion-label>
+      </ion-col>
+      <ion-col>
+        <ion-card-subtitle>
+          {{ item.code }}
+        </ion-card-subtitle>
+      </ion-col>
+    </ng-template>
+    
+  </ng-template>
+</ion-modal>
+
+<ion-popover #newStock trigger="add-new" [dismissOnSelect]="true" >
+  <ng-template>
+    <ion-list>
+      <ion-item button (click)="newItem('med')">
+        Medicine
+      </ion-item>
+      <ion-item button (click)="newItem('supply')">
+        Medical Supply
+      </ion-item>
+      <ion-item button (click)="newItem('dialyzer')">
+        Dialyzer
+      </ion-item>
+      <ion-item button (click)="newItem('equipment')">
+        Equipment
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

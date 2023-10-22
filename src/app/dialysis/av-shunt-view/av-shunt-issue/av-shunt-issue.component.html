@@ -1,0 +1,35 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <app-option-list
+        [hasDelete]="{color: 'danger', icon: 'trash'}"
+        [data]="list"
+        [canEdit]="true"
+        (selectCallback)="onSelect($event)" 
+        (optionSelectCallback)="onOptionSelect($event)">
+        <ng-template #listContent let-item="item" let-i="index">
+          
+          <ion-label>
+            <ion-text>
+              <h2 style="font-size: 18px;">
+                {{ (item.abnormalDatetime | date: 'yyyy/MM/dd (EE) HH:mm') }}
+              </h2>
+              <h3>
+                {{ item.complications }}
+              </h3>
+              <h3>
+                {{ item.treatmentMethod }}
+              </h3>
+              <h3>
+                {{ item.treatmentResult }}
+              </h3>
+            </ion-text>
+          </ion-label>
+        </ng-template>
+      </app-option-list>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+
+
+

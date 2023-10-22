@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  hemoweb:
+    container_name: hemoweb
+    build:
+      context: ./server
+      target: development
+    command: npx nodemon src/index.ts
+    ports:
+      - '3080:3080'
+    volumes:
+      - ./server:/srv/app
+      - ./www:/srv/app/www

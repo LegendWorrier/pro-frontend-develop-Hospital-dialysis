@@ -1,0 +1,527 @@
+ion-card {
+    overflow: visible;
+}
+
+.record-list {
+    border: 2.5px solid var(--ion-color-panel);
+    min-height: 200px;
+    max-height: 500px;
+
+    overflow: hidden;
+    overflow-y: auto;
+
+    ion-item {
+        --min-height: 80px;
+    }
+}
+
+.record-table {
+    border: 2.5px solid var(--ion-color-panel);
+    min-height: 200px;
+    max-height: 400px;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+
+    position: relative;
+}
+
+#machine-panel {
+    position: static;
+    .table-wrapper {
+        position: relative;
+    }
+}
+
+.record-table-collapsed {
+    
+    // collapse h
+    @media (max-width: 766px) {
+        min-height: 0px;
+        height: 0px;
+        border: 0.01px solid var(--ion-color-panel);
+        padding: 0;
+        .machine-panel-handle-wrapper {
+            bottom: 13px;
+            .ios & {
+                bottom: 21px;
+            }
+        }
+    }
+    // collapse w
+    @media (min-width: 767px) {
+        border: none;
+        padding: 0;
+        .machine-panel-handle-wrapper {
+            right: 76.5px;
+            .ios & {
+                right: 82px;
+            }
+        }
+    }
+}
+
+.ion-card {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
+    --background: var(--ion-card-background, var(--ion-item-background, var(--ion-background-color, #fff)));
+    --color: var(--ion-card-color, var(--ion-item-color, var(--ion-color-step-550, #737373)));
+    margin-inline: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+
+    ion-card-header {
+        flex-direction: column;
+    }
+}
+
+.machine-panel-handle-wrapper {
+    position: absolute;
+    right: calc(50% + 58px);
+    top: 32px;
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+    .ios & {
+        right: calc(50% + 59px);
+    }
+    
+    .machine-panel-handle {
+        cursor: pointer;
+        filter: brightness(1.05);
+        z-index: 999;
+
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        -webkit-box-shadow: 0px -2px 5px 0px rgba(0,0,0,0.5);
+        -moz-box-shadow: 0px -2px 5px 0px rgba(0,0,0,0.425);
+        box-shadow: 0px -2px 5px 0px rgb(0 0 0 / 35%);
+
+        width: 90px;
+        height: 30px;
+        transform: rotate(-90deg);
+        background-color: var(--ion-color-light);
+        border-radius: 4px 4px 0 0;
+
+        ion-icon {
+            margin-left: 5px;
+        }
+
+        &:hover {
+            filter: brightness(1);
+        }
+        &:active {
+            filter: brightness(0.9);
+        }
+
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        -o-user-select:none;
+        user-select:none;
+    }
+
+    @media (max-width: 766px) {
+        left: calc(50% - 45px);
+        top: auto;
+        bottom: 13px;
+        .ios & {
+            bottom: 21px;
+        }
+
+        .machine-panel-handle {
+            transform: none;
+
+            -webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.5);
+            -moz-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.425);
+            box-shadow: 0px 2px 5px 0px rgb(0 0 0 / 35%);
+
+            border-radius: 0 0 4px 4px;
+        }
+        
+    }
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    height: 100%;
+
+    transform: none !important;
+}
+table.mat-mdc-table {
+    width: 100%;
+    min-width: 900px;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+
+    .mat-mdc-header-cell {
+        background-color: var(--ion-color-light);
+        border-bottom: 1px solid;
+    }
+
+    @mixin set-bg($normal, $dark) {
+        background-color: $normal;
+        @media (prefers-color-scheme: dark) {
+            background-color: $dark;
+        }
+        .dark & {
+            background-color: $dark;
+        }
+    }
+    @mixin normal-bg-override {
+        @include set-bg(rgb(221, 241, 251), rgb(37, 43, 47));
+    }
+    @mixin hover-bg-override {
+        @include set-bg(rgb(208, 236, 250), rgb(45, 61, 64));
+    }
+    @mixin active-bg-override {
+        @include set-bg(rgb(204, 230, 242), rgb(42, 55, 61));
+    }
+    @mixin normal-bg {
+        @include set-bg(rgb(255, 255, 255), rgb(30, 30, 30));
+    }
+    @mixin hover-bg {
+        @include set-bg(rgb(249, 250, 250), rgb(49, 49, 50));
+    }
+    @mixin active-bg {
+        @include set-bg(rgb(238, 239, 239), rgb(43, 43, 44));
+    }
+
+    @mixin still-bg {
+        @include set-bg(#efe892, #6a6424);
+        &:hover {
+            @include set-bg(#e4db75, #857d26);
+        }
+    }
+
+    @mixin bg($even: true) {
+        @include normal-bg();
+        &:hover { @include hover-bg(); }
+        &:active { @include active-bg(); filter: brightness(0.95); }
+
+        .mat-column-copy { @include normal-bg(); }
+        &:hover .mat-column-copy { @include hover-bg();}
+        &:active .mat-column-copy { @include active-bg(); }
+        
+        @if $even == true {
+            &:nth-child(even) {
+                @include normal-bg-override();
+                &:hover { @include hover-bg-override(); }
+                &:active { @include active-bg-override(); filter: brightness(0.95); }
+            }
+            &:nth-child(even) .mat-column-copy { @include normal-bg-override(); }
+            &:nth-child(even):hover .mat-column-copy { @include hover-bg-override(); }
+            &:nth-child(even):active .mat-column-copy { @include active-bg-override(); }
+        }
+        @else {
+            &:nth-child(odd) {
+                @include normal-bg-override();
+                &:hover { @include hover-bg-override(); }
+                &:active { @include active-bg-override(); filter: brightness(0.95); }
+            }
+            &:nth-child(odd) .mat-column-copy { @include normal-bg-override(); }
+            &:nth-child(odd):hover .mat-column-copy { @include hover-bg-override(); }
+            &:nth-child(odd):active .mat-column-copy { @include active-bg-override(); }
+        }
+    }
+
+    tr.mat-mdc-row {
+        cursor: pointer;
+        @include bg;
+        .odd & {
+            @include bg(false);
+        }
+
+        &.still {
+            @include still-bg();
+            .mat-column-bp {
+                color: #f77a26;
+                @media (prefers-color-scheme: dark) {
+                    color:#eda575;
+                }
+                .dark & {
+                    color:#eda575;
+                }
+            }
+        }
+    }
+
+    .mat-column-date {
+        min-width: 90px;
+    }
+
+    .mat-column-bp {
+        min-width: 43.33px;
+    }
+
+    .mat-column-copy {
+        max-width: 50px;
+        z-index: 999;
+    }
+
+    .mat-column-delete {
+        width: 65.33px;
+        @media (max-width: 766px) {
+            width: 40px;
+            max-width: 40px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .mat-column-date {
+            max-width: 100px;
+        }
+    }
+}
+
+.no-data {
+    position: absolute;
+    left: calc(50% - 37.75px);
+    top: calc(50% + 10px);
+}
+
+.del-btn {
+    --padding-top: 0;
+    --padding-start: 0.4em;
+    --padding-end: 0.4em;
+    --padding-bottom: 0;
+    height: 1.8em;
+    font-size: 16px;
+}
+
+.inactive {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    background-color: rgb(0 0 0 / 5%);
+    z-index: 999;
+
+    @media (prefers-color-scheme: dark) {
+        background-color: rgb(200 200 200 / 5%);
+    }
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+}
+
+ion-card-header {
+    ion-card-title {
+        width: -moz-fit-content;
+        width: fit-content;
+    }
+    ion-buttons {
+        position: absolute;
+        top: calc(50% - 25px);
+        right: 13px;
+        ion-button {
+            width: 48px;
+            height: 48px;
+            --padding-start: 4px;
+            --padding-end: 4px;
+        }
+        ion-icon {
+            font-size: 50px;
+        }
+
+        @media (max-width: 576px) {
+            right: 0px;
+        }
+
+        &.addon-btn {
+            right: 60px;
+            ion-icon {
+                font-size: 25px;
+            }
+
+            @media (max-width: 390px) {
+                position: unset !important;
+            }
+        }
+
+        &.plus-btn {
+            @media (max-width: 390px) {
+                top: 4px;
+            }
+        }
+    }
+}
+
+
+
+.doctor-note {
+    min-height: 145px;
+}
+
+.no-record {
+    ion-text {
+        color: rgba(var(--ion-color-medium-rgb), 0.3);
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    -o-user-select:none;
+    user-select:none;
+}
+
+.no-record-middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+}
+
+:host ::ng-deep {
+    .record-audit {
+        display: inline-grid;
+        max-width: min(30%, 82px);
+        
+        ion-text {
+            font-size: 12px;
+            line-height: 1em;
+
+            i {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+        }
+    }
+}
+
+.record {
+    ion-label {
+        white-space: normal;
+    }
+
+    ion-card-subtitle {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    @media (max-width: 576px) {
+        --min-height: 93.33px !important;
+
+        ion-label {
+            font-size: small;
+        }
+
+        ion-card-subtitle {
+            margin-top: 10px;
+        }
+    }
+}
+
+.execution-record {
+
+    &.waiting {
+        --background: rgba(var(--ion-color-warning-rgb), 0.5);
+        .dark & {
+            --background: rgba(var(--ion-color-warning-rgb), 0.2);
+        }
+        @media (prefers-color-scheme: dark) {
+            --background: rgba(var(--ion-color-warning-rgb), 0.2);
+        }
+    }
+
+    .top {
+        white-space: unset;
+    }
+
+    .ctl-btn-group {
+        text-align: center;
+        max-width: 25%;
+    }
+
+    @media (max-width: 576px) {
+
+        --min-height: 93.33px !important;
+        --inner-padding-top: 10px;
+
+        .top {
+            position: absolute;
+            margin: 0;
+            top: 10px;
+        }
+
+        .ctl-btn-group {
+            max-width: unset;
+            ion-button {
+                height: 3em;
+                font-size: 10px;
+            }
+        }
+
+        ion-label {
+            font-size: small;
+        }
+
+        ion-card-title {
+            margin-top: 10px;
+        }
+    }
+}
+
+.interval {
+    border-radius: 8px;
+    padding-inline: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    margin-inline: 2px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    position: relative;
+    transition: color 150ms ease-in-out 0s;
+    border: none;
+    background: var(--ion-color-step-300, #edeef0);
+    color: var(--ion-text-color, #000);
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    appearance: none;
+    overflow: hidden;
+}
+.adjust-date-content {
+    ion-col {
+        align-self: center;
+    }
+    --padding-start: 8px;
+    --padding-end: 8px;
+    --padding-bottom: 10px;
+
+    .empty {
+        height: 45px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+}
+
+.icon-button {
+    ion-icon {
+        margin-right: 0px;
+    }
+}

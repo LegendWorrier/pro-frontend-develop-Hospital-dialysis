@@ -1,0 +1,153 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Assessment Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-button color="secondary-alt" (click)="import()">Import</ion-button>
+        <ion-button color="quaternary-alt" (click)="export()">Export</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list class="list-panel spacing">
+          <ion-item button (click)="groups()">
+           <ion-icon name="folder-open"></ion-icon> Assessment Groups
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Pre Assessment
+            <ion-checkbox class="ion-float-right" [(ngModel)]="hasReassessment" (click)="reassessment()" justify="start" labelPlacement="end">Re-Assessment</ion-checkbox>
+          </ion-title>
+          <ion-item-divider></ion-item-divider>
+          <ng-container *ngIf="(preAssessments | async) && (preGroups | async); else loading">
+            <ng-container *ngTemplateOutlet="assessmentList; context: { data: getIsolatedList(type.Pre) }"></ng-container>
+            
+            <ng-container *ngFor="let group of preGroups | async">
+              <ion-list-header color="light">
+                <ion-label>
+                  {{ group.displayName }}
+                </ion-label>
+              </ion-list-header>
+              <ng-container *ngTemplateOutlet="assessmentList; context: { data: getGroupItemList(group) }"></ng-container>
+            </ng-container>
+          </ng-container>
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Other Assessment
+          </ion-title>
+          <ion-item-divider></ion-item-divider>
+          <ng-container *ngIf="(otherAssessments | async) && (otherGroups | async); else loading">
+            <ng-container *ngTemplateOutlet="assessmentList; context: { data: getIsolatedList(type.Other) }"></ng-container>
+            
+            <ng-container *ngFor="let group of otherGroups | async">
+              <ion-list-header color="light">
+                <ion-label>
+                  {{ group.displayName }}
+                </ion-label>
+              </ion-list-header>
+              <ng-container *ngTemplateOutlet="assessmentList; context: { data: getGroupItemList(group) }"></ng-container>
+            </ng-container>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Post Assessment
+          </ion-title>
+          <ion-item-divider></ion-item-divider>
+          <ng-container *ngIf="(postAssessments | async) && (postGroups | async); else loading">
+            <ng-container *ngTemplateOutlet="assessmentList; context: { data: getIsolatedList(type.Post) }"></ng-container>
+            
+            <ng-container *ngFor="let group of postGroups | async">
+              <ion-list-header color="light">
+                <ion-label>
+                  {{ group.displayName }}
+                </ion-label>
+              </ion-list-header>
+              <ng-container *ngTemplateOutlet="assessmentList; context: { data: getGroupItemList(group) }"></ng-container>
+            </ng-container>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-list>
+          <ion-title class="title">
+            Dialysis Assessment
+          </ion-title>
+          <ion-item-divider></ion-item-divider>
+          <ng-container *ngIf="(dialysisAssessments | async) && (dialysisGroups | async); else loading">
+            <ng-container *ngTemplateOutlet="assessmentList; context: { data: getIsolatedList(type.Dialysis) }"></ng-container>
+            
+            <ng-container *ngFor="let group of dialysisGroups | async">
+              <ion-list-header color="light">
+                <ion-label>
+                  {{ group.displayName }}
+                </ion-label>
+              </ion-list-header>
+              <ng-container *ngTemplateOutlet="assessmentList; context: { data: getGroupItemList(group) }"></ng-container>
+            </ng-container>
+          </ng-container>
+          
+        </ion-list>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab slot="fixed" horizontal="center" vertical="bottom">
+    <ion-fab-button (click)="add()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ng-template #assessmentList let-data="data" >
+  <ion-item button *ngFor="let item of data; let i=index;" (click)="edit(item)">
+    <ion-label>
+      {{ item.displayName }}
+
+      <p class="name">{{ item.name }}</p>
+    </ion-label>
+    <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i-1])" [disabled]="i === 0">
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-button>
+    <ion-button color="medium" size="small" class="icon-button" (click)="$event.stopPropagation();swap(item, data[i+1])" [disabled]="i === data.length - 1">
+      <ion-icon name="arrow-down"></ion-icon>
+    </ion-button>
+  </ion-item>
+</ng-template>
+
+<ng-template #loading>
+  <ion-spinner></ion-spinner>
+</ng-template>
+

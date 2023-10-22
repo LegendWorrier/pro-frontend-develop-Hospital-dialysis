@@ -1,0 +1,86 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ name }} Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Name: </ion-label>
+            <ion-input name="name" placeholder="Enter {{name.toLowerCase()}} name" [(ngModel)]="tmp.name" [readonly]="!canEdit" required></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Code: </ion-label>
+            <ion-input name="code" placeholder="Enter {{name.toLowerCase()}} code" [(ngModel)]="tmp.code" [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Unit: </ion-label>
+            <ion-input name="unit" placeholder="Enter unit for each pcs" [(ngModel)]="tmp.pieceUnit" [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ng-container *ngFor="let tp of detailList" >
+          <ng-container *ngTemplateOutlet="tp; context: { item: tmp, canEdit: canEdit }"></ng-container>
+        </ng-container>
+      </ion-row>
+
+      <ng-container *ngTemplateOutlet="extra; context: { item: tmp, canEdit: canEdit }"></ng-container>
+
+      <ion-row class="spacing-top safe-area">
+        <ion-col>
+          <ion-checkbox name="barcode-ctl" [(ngModel)]="hasBarcode" [disabled]="!canEdit">Has Barcode</ion-checkbox>
+          <ion-item *ngIf="hasBarcode">
+            <ion-input name="barcode" placeholder="Enter barcode" [(ngModel)]="tmp.barcode" [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      
+      <ion-row class="spacing-top">
+        <ion-col>
+          <ion-card>
+            <ion-card-header>Note</ion-card-header>
+            <ion-card-content>
+              <ion-item>
+                <ion-textarea name="note" rows="5" placeholder="Enter note.." [(ngModel)]="tmp.note" [readonly]="!canEdit"></ion-textarea>
+              </ion-item>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="safe-area">
+        <ion-col size="12" size-sm="auto" class="ion-text-center" >
+          <ion-img [src]="src" [style.height]="src?('150px'):''" (click)="canEdit ? chooseImage() : null" ></ion-img>
+          <ion-button color="secondary" size="small" (click)="chooseImage()" *ngIf="canEdit">
+            <ion-icon name="image"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text id="error" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="canEdit">
+        <ion-col class="btn-group">
+          <ion-button type="submit" (click)="save()" color="greenish" [disabled]="form.invalid">Save</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="editMode" >Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

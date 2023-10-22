@@ -1,0 +1,13 @@
+.dockerignore
+.git
+node_modules
+npm-debug.log
+docker-compose*.yml
+Dockerfile
+www/*
+**/*.d.ts
+**/his-*.js
+!**/his-default.js
+!**/his-interface.js
+!**/his-import.js
+**/srcbuildinfo*

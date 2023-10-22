@@ -1,0 +1,15 @@
+<ion-row *ngIf="draft && canEdit">
+  <ion-col *ngIf="!isLoaded">
+    <ion-button color="secondary" (click)="load()">Load Draft</ion-button>
+    <ion-button color="danger" (click)="clear()">Clear Draft</ion-button>
+  </ion-col>
+  <ion-col *ngIf="isLoaded">
+    <ion-button color="secondary" (click)="save()">Update Draft</ion-button>
+    <ion-button color="danger" (click)="clear()">Clear Draft</ion-button>
+  </ion-col>
+</ion-row>
+<ion-row *ngIf="!draft && canEdit">
+  <ion-col>
+    <ion-button color="secondary" (click)="save()">Save Draft</ion-button>
+  </ion-col>
+</ion-row>

@@ -1,0 +1,38 @@
+.control-group {
+    position: fixed;
+    z-index: 110;
+    padding-right: max(20px, var(--ion-safe-area-right));
+    padding-left: max(20px, var(--ion-safe-area-left));
+}
+
+.btn-grp {
+    margin-top: 80px;
+
+    padding-right: max(20px, var(--ion-safe-area-right));
+    padding-left: max(20px, var(--ion-safe-area-left));
+
+    text-align: center;
+}
+
+ion-content {
+    --padding-bottom: 200px;
+}
+
+#error {
+    white-space: pre-wrap;
+}
+
+.signature-row {
+    margin-top: 10px;
+    .signature-label {
+        align-self: center;
+
+        ion-label {
+            padding-left: 16px;
+
+            span {
+                margin-left: 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,68 @@
+.medicine-item ion-text {
+    vertical-align: sub;
+}
+ion-item-divider {
+    height: 10px;
+    min-height: 0;
+}
+ion-card-title {
+    margin-bottom: 5px;
+}
+.id-badge {
+    padding-left: 6px;
+    padding-right: 6px;
+    width: fit-content;
+}
+
+.title {
+    font-weight: bold;
+    
+}
+
+ion-card-header {
+    display: block;
+}
+
+.med-history-grp {
+    max-height: 350px;
+    .med-list {
+     overflow-y: auto;
+    }
+
+    ion-card-title {
+        width: fit-content;
+    }
+
+    .controls {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+
+        ion-fab-button {
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+        }
+
+        @media(max-width: 767px) {
+            ion-fab-button {
+                width: 30px;
+                height: 30px;
+            }
+
+            ion-button {
+                --padding-top: 0;
+                --padding-start: 0.9em; 
+                --padding-end: 0.9em;
+                --padding-bottom: 0;
+                height: 2.1em; 
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+.no-record {
+    color: rgba(var(--ion-color-medium-rgb), 0.8);
+    font-style: italic;
+}

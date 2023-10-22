@@ -1,0 +1,26 @@
+<ion-row class="info-grp">
+  <ion-col size="12">
+    <span>Last Update: <ion-text color="medium"><em>{{ lastUpdateText }}</em></ion-text></span>
+    <ion-fab-button class="reload-btn" size="small" (click)="updateInfo()" color="primary">
+      <ion-icon name="reload"></ion-icon>
+    </ion-fab-button>
+    <ion-button class="color-btn" size="small" color="secondary" (click)="generateColors()" *ngIf="multiUnit" >Refresh Colors</ion-button>
+  </ion-col>
+</ion-row>
+<ion-row class="info-grp">
+  <ion-col *ngFor="let item of info; let i = index;" size="12" size-sm="auto">
+    <ion-row>
+      <ion-col size="auto"><ion-badge *ngIf="info.length > 1" class="info-lb" [style.background]="colors[item.unitId]"> {{ getUnitName(item.unitId) }}</ion-badge></ion-col>
+      <ion-col size="auto">
+        <ion-label *ngIf="info.length === 1">Current Shift</ion-label><span style="margin-right: 2px;">:</span>
+        <ion-label *ngIf="item.currentSection" > Shift {{ item.currentShift + 1 }} (Started time: {{ getStartTime(item.lastStarted, item.currentSection) }})</ion-label>
+        <ion-label *ngIf="!item.currentSection" >N/A</ion-label>
+      </ion-col>
+      <ion-col size="auto" class="next-round-btn">
+        <ion-button color="secondary-alt" size="small" *ngIf="canStartNext(item)" (click)="startNextRound(item.unitId)">
+          {{ item.currentShift === item.sections.length - 1 ? 'End the day' : 'Start Next Round' }}
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

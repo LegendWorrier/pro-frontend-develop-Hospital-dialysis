@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hemodialysis Pro</string>
+    <string name="title_activity_main">Hemodialysis Pro</string>
+    <string name="package_name">wasenshi.hemodialysispro</string>
+    <string name="custom_url_scheme">wasenshi.hemodialysispro</string>
+</resources>

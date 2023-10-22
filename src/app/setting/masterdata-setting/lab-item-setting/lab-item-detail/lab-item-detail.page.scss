@@ -1,0 +1,29 @@
+.spacing-top {
+    margin-top: 35px;
+}
+
+.spacing-top-half {
+    margin-top: 15px;
+}
+
+.panel {
+    padding-left: calc(20px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+
+    ion-col {
+        align-self: center;
+    }
+}
+
+.system-icon {
+    margin-left: calc(20px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    margin-top: 20px;
+}
+
+ion-label ion-checkbox {
+    vertical-align: sub;
+}
+
+.btn-group {
+    margin-left: max(var(--ion-safe-area-left), 10px);
+}

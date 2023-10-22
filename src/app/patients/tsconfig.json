@@ -1,0 +1,23 @@
+{
+  "extends": "../../../server/tsconfig-base.json",
+  "include": [
+    "patient-info.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../server/dist",
+    "composite": true, // needed for references sub-projects
+    "rootDir": ".",
+    "tsBuildInfoFile": "../../../server/dist/srcbuildinfo-patient",
+    "experimentalDecorators": true,
+    "strict": false,
+    "strictNullChecks": false
+  },
+  "references": [
+    {
+      "path": "../enums",
+    },
+    {
+      "path": "../share"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+<ion-label class="title">
+  {{ data.header }}
+</ion-label>
+<ion-card-subtitle class="ion-margin-bottom">
+  {{ data.subheader }}
+</ion-card-subtitle>
+<ion-label class="ion-margin-top ion-margin-bottom">
+  {{ data.message }}
+</ion-label>
+<ion-row class="ion-margin-top action-group">
+  <ion-col size="auto" *ngFor="let item of data.buttons" >
+    <ion-button color="primary" fill="clear" (click)="onClick(item.role)"> {{ item.text }} </ion-button>
+  </ion-col>
+</ion-row>

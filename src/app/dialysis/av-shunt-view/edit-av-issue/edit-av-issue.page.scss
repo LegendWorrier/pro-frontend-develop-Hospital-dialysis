@@ -1,0 +1,9 @@
+ion-card {
+    ion-col {
+        align-self: center;
+        &.treatment {
+            align-self: auto;
+            top: 19.5px;
+        }
+    }
+}

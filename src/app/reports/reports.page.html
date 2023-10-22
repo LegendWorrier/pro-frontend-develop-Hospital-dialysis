@@ -1,0 +1,39 @@
+<link href="/assets/styles/kendo/kendo.common.min.css" rel="stylesheet" />
+<link href="/assets/styles/kendo/kendo.blueopal.min.css" rel="stylesheet" />
+<app-header *ngIf="!isModal" [pageName]="pageName || 'Report'" [searchBar]="false" prev="/patients"></app-header>
+<ion-header appHeaderTheme *ngIf="isModal">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="clipboard" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>{{ pageName || 'Report' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <tr-viewer #report *ngIf="isReady && token; else loading;"
+    [containerStyle]="viewerContainerStyle"
+    [serviceUrl]="reportServiceUrl"
+    [templateUrl]="templateUrl"
+    [authenticationToken]="token"
+    [reportSource]="reportSource"
+    [viewMode]="'PRINT_PREVIEW'"
+    [scaleMode]="'SPECIFIC'"
+    [scale]="1.0"
+    [documentMapVisible]="false"
+    [error]="error"
+
+    [renderingEnd]="onRenderEnd"
+    >
+  </tr-viewer>
+
+  <ng-template #loading>
+    <ion-spinner></ion-spinner>
+  </ng-template>
+  
+</ion-content>

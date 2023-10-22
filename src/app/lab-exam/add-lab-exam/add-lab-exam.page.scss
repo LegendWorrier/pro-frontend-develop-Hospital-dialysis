@@ -1,0 +1,29 @@
+ion-col {
+    align-self: center;
+}
+
+ion-item {
+    &+ion-col {
+        text-align: center;
+    }
+    ion-select {
+        max-width: unset;
+    }
+}
+
+.list-header {
+    padding-left: calc(var(--ion-safe-area-left) + 10px);
+}
+
+ion-button.action-btn {
+    &[size=small] {
+        --padding-start: 0.35em;
+        --padding-end: 0.35em;
+    }
+    --padding-start: 0.6em;
+    --padding-end: 0.6em;
+
+    .ios &.single {
+        height: 42px;
+    }
+}

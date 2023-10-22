@@ -1,0 +1,9 @@
+<ng-template #nameDisplay let-item="item">
+  <ion-label class="name-label">{{item.name}}</ion-label>
+</ng-template>
+
+<ng-template #nameEdit let-item="item">
+  <ion-label> Name:  </ion-label>
+  <ion-input [(ngModel)]="item.name" placeholder="Enter {{name}} name" ></ion-input>
+  <!-- tabindex="3" -->
+</ng-template>

@@ -1,0 +1,20 @@
+<ion-list>
+  <ion-item-divider>
+    {{ globalMode ? getName : getDay | date: 'dd MMM yyyy' }}
+  </ion-item-divider>
+  <ion-item button (click)="shift($event)">
+    Choose Shift(s)
+  </ion-item>
+  <ion-item button [detail]="false" (click)="reserve()">
+    Reserved
+  </ion-item>
+  <ion-item button [detail]="false" (click)="offlimit()">
+    Off-Limits
+  </ion-item>
+  <ion-item *ngIf="globalMode"  button [detail]="false" (click)="suspend()">
+    Suspended
+  </ion-item>
+  <ion-item *ngIf="globalMode" button [detail]="false" (click)="detail()">
+    User Detail
+  </ion-item>
+</ion-list>

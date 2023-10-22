@@ -1,0 +1,15 @@
+<ng-template #beforeHeader>
+  <ion-list class="list-panel spacing">
+    <ion-item button (click)="category()">
+     <ion-icon name="folder-open"></ion-icon> Categories
+    </ion-item>
+  </ion-list>
+</ng-template>
+
+<ng-template #header>
+  <ion-col class="text-wrasp">Category</ion-col>
+</ng-template>
+
+<ng-template #detail let-item="item">
+  <ion-label> {{item.category || '-'}} </ion-label>
+</ng-template>

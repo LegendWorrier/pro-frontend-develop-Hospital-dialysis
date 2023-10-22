@@ -1,0 +1,28 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <app-option-list
+        [hasDelete]="{color: 'danger', icon: 'trash'}"
+        [data]="list"
+        [canEdit]="true"
+        (selectCallback)="onSelect($event)" 
+        (optionSelectCallback)="onOptionSelect($event)">
+        <ng-template #listContent let-item="item" let-i="index">
+          <ion-label>
+            <ion-text>
+              <h2 style="font-size: 18px;">
+                {{ getName(item) }}
+              </h2>
+              <h4>
+                <em>
+                  {{ ((item.establishedDate | date: 'dd MMM yyyy') || 'Unknown') + ' - ' + ((item.endDate | date: 'dd MMM yyyy') || 'Unknown') }}
+                </em>
+              </h4>
+            </ion-text>
+          </ion-label>
+            
+        </ng-template>
+      </app-option-list>
+    </ion-col>
+  </ion-row>
+</ion-grid>

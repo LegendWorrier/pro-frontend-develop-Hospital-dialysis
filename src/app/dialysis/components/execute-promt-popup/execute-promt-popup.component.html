@@ -1,0 +1,40 @@
+<ion-row>
+  <ion-col>
+    <ion-row>
+      <ion-col>
+        <div class="popup-head">
+          <h3 class="popup-title">Execute</h3>
+          
+          <h5 class="popup-sub-title"> Please confirm the timestamp</h5>
+        </div>
+      </ion-col>
+      
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-datetime-button datetime="timestamp"></ion-datetime-button>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="timestamp" [max]="maxDate"
+              [(ngModel)]="timestamp" appLocalDate
+              [showDefaultButtons]="true"
+              ></ion-datetime>
+          </ng-template>
+        </ion-modal>
+        
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="request()">
+          Confirm
+        </ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button color="secondary-alt" (click)="now()">
+          Now
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>

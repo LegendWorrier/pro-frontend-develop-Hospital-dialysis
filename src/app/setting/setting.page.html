@@ -1,0 +1,76 @@
+
+<ion-header appHeaderTheme>
+<ion-toolbar>
+  <ion-buttons slot="start">
+  <ion-icon name="settings" style="font-size: 24px;"></ion-icon>
+  </ion-buttons>
+
+  <ion-title>{{isAdmin? 'Admin' : 'Setting'}}</ion-title>
+    
+</ion-toolbar>
+</ion-header>
+<ion-content>
+<ion-list class="list-panel spacing" *ngIf="isMobileApp">
+  <ion-item button (click)="appPrefSetting()"><ion-icon name="server"></ion-icon> App Setting</ion-item>
+</ion-list>
+
+<ion-list class="list-panel spacing">
+  <ion-item button (click)="gotoProfile()"><ion-icon name="person-circle"></ion-icon> My Profile</ion-item>
+  <ion-item button (click)="gotoNotiSetting()"><ion-icon name="notifications"></ion-icon> Notification</ion-item>
+</ion-list>
+
+<ng-container>
+  <ion-list class="list-panel spacing">
+    <ion-item button (click)="showBasicSetting()" *ngIf="hasBasicPermission" ><ion-icon name="information-circle"></ion-icon> Basic Setting</ion-item>
+    <ion-item button (click)="showUserSetting()" *ngIf="isAdmin || hasUserPermission" ><ion-icon name="people"></ion-icon> Users Management</ion-item>
+    <ion-item button (click)="showRoleSetting()" *ngIf="isPowerAdmin" ><ion-icon name="id-card" style="height: 20px;"></ion-icon> Roles & Permissions</ion-item>
+  </ion-list>
+  <ion-list class="list-panel spacing">
+    <ion-item button (click)="showUnitSetting()"><ion-icon name="albums"></ion-icon> Units</ion-item>
+  </ion-list>
+  <ion-list class="list-panel spacing">
+    <ion-item button (click)="showStatusSetting()"><ion-icon name="bookmarks"></ion-icon> Status</ion-item>
+    <ion-item button (click)="showDeathCauseSetting()"><ion-icon name="pulse"></ion-icon> Death Causes</ion-item>
+    <ion-item button (click)="showUnderlyingSetting()"><ion-icon name="heart"></ion-icon> Underlying </ion-item>
+    <ion-item button (click)="showACSetting()"><ion-icon name="bandage"></ion-icon> Anticoagulants</ion-item>
+    <ion-item button (click)="showNeedleSetting()"><ion-icon name="pin"></ion-icon> Needles </ion-item>
+    <ion-item button (click)="showDialysateSetting()"><ion-icon name="eyedrop"></ion-icon> Dialysate </ion-item>
+    <ion-item button (click)="showLabItemSetting()"><ion-icon name="flask"></ion-icon> Lab Items </ion-item>
+    <ion-item button (click)="showWardSetting()"><ion-icon name="bed"></ion-icon> Wards </ion-item>
+    <ion-item button (click)="showPatientHistorySetting()"><ion-icon name="id-card"></ion-icon> Patient Histories </ion-item>
+  </ion-list>
+
+  <ion-list class="list-panel spacing" *ngIf="isAdmin || hasStockPermission">
+    <ion-item-divider>
+      Stockables
+    </ion-item-divider>
+    <ion-item button (click)="showMedicineSetting()"><ion-icon name="pills"></ion-icon> Medicines</ion-item>
+    <ion-item button (click)="showDialyzerSetting()"><ion-icon name="dialyzer"></ion-icon> Dialyzers </ion-item>
+    <ion-item button (click)="showMedSupplySetting()"><ion-icon name="med-supply"></ion-icon> Medical Supplies </ion-item>
+    <ion-item button (click)="showEquipmentSetting()"><ion-icon name="equipment"></ion-icon> Equipments </ion-item>
+
+  </ion-list>
+    
+  <ion-list class="list-panel spacing" *ngIf="isAdmin || hasAdvancePermission">
+    <ion-item button (click)="showAssessment()"><ion-icon name="checkbox"></ion-icon> Assessment</ion-item>
+    <ion-item button (click)="showDialysisRecord()"><ion-icon name="reader"></ion-icon> Dialysis Record</ion-item>
+    <ion-item button (click)="showHemosheet()"><ion-icon name="newspaper"></ion-icon> Hemosheet</ion-item>
+    <ion-item button (click)="showPatient()"><ion-icon name="people"></ion-icon> Patient Record</ion-item>
+    <ion-item button (click)="showPrescription()"><ion-icon name="clipboard"></ion-icon> Dialysis Prescription</ion-item>
+    <ion-item button (click)="showSchedule()"><ion-icon name="calendar"></ion-icon> Schedule</ion-item>
+    <ion-item button (click)="showLabExamSetting()"><ion-icon name="flask"></ion-icon> Lab Exam </ion-item>
+  </ion-list>
+
+  <ion-list class="list-panel spacing" *ngIf="isAdmin || hasShiftHistoryPermission">
+    <ion-item button (click)="showShiftHistory()"><ion-icon name="library"></ion-icon> Shift History</ion-item>
+  </ion-list>
+</ng-container>
+
+<ion-list class="list-panel spacing">
+    <ion-item button (click)="showLanguageSetting()"><ion-icon name="language"></ion-icon> Language: {{ Lang | pretty }}</ion-item>
+</ion-list>
+
+</ion-content>
+  
+  
+  

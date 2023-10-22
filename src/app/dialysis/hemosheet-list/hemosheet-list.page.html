@@ -1,0 +1,155 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="newspaper" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title>Hemosheet List</ion-title>
+
+  </ion-toolbar>
+  <ion-toolbar class="filter-toolbar">
+    <ion-text class="filter-label" slot="start">Filter: </ion-text>
+    <ion-select class="filter-select" interface="popover" slot="start" [(ngModel)]="filterMode" (ngModelChange)="onFilter()">
+      <ion-select-option value="bf">Before</ion-select-option>
+      <ion-select-option value="r">Within Range</ion-select-option>
+    </ion-select>
+    <div slot="start" [class.ion-hide-sm-down]="isRangeMode" class="select-date" (click)="beforeDt.present()">
+      <ion-icon icon="calendar-outline"></ion-icon>
+      <ion-label [class.placeholder]="!before">{{ (before | date: beforeFormat) || 'Select Date' }}</ion-label>
+    </div>
+    
+    <div slot="start" class="ion-hide-sm-down select-date" *ngIf="isRangeMode && !range" (click)="afterDt.present()">
+      <ion-icon icon="calendar-outline"></ion-icon>
+      <ion-label [class.placeholder]="!after">{{ (after | date: ' MMM d, yyyy') || 'Select Date' }}</ion-label>
+    </div>
+    <ion-text slot="start" class="range-label" *ngIf="isRangeMode" >Range:</ion-text>
+    <ion-select class="filter-range" interface="popover" slot="start" [(ngModel)]="range" *ngIf="isRangeMode" placeholder="Select" (ngModelChange)="onFilter()" >
+      <ion-select-option *ngFor="let item of rangeList" [value]="item.v"> {{item.n}} </ion-select-option>
+    </ion-select>
+
+    <ion-button color="secondary" size="small" class="reset-btn" [class.ion-hide-sm-down]="isRangeMode" (click)="resetFilter()"
+    *ngIf="after || before || isRangeMode" >Clear</ion-button>
+
+  </ion-toolbar>
+  <ion-toolbar class="filter-toolbar ion-hide-sm-up" [hidden]="!isRangeMode" >
+    <div slot="start" class="select-date" (click)="beforeDt.present()">
+      <ion-icon icon="calendar-outline"></ion-icon>
+      <ion-label [class.placeholder]="!before">{{ (before | date: beforeFormat) || 'Select Date' }}</ion-label>
+    </div>
+    <div slot="start" class="select-date" *ngIf="isRangeMode && !range" (click)="afterDt.present()">
+      <ion-icon icon="calendar-outline"></ion-icon>
+      <ion-label [class.placeholder]="!after">{{ (after | date: 'MMM d, yyyy') || 'Select Date' }}</ion-label>
+    </div>
+
+    <ion-button color="secondary" size="small" class="reset-btn" (click)="resetFilter()"
+    *ngIf="after || before || isRangeMode" >Clear</ion-button>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="data-header">
+    <ion-col class="col-date">
+      Date
+    </ion-col>
+    <ion-col >
+      Ward
+    </ion-col>
+    <ion-col class="col-type">
+      Type
+    </ion-col>
+    <ion-col class="col-mode">
+      Mode
+    </ion-col>
+  </ion-row>
+  <ion-grid>
+    <ion-row style="margin-top: 24px;">
+      <ion-col class="ion-text-center">
+        <ion-list>
+          <ion-item-divider style="position: sticky; z-index: 200; top: 34px; padding: 0;">
+            <ion-title style="padding: 0;">
+              Today
+            </ion-title>
+          </ion-item-divider>
+          <ng-container *ngIf="TodayList.length !== 0" >
+            <ion-item button *ngFor="let item of TodayList as list; let i=index;" [class]="itemClasses(item)" (click)="onSelect([item, i, list])" >
+              <ng-container *ngTemplateOutlet="content; context: { item: item }"></ng-container>
+            </ion-item>
+          </ng-container>
+          
+          <h4 *ngIf="!firstLoad && TodayList.length === 0"> No Data </h4>
+          <ion-spinner *ngIf="firstLoad"></ion-spinner>
+          <ion-item-divider style="position: sticky; z-index: 201; top: 34px; padding: 0;">
+            <ion-title style="padding: 0;">
+              History
+            </ion-title>
+          </ion-item-divider>
+          <ng-container *ngIf="HistoryList.length !== 0" >
+            <ion-item button *ngFor="let item of HistoryList as list; let i=index;" [class]="itemClasses(item)" (click)="onSelect([item, i, list])" >
+              <ng-container *ngTemplateOutlet="content; context: { item: item }"></ng-container>
+            </ion-item>
+          </ng-container>
+          
+          <h4 *ngIf="!firstLoad && HistoryList.length === 0"> No History </h4>
+          <ion-spinner *ngIf="firstLoad"></ion-spinner>
+
+          <!-- loading -->
+          <app-page-loader #loader label="Hemosheets" [(dataList)]="recordList" [retryable]="true"
+          [loadCall]="loadHemosheet$" (firstLoadEvent)="firstLoad = $event"></app-page-loader>
+
+        </ion-list>
+        <ng-template #content let-item="item">
+          <ion-label class="col-date">
+            {{ (item.completedTime || item.created) | date: 'dd MMM yy (EE) HH:mm'}}
+          </ion-label>
+          <ion-label class="col-ward-label">
+            {{ item.ward || '-'}}
+          </ion-label>
+          <ng-container *ngIf="!item.dialysisPrescription">
+            <ion-label color="danger" class="no-prescription-label">
+              <i>No Dialysis Prescription</i>
+            </ion-label>
+          </ng-container>
+          
+          <ng-container *ngIf="item.dialysisPrescription">
+            <ion-label class="col-type">
+              <ion-chip color="pink" class="temporary tag" *ngIf="item.dialysisPrescription.temporary">
+                Temporary
+              </ion-chip>
+              <ion-chip color="primary" class="temporary tag" *ngIf="!item.dialysisPrescription.temporary">
+                Long-Term
+              </ion-chip>
+            </ion-label>
+            <ion-label class="col-mode">
+              {{ item.dialysisPrescription.mode || '-'}}
+            </ion-label>
+          </ng-container>
+          
+        </ng-template>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab *ngIf="!hemosheet && canEdit" vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="newHemo()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ion-popover #beforeDt [keepContentsMounted]="true" class="hemo-calendar">
+  <ng-template>
+    <ion-datetime [presentation]="beforePresentation"
+      [max]="maxDate" [min]="after"
+      [(ngModel)]="before" name="bf" (ionChange)="onFilter()"
+      [showDefaultButtons]="true" ></ion-datetime>
+  </ng-template>
+</ion-popover>
+
+<ion-popover #afterDt [keepContentsMounted]="true" class="hemo-calendar">
+  <ng-template>
+    <ion-datetime presentation="date"
+      [max]="before ?? maxDate"
+      [(ngModel)]="after" name="af" (ionChange)="onFilter()"
+      [showDefaultButtons]="true"></ion-datetime>
+  </ng-template>
+</ion-popover>

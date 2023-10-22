@@ -1,0 +1,175 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Basic Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="form" enctype="multipart/form-data" (ngSubmit)="save()">
+    <ion-grid>
+      <ion-row>
+        <ion-col size-lg="6" size="12">
+          <ion-card>
+            <ion-card-content>
+              <ion-row>
+                <ion-col size="12" size-sm="3">
+                  <ion-label> {{isHospital ? 'Hospital' : 'Center'}} Logo </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-img [src]="src" [style.height]="src?(width > 376?'300px':'150px'):''" (click)="chooseLogo()"></ion-img>
+                  <ion-row>
+                    <ion-col size="auto">
+                      <ion-button color="secondary" size="small" (click)="chooseLogo()">
+                        <ion-icon name="image"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                    <ion-col [size]="width > 397 ? 'auto' : '12'" *ngIf="src">
+                      <ion-label>Align</ion-label>
+                    </ion-col>
+                    <ion-col [size]="width > 397 ? '6.5' : '12'" class="align" *ngIf="src">
+                      <ion-radio-group formControlName="global:logoAlign">
+                        <ion-radio labelPlacement="end" justify="end" [value]="0">Left</ion-radio>
+                        <ion-radio labelPlacement="end" justify="end" [value]="1">Center</ion-radio>
+                        <ion-radio labelPlacement="end" justify="end" [value]="2">Right</ion-radio>
+                      </ion-radio-group>
+                    </ion-col>
+                  </ion-row>
+                  
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> {{isHospital ? 'Hospital' : 'Center'}} Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> {{isHospital ? 'Hospital' : 'Center'}} Name </ion-label>
+                    <ion-input name="cn" [placeholder]="'Enter ' + (isHospital ? 'Hospital' : 'Center') +' name'" formControlName="centerName"></ion-input>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="3" class="hospital-label" *ngIf="isHospital">
+                  <ion-label > Hospital</ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Organization Type </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Organization Type </ion-label>
+                    <ion-select name="ct" placeholder="Select type" interface="action-sheet" class="full-h-sm-up" formControlName="centerType">
+                      <ion-select-option *ngFor="let item of centerTypes" [value]="item.value">{{ item.name }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Decimal Precision </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Decimal Precision </ion-label>
+                    <ion-select name="dp" placeholder="Select Decimal Precision" interface="action-sheet" class="full-h-sm-up" formControlName="decimalPrecision">
+                      <ion-select-option *ngFor="let d of [1,2,3,4]" [value]="d">{{d}}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down" style="align-self: baseline; top: 18px;">
+                  <ion-label> Preferred Domain Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Preferred Domain Name </ion-label>
+                    <ion-input name="webserver" placeholder="Enter domain name" formControlName="secureDomain"></ion-input>
+                  </ion-item>
+                  <ion-text color="danger">* This should be a secure domain name for the server (but ip address is also allowed)</ion-text>
+                  <br>
+                  <ion-text color="danger">** Beware: changing this value to invalid url could cause undesired bahavior for the app.</ion-text>
+                </ion-col>
+              </ion-row>
+
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+        <ion-col>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Advance Settings 
+              </ion-card-title>
+              <ion-button color="secondary" size="small" shape="round" (click)="showAdvance=!showAdvance">
+                <ion-icon [name]="showAdvance?'chevron-up-outline':'chevron-down-outline'"></ion-icon>
+              </ion-button>
+            </ion-card-header>
+            <ion-card-content [class.hide]="!showAdvance" class="advance-panel">
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down" style="align-self: baseline; top: 18px;">
+                  <ion-label> API Server Url </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> API Server Url </ion-label>
+                    <ion-input name="api" placeholder="Enter api server url" formControlName="apiServer"></ion-input>
+                  </ion-item>
+                  <ion-text color="danger">* This should be a secure connection url (using https) to the backend server</ion-text>
+                  <br>
+                  <ion-text color="danger">** Beware: changing this value to invalid url could break the app.</ion-text>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="4" class="ion-hide-sm-down" style="align-self: baseline; top: 18px;">
+                  <ion-label> Report Server Url </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Report Server Url </ion-label>
+                    <ion-input name="report" placeholder="Enter report server url" formControlName="reportService"></ion-input>
+                  </ion-item>
+                  <ion-text color="danger">* This should be a secure connection url (using https) to the report server</ion-text>
+                  <br>
+                  <ion-text color="danger">** Beware: changing this value to invalid url could break the app.</ion-text>
+                </ion-col>
+              </ion-row>
+              <ion-row *ngIf="isHospital">
+                <ion-col size="4" class="ion-hide-sm-down" style="align-self: baseline; top: 18px;">
+                  <ion-label> HIS integration </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> HIS integration </ion-label>
+                    <ion-checkbox name="his" formControlName="his"></ion-checkbox>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-text id="error" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button type="submit" size="large" color="greenish" >
+            Save
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

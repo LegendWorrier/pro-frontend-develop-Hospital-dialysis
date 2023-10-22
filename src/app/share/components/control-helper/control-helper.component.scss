@@ -1,0 +1,18 @@
+.control-helper {
+    position: sticky;
+    bottom: 0px;
+    margin-top: 10px;
+    z-index: 5000;
+    justify-content: space-between;
+    pointer-events: none;
+
+    ion-col {
+        display: flex;
+        justify-content: space-between;
+        pointer-events: all;
+    }
+
+    .btn-grp {
+        display: flex;
+    }
+}

@@ -1,0 +1,20 @@
+ion-item-divider {
+  min-height: 5px;
+  background-color: var(--ion-color-theme-panel);
+}
+
+.title {
+  padding: 10px;
+  background-color: var(--ion-color-theme-panel);
+}
+
+.main-input {
+  --padding-start: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  --background: var(--ion-color-theme-bg);
+  text-align: center;
+  ion-datetime {
+    width: 100%;
+  }
+}

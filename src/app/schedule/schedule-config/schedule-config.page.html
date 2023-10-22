@@ -1,0 +1,100 @@
+<app-header pageName = "Schedule Config" [content]="content" [searchBar]="false" [prev]="'/schedule'" ></app-header>
+
+<ion-content #content>
+  <ion-grid *ngIf="authorized; else forbid" >
+    <ion-row>
+      <ion-col class=" container">
+        <ion-row class="title">
+          <ion-col class="ion-text-center">
+            <ion-title>{{ unitName }}</ion-title>
+          </ion-col>
+        </ion-row>
+
+        <ion-card class="card-panel bigger-text">
+          <ion-row class="max-per-slot-grp">
+            <ion-col size="6" size-sm="4" class="ion-align-self-center">
+              <ion-label>Max patients/beds per round:</ion-label>
+            </ion-col>
+            <ion-col size="2" class="ion-text-center ion-align-self-center">
+              <ion-label *ngIf="!isEditing" >{{ maxPerSlot }}</ion-label>
+              <ion-input *ngIf="isEditing" 
+              type="number"
+              inputmode="numeric"
+              [(ngModel)]="maxPerSlot"
+              min="1"
+              placeholder="Enter number"
+              class="max-per-slot" ></ion-input>
+            </ion-col>
+            <ion-col class="ion-text-center ion-align-self-center" size="4" size-sm="3" push="0" push-sm="3">
+              <ion-button color="greenish" (click)="isEditing=true" *ngIf="!isEditing" >Edit</ion-button>
+              <ion-button color="orange" (click)="editMax()" *ngIf="isEditing" >Save</ion-button>
+              <ion-button color="medium" (click)="isEditing=false" *ngIf="isEditing" >Cancel</ion-button>
+            </ion-col>
+          </ion-row>
+  
+          <ion-row>
+            <ion-col size="auto">
+              <ion-label>Rounds</ion-label>
+            </ion-col>
+            <ion-col *ngIf="isPending" class="show-original">
+              <ion-checkbox [(ngModel)]="showOriginal" labelPlacement="end" justify="start">Show Current</ion-checkbox>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="isPending" >
+            <ion-col>
+              <ion-text color="warning">** Pending update for next month</ion-text>
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let item of showOriginal ? originalSections : sections; let i=index; trackBy:trackByIdentity"
+              class="section-row" [class.pending]="isPending && !showOriginal" >
+            <ion-col>
+              <ion-item>
+                <ion-note>{{i+1}}</ion-note>
+                <ion-datetime-button #dtBtn datetime="s-{{i+1}}" [disabled]="showOriginal" ></ion-datetime-button>
+                <ion-popover [keepContentsMounted]="true" class="hemo-calendar">
+                  <ng-template>
+                    <ion-datetime id="s-{{i+1}}" presentation="time" [showDefaultButtons]="true" [(ngModel)]="item.start" appLocalDate></ion-datetime>
+                  </ng-template>
+                </ion-popover>
+              </ion-item>
+            </ion-col>
+            <ion-col size="2" class="ion-align-self-center ion-text-center">
+              <ion-fab-button class="del" color="danger" (click)="delSection(item)" [disabled]="showOriginal"><ion-icon name="close"></ion-icon></ion-fab-button>
+            </ion-col>
+          </ion-row>
+          <ion-row class="add-btn-row">
+            <ion-col>
+              <ion-fab-button color="primary" (click)="addNewSection()" [disabled]="isAtLimit() || showOriginal"><ion-icon name="add"></ion-icon></ion-fab-button>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col class="ion-text-center">
+              <ion-text color="danger">{{ error }}</ion-text>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="btn-group">
+            <ion-col class="ion-text-center" size="auto">
+              <ion-button color="orange" (click)="saveSections()" [disabled]="!canSave">Save Change</ion-button>
+            </ion-col>
+            <ion-col class="ion-text-center" size="auto" *ngIf="isPending" >
+              <ion-button color="danger" (click)="clearPending()">Clear Pending Change</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ng-template #forbid>
+    <ion-grid style="height: 100%;">
+      <ion-row style="height: 100%;">
+        <ion-col>
+          <div class="no-record no-record-middle"><ion-text>You are not authorized for this setting.</ion-text></div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
+  
+</ion-content>

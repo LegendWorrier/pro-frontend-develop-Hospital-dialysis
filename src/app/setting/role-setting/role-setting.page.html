@@ -1,0 +1,45 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Roles & Permissions</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  
+  <ion-list *ngIf="!loading && data.length > 0; else init">
+    <ion-item *ngFor="let item of data" (click)="roleDetail(item)" button>
+      <ion-label> {{item.name || '-'}} </ion-label>
+      <ion-label> Permissions: {{ item.permissions.length }} </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #init>
+    <ng-container *ngIf="loading" >
+      <ion-skeleton-text animated ></ion-skeleton-text>
+      <ion-skeleton-text animated ></ion-skeleton-text>
+      <ion-skeleton-text animated ></ion-skeleton-text>
+  
+      <ion-spinner></ion-spinner>
+    </ng-container>
+  
+    <ng-container *ngIf="!loading" >
+      <ion-text class="no-data">No Data</ion-text>
+    </ng-container>
+    
+    <ng-container *ngIf="networkError" >
+      <ion-text class="network-error">Could not load the data</ion-text>
+    </ng-container>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button center bottom (click)="addRole()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

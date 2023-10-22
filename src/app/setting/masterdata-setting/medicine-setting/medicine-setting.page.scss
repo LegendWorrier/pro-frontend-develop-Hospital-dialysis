@@ -1,0 +1,41 @@
+ion-note {
+    font-size: large;
+    min-width: 20px;
+    padding-right: 0;
+    margin-inline-end: 16px;
+}
+
+ion-content {
+    --padding-bottom: 70px;
+}
+
+.list-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 49px;
+    padding-right: calc(1% + 20px);
+    background-color: var(--ion-color-panel);
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    z-index: 110;
+
+    display: flex;
+
+    @media (min-width: 767px) {
+        padding-right: calc(1% + 20px + 74.05px);
+    }
+}
+
+.text-wrasp {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+:host ::ng-deep {
+    .name-label {
+        text-align: unset !important;
+    }
+}

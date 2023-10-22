@@ -1,0 +1,19 @@
+{
+  "extends": "../../../server/tsconfig-base.json",
+  "include": [
+    "gender.ts",
+    "coverage-scheme-type.ts",
+    "admission-type.ts",
+    "ac-for-fill.ts",
+    "blood-access-route.ts",
+    "postures.ts",
+    "kidney-state.ts",
+    "dialysis-type.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../server/dist",
+    "composite": true, // needed for references sub-projects
+    "rootDir": ".",
+    "tsBuildInfoFile": "../../../server/dist/srcbuildinfo-enum"
+  }
+}

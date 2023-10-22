@@ -1,0 +1,134 @@
+ion-content.main {
+    --padding-bottom: 70px;
+}
+
+ion-list {
+    ion-col {
+        padding: 0;
+        ion-label {
+            margin: 0;
+        }
+    }
+}
+
+.reload-btn {
+    width: 30px;
+    height: 30px;
+    ion-icon {
+        font-size: 19px;
+        --ionicon-stroke-width: 60px;
+    }
+
+    &.fade {
+        opacity: .5;
+        &:hover, &:active {
+            opacity: 1;
+        }
+    }
+}
+
+.ctl-grp {
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+    
+    background-color: var(--ion-color-theme-panel);
+    ion-col {
+        align-self: center;
+    }
+
+    .ctl-label {
+        text-align: end;
+    }
+
+    ion-select {
+        background-color: var(--ion-color-white);
+    }
+}
+
+:host ::ng-deep {
+
+    ion-item.item-datetime {
+        --min-height: 40px;
+
+        .ios & {
+            --min-height: 40px;
+        }
+    }
+}
+
+.header-label {
+    padding-top: 5px;
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+    background-color: var(--ion-color-panel);
+    position: sticky;
+    top: 50px;
+    width: 100%;
+    z-index: 110;
+
+    display: flex;
+
+    --padding-start: 16px;
+    --padding-end: 16px;
+    .ios & {
+        --padding-end: 26px;
+    }
+    @media (max-width: 768px) {
+        --padding-start: 10px;
+    }
+    @media (max-width: 577px) {
+        --padding-start: 0px;
+    }
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+        .ios & {
+            padding-right: 8px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        &.multi-unit {
+            top: 100.67px;
+        }
+    }
+}
+
+.info {
+    position: sticky;
+    top: 50px;
+    z-index: 109;
+    background-color: var(--ion-color-white);
+
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+
+    @media (max-width: 576px) {
+        &.multi-unit {
+            top: 100.67px;
+        }
+    }
+}
+
+ion-item-divider {
+    min-height: 5px;
+}
+
+ion-content.bf-content {
+    --padding-top: 15px;
+    --padding-bottom: 5px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+
+    .edit-ctl {
+        position: sticky;
+        bottom: 10px;
+        padding: 5px;
+    }
+}
+
+#close-btn {
+    font-size: 24px;
+}

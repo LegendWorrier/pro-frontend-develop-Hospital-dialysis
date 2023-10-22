@@ -1,0 +1,52 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="pills" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Select Medicine</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="filter-header">
+    <ion-col>
+      <ion-searchbar mode="ios" [appFilterList]="medicineList" [(output)]="dataList"></ion-searchbar>
+    </ion-col>
+    <ion-col size="3" size-lg="2" class="category-select">
+      <ion-item>
+        <ion-select [value]="null" interface="popover" (ionChange)="filterCat = $event.detail.value">
+          <ion-select-option *ngFor="let item of getMedCatList()" [value]="item.id">
+            {{ item.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row class="data-header">
+    <ion-col>
+      Name
+    </ion-col>
+    <ion-col class="category">
+      Category
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-list>
+        <ion-item *ngFor="let item of filteredList" button (click)="select(item)">
+          <ion-label>
+            {{ item.name }}
+          </ion-label>
+          <ion-label class="category">
+            {{ item.category || '-' }}
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+</ion-content>

@@ -1,0 +1,8 @@
+<ion-header *ngIf="isPanel">
+  <ion-searchbar #filter class="suggest" placeholder="Enter Value" inputmode="search" debounce="70" (ionInput)="search($event)" (search)="ok(filter.value)" [value]="value"></ion-searchbar>
+  <ion-button color="secondary" size="small" (click)="ok(filter.value)">OK</ion-button>
+  <ion-item-divider style="height: 1px; min-height: 1px;"></ion-item-divider>
+</ion-header>
+<ion-list>
+  <ion-item lines="none" detail="false" *ngFor="let item of list" button (click)="select(item)"> <ion-label>{{ item.name }}</ion-label> </ion-item>
+</ion-list>

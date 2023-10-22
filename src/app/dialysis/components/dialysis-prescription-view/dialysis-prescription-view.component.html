@@ -1,0 +1,275 @@
+<ion-row>
+
+  <ion-col [size]="width > 480 ? '3' : '4'">
+    <ion-label>State: </ion-label>
+  </ion-col>
+  <ion-col [size]="width > 480 ? '3' : '8'">
+  {{ prescription.temporary ? 'Temporary' : 'Long-Term' }}
+  </ion-col>
+
+  <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+    <ion-label>Mode: </ion-label>
+  </ion-col>
+  <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+  {{ modeNames[prescription.mode] }}
+  </ion-col>
+
+  <ng-container *ngIf="prescription.duration || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Duration: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.DurationFormatted }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dryWeight || (full && !prescription.temporary)">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dry Weight: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.dryWeight | number: decimal) || '-' }} {{ prescription.dryWeight? 'Kg' : ''}}
+    </ion-col>
+  </ng-container>
+  <ng-container *ngIf="prescription.excessFluidRemovalAmount || (full && prescription.temporary)">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Excess Fluid Removal Amount: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.excessFluidRemovalAmount | number: decimal | noComma) || '-' }} {{ prescription.excessFluidRemovalAmount? 'L' : ''}}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.frequency || (full && !prescription.temporary)">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Frequency: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.frequency ? prescription.frequency + ' time(s) per week' : '-'}}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.hdfType || (full && prescription.mode === modes['HDF'])">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>HDF Type: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.hdfType }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.substituteVolume || (full && prescription.mode === modes['HDF'])">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Substitute Volume: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.substituteVolume | number: decimal | noComma) || '-' }} {{ prescription.substituteVolume? 'L' : '' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.ivSupplementVolume || (full && prescription.mode === modes['HDF'])">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>IV Supplement Volume: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.ivSupplementVolume | number: decimal | noComma) || '-' }} {{ prescription.ivSupplementVolume? 'L' : '' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.ivSupplementPosition || (full && prescription.mode === modes['HDF'])">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>IV Supplement Position: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.ivSupplementPosition || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dialysateK != null || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dialysate (K/Ca²): </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.DialysateFormatted || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.hcO3 || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>HCO<sub>3</sub>: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.hcO3 | number: decimal | noComma) || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.na || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Na: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.na | number: decimal | noComma) || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.bloodTransfusion || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Blood Transfusion: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.bloodTransfusion | number: decimal | noComma) || '-' }} {{ prescription.bloodTransfusion? 'ml' : ''}}
+    </ion-col>
+  </ng-container>
+  <ng-container *ngIf="prescription.extraFluid || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Extra Fluid: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.extraFluid | number: decimal | noComma) || '-' }} {{ prescription.extraFluid? 'ml' : ''}}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dialysateTemperature || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dialysate Temperature: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.dialysateTemperature | number: decimal | noComma) || '-' }} {{ prescription.dialysateTemperature? '°C' : '' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dialysateFlowRate || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dialysate Flow Rate: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.dialysateFlowRate | number: decimal | noComma) || '-' }} {{ prescription.dialysateFlowRate? 'ml/min' : '' }}
+    </ion-col>
+  </ng-container>
+
+  <!-- Note: isAcNotUsed means hemosheet override this prescription -->
+  <ng-container *ngIf="(getReasonForRefrain() || !acNotUsed) || full || isAcNotUsed">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+      <ion-label>Anticoagulant {{acNotUsed? '' : '(init, maintain rate)'}}: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ acNotUsed ? 'Not used' : prescription.anticoagulant || 'N/A' }} 
+    <ng-container *ngIf="!acNotUsed" >
+      {{ (prescription.initialAmountMl ?? prescription.initialAmount | number: decimal | noComma) || '--' }} 
+      {{(prescription.initialAmountMl ?? prescription.initialAmount)? (prescription.initialAmountMl?'ml':'unit'):''}}, 
+      {{ (prescription.maintainAmountMl ?? prescription.maintainAmount | number: decimal | noComma) || '--' }} 
+      {{(prescription.initialAmountMl ?? prescription.maintainAmount)? (prescription.initialAmountMl?'ml/hr':'unit/hr'):''}}
+    </ng-container>
+    <ion-badge class="ac-not-used" color="orange" *ngIf="isAcNotUsed && !fromPrescription">This Session</ion-badge>
+    </ion-col>
+    <ng-container *ngIf="!acNotUsed && (prescription.acPerSession || prescription.acPerSessionMl)">
+      <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Total AC Amount: </ion-label>
+      </ion-col>
+      <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+        {{ (prescription.acPerSessionMl ?? prescription.acPerSession) | number: decimal | noComma }} {{prescription.acPerSessionMl? 'ml/session' : 'unit/session'}}
+      </ion-col>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="acNotUsed && (getReasonForRefrain() || full)">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+      <ion-label>Not used reason: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ getReasonForRefrain() || '-' }}
+    </ion-col>
+  </ng-container>
+  
+
+  <ng-container *ngIf="prescription.bloodAccessRoute || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Blood Access Route: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.bloodAccessRoute || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.aNeedleCC || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Arterial Volume: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.aNeedleCC || '-' }} {{prescription.aNeedleCC? 'ml' : ''}}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.vNeedleCC || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Venous Volume: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.vNeedleCC || '-' }} {{prescription.vNeedleCC? 'ml' : ''}}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.arterialNeedle || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Arterial Needle: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.arterialNeedle || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.venousNeedle || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Venous Needle: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.venousNeedle || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.bloodFlow || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Blood Flow: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ (prescription.bloodFlow | number: decimal | noComma) || '-' }} {{ prescription.bloodFlow? 'ml/min' : '' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dialyzer || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dialyzer: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.dialyzer || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.dialyzerSurfaceArea || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Dialyzer Surface Area: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.dialyzerSurfaceArea || '-' }} <ng-container *ngIf="prescription.dialyzerSurfaceArea"> m<sup>2</sup></ng-container>
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.avgDialyzerReuse || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Average Dialyzer Reuse: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.avgDialyzerReuse || '-' }}
+    </ion-col>
+  </ng-container>
+
+  <ng-container *ngIf="prescription.note || full">
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '4'">
+        <ion-label>Note: </ion-label>
+    </ion-col>
+    <ion-col [attr.size-xs]="width > 480 ? '3' : '8'">
+    {{ prescription.note || '-' }}
+    </ion-col>
+  </ng-container>
+
+</ion-row>

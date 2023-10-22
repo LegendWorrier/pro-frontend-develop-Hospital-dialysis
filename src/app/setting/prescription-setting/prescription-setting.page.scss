@@ -1,0 +1,12 @@
+.setting-grp {
+  justify-content: start;
+  ion-select {
+      max-width: 250px;
+      background-color: var(--ion-color-panel);
+      --padding-start: 10px;
+  }
+  ion-col {
+      display: flex;
+      align-items: center;
+  }
+}
