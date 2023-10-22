@@ -1,0 +1,12 @@
+<ng-container *ngIf="title">
+  <ion-card-title class="title">
+    {{ title }}
+  </ion-card-title>
+  <ion-item-divider></ion-item-divider>
+</ng-container>
+
+<ion-datetime [presentation]="onlytime? 'time' : 'time-date'" [(ngModel)]="value" appLocalDate >
+  <span slot="title">{{ placeholder || ('Select ' + (onlytime?'time':'date')) }}</span>
+</ion-datetime>
+
+<ion-button class="ok-btn" color="greenish" (click)="confirm()">Ok</ion-button>

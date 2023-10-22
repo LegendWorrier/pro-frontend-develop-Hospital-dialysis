@@ -1,0 +1,198 @@
+<app-header [pageName]="!editMode? 'Stock New' : 'Stock Item Edit'" icon="stock" [content]="content" [searchBar]="false" prev="/stocks">
+</app-header>
+
+<ion-content #content>
+
+  <form #form="ngForm">
+    <ion-row class="safe-area spacing">
+      <ion-col>
+        <ion-radio-group name="stock-type" [(ngModel)]="tmp.stockType">
+          <ion-row>
+            <ion-col [size]="width > 396 ? 'auto' : '12'" >
+              <ion-radio labelPlacement="end" class="ion-margin-end" [value]="stockType.NORMAL" [disabled]="editMode" >Normal</ion-radio>
+            </ion-col>
+            <ion-col [size]="width > 396 ? 'auto' : '12'" >
+              <ion-radio labelPlacement="end" class="ion-margin-end" [value]="stockType.ADJUST" [disabled]="editMode" >Adjust</ion-radio>
+            </ion-col>
+            <ion-col [size]="width > 396 ? 'auto' : '12'" >
+              <ion-radio labelPlacement="end" class="ion-margin-end" [value]="stockType.BF" [disabled]="editMode" >Brought Forward</ion-radio>
+            </ion-col>
+          </ion-row>
+        </ion-radio-group>
+      </ion-col>
+    </ion-row>
+  
+    <ion-row>
+      <ion-col [size]="width > 396 ? 'auto' : '12'">
+        <ion-item>
+          <ion-select name="item-type" [(ngModel)]="itemType" interface="action-sheet" (ngModelChange)="onChangeType()" class="item-type-select" [disabled]="editMode || itemInfo">
+            <ion-select-option value="med">Medicine</ion-select-option>
+            <ion-select-option value="dialyzer">Dialyzer</ion-select-option>
+            <ion-select-option value="supply">Medical Supply</ion-select-option>
+            <ion-select-option value="equipment">Equipment</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+  
+    <ion-row *ngIf="!editMode && !itemInfo">
+      <ion-col [size]="width > 396 ? 'auto' : '12'" class="ion-align-self-center">
+        <ion-item>
+          <ion-select
+            [appSelectSearch]="itemList"
+            [customFilter]="customFilter"
+            searchText="Search by name, code, barcode"
+            #filter="SelectSearch"
+            name="item-id"
+            [placeholder]="!itemList || itemList.length > 0 ? 'Select Item' : 'No items'"
+            [(ngModel)]="tmp.itemId" class="item-select"
+            [disabled]="!itemList || itemList.length === 0"
+            [required]="true"
+            (ngModelChange)="onItemChange()"
+            >
+            <ion-select-option *ngFor="let item of filter.output" [value]="item.id"> {{ item.name }} </ion-select-option>
+          </ion-select>
+          <ion-spinner *ngIf="!itemList"></ion-spinner>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-button color="secondary" (click)="addNewItem()">New</ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="editMode || itemInfo" class="safe-area spacing">
+      <ion-col>
+        <ion-label> <h1>{{ itemInfo.name }}</h1> </ion-label>
+        <ion-img *ngIf="image" [src]="image" style="height: 30vh; width: fit-content;"></ion-img>
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="safe-area spacing" *ngIf="mode === stockType.NORMAL">
+      <ion-col>
+        <ion-chip [color]="tmp.isCredit ? 'danger':'greenish'" class="no-select" >{{ tmp.isCredit ? 'Remove' : 'Add' }}</ion-chip>
+      </ion-col>
+    </ion-row>
+  
+    <ion-row class="safe-area spacing">
+      <ion-col>
+
+        <ion-row>
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label>Date <ion-text color="danger">*</ion-text></ion-label>
+          </ion-col>
+          <ion-col>
+            <hemo-datetime-item [required]="true" title="Date" [(value)]="tmp.entryDate" >
+              <ion-datetime name="entry" presentation="date" [(ngModel)]="tmp.entryDate" required></ion-datetime>
+            </hemo-datetime-item>
+          </ion-col>
+        </ion-row>
+        
+        <ion-row *ngIf="mode === stockType.NORMAL">
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label>Is Used</ion-label>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating" class="ion-hide-sm-up"> Is Used</ion-label>
+              <ion-checkbox name="isCredit" [(ngModel)]="tmp.isCredit" required></ion-checkbox>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label>{{ mode === stockType.ADJUST ? 'Check Total' : 'Quantity' }}</ion-label>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating" class="ion-hide-sm-up"> {{ mode === stockType.ADJUST ? 'Check Total' : 'Quantity' }} </ion-label>
+              <ion-input name="quantity" type="number" inputmode="numeric"
+                [placeholder]="mode === stockType.ADJUST ? 'Enter Total' : 'Enter Quantity'" 
+                [min]="mode === stockType.ADJUST ? 0 : 1" [(ngModel)]="tmp.quantity" required></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="mode !== stockType.ADJUST && !tmp.isCredit">
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label>Unit Price</ion-label>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating" class="ion-hide-sm-up"> Unit Price</ion-label>
+              <ion-input name="price" type="number" inputmode="decimal" placeholder="Enter price for this lot" min="0" [(ngModel)]="tmp.pricePerPiece"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+
+        <ng-container *ngIf="mode === stockType.ADJUST">
+          <ng-container *ngIf="getSum() as sum; else loading">
+            <ion-row>
+              <ion-col>
+                <ion-label>
+                  Current Total: <ion-text class="ion-margin-left">{{ sum === -1 ? '-' : sum }}</ion-text>
+                </ion-label>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="getAdjustValue() as adjust; else none">
+              <ion-col>
+                <ion-label>
+                  Adjust Value: <ion-text class="ion-margin-left">{{ adjust }}</ion-text>
+                  <ion-text [color]="adjust > 0 ? 'greenish' : 'danger'">{{ adjust > 0 ? ' (Excess)' : ' (Missing)' }}</ion-text>
+                </ion-label>
+              </ion-col>
+            </ion-row>
+            <ng-template #none>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    Adjust Value: <ion-text class="ion-margin-left"> (none) </ion-text>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ng-template>
+            
+          </ng-container>
+        </ng-container>
+        
+        <ng-template #loading>
+          <ion-row>
+            <ion-col>
+              <ion-label>
+                Current Total: <ion-spinner style="
+                width: 15px;
+                height: 15px;
+                margin-left: 10px;
+                "></ion-spinner>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              <ion-label>
+                Adjust Value: <ion-spinner style="
+                width: 15px;
+                height: 15px;
+                margin-left: 10px;
+                "></ion-spinner>
+              </ion-label>
+              
+            </ion-col>
+          </ion-row>
+        </ng-template>
+
+      </ion-col>
+    </ion-row>
+
+    <ion-row class="safe-area spacing">
+      <ion-col size="auto">
+        <ion-button color="greenish" type="submit" 
+          [disabled]="form.invalid || !tmp.itemId || (mode === stockType.ADJUST && !getAdjustValue())" 
+          (click)="save()">{{ mode === stockType.ADJUST ? 'Adjust' : 'Save' }}</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button color="danger" *ngIf="editMode" (click)="delete()">Delete</ion-button>
+      </ion-col>
+    </ion-row>
+
+  </form>
+</ion-content>

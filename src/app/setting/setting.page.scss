@@ -1,0 +1,11 @@
+ion-footer ion-list {
+    padding: 0;
+}
+
+.selected {
+    --color: var(--ion-color-primary);
+}
+
+ion-content {
+    --padding-bottom: 100px;
+}

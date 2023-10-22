@@ -1,0 +1,27 @@
+<ion-content color="quaternary">
+
+  <ion-card>
+    <ion-card-content>
+      <div id="head-text" class="ion-margin-bottom">
+        <ion-text color="secondary" class="ion-text-start">
+          <h1>{{browserSupported ? 
+            'You need to have a secure connection to continue using full feature of this app. Do you want to continue to setup? It\'s easy.'
+          : 'Using this browser, you won\'t get full potential of the app. We recommend you to change browser to the default one of your device.'}}
+          </h1>
+        </ion-text>
+      </div>
+      
+      <ion-button id="continue-button" class="ion-margin-end" (click)="goToSetup()" *ngIf="browserSupported"  >Continue to setup</ion-button>
+      
+      <div class="ion-margin-top">
+        <a [routerLink]="['./']" (click)="skipCheck()">Skip</a>
+
+        <span class="ion-float-right">
+          <ion-checkbox [(ngModel)]="isBypassFlag" labelPlacement="end">Don't show again</ion-checkbox>
+        </span>
+
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

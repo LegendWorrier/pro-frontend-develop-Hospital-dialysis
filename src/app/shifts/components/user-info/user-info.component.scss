@@ -1,0 +1,14 @@
+.signature-row {
+    margin-top: 10px;
+    .signature-label {
+        align-self: center;
+
+        ion-label {
+            padding-left: 16px;
+
+            span {
+                margin-left: 10px;
+            }
+        }
+    }
+}

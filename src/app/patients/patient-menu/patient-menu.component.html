@@ -1,0 +1,59 @@
+<ion-content>
+  <ion-list>
+    <ion-item button (click)="openAdmissionPage()">
+      <ion-icon name="admit"></ion-icon> <ion-label>Admissions</ion-label>
+    </ion-item>
+    <ion-item button (click)="gotoLab()">
+      <ion-icon name="flask"></ion-icon> <ion-label>Lab Exam</ion-label>
+    </ion-item>
+    <ion-item button (click)="gotoStat('dialysis')">
+      <ion-icon name="stats-chart"></ion-icon> <ion-label>Dialysis Stats</ion-label>
+    </ion-item>
+    <ion-item button (click)="gotoStat('assessments')">
+      <ion-icon name="checkbox"></ion-icon> <ion-label>Assessment Stats</ion-label>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        Doctor
+      </ion-label>
+    </ion-item-divider>
+    <ion-item button (click)="openDialysisPrescriptionPage()">
+      <ion-icon name="clipboard"></ion-icon> <ion-label>Dialysis Prescriptions</ion-label>
+    </ion-item>
+    <ion-item button (click)="openMedicinePrescriptionPage()">
+      <ion-icon name="pills"></ion-icon> <ion-label> Medicine Prescriptions</ion-label>
+    </ion-item>
+    <ion-item-divider>
+      <ion-label>
+        Nurse
+      </ion-label>
+    </ion-item-divider>
+    <ion-item button (click)="openHemosheetPage()">
+       <ion-icon name="newspaper"></ion-icon> <ion-label>Hemosheets</ion-label>
+    </ion-item>
+    <ion-item button (click)="openAVShuntPage()">
+      <ion-icon name="butterfly-needle"></ion-icon> <ion-label>AV Shunt</ion-label>
+    </ion-item>
+    <ion-item button (click)="openMedHistory()">
+      <ion-icon name="med-history"></ion-icon> <ion-label>Med History</ion-label>
+    </ion-item>
+    <ion-item button (click)="openAlbum()" disabled>
+      <ion-icon name="camera"></ion-icon> <ion-label>Albums (Coming soon)</ion-label>
+    </ion-item>
+    <ion-item button id="report-btn">
+      <ion-icon name="document-text"></ion-icon> <ion-label>Reports & Documents</ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-popover trigger="report-btn" side="start" class="pop-main-menu">
+  <ng-template>
+    <ion-content>
+      <ion-list>
+        <ion-item button (click)="openDialysisSummary()">
+          <ion-icon name="stats-chart"></ion-icon> <ion-label>Dialysis Adequacy</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover>

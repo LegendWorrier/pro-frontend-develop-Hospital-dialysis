@@ -1,0 +1,340 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Assessment Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- wrap in form make it bug with swapping (angular 15+) -->
+  <!-- <form #form="ngForm"> -->
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-card>
+            <ion-card-content>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Assessment Type </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Assessment Type </ion-label>
+                    <ion-select name="type" placeholder="Choose Type" interface="action-sheet"
+                      [(ngModel)]="assessment.type"
+                      class="full-h-sm-up"
+                      required 
+                      [disabled]="editMode"
+                      (ionChange)="assessment.groupId = undefined">
+                      <ion-select-option *ngFor="let item of types" [value]="item.value"> {{ item.text }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Group </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Group </ion-label>
+                    <ion-select name="group" placeholder="Choose group" [(ngModel)]="assessment.groupId" class="full-h-sm-up" [disabled]="assessment.type == null">
+                      <ion-select-option *ngFor="let item of getGroup()" [value]="item.id"> {{ item.displayName }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Name </ion-label>
+                    <ion-input name="name" placeholder="Enter key name" [(ngModel)]="assessment.name" required></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Display Name </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Display Name </ion-label>
+                    <ion-input name="displayName" placeholder="Enter the name to be shown" [(ngModel)]="assessment.displayName" required></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Note </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Note </ion-label>
+                    <ion-input name="note" placeholder="Enter the additional information to be shown" [(ngModel)]="assessment.note"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="3" class="ion-hide-sm-down">
+                  <ion-label> Option Type </ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating" class="ion-hide-sm-up"> Option Type </ion-label>
+                    <ion-select name="optionType" placeholder="Choose Option Type" interface="action-sheet" [(ngModel)]="assessment.optionType" class="full-h-sm-up">
+                      <ion-select-option *ngFor="let item of optionTypes" [value]="item.value"> {{ item.text }} </ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> {{ isValueType ? 'Has Options' : 'Multi-Select' }} </ion-label>
+                </ion-col>
+                <ion-col  >
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="multi" [(ngModel)]="assessment.multi" [disabled]="assessment.optionType === OptionTypes.Radio"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-label>{{ isValueType ? 'Has Options' : 'Multi-Select' }}
+                       <ion-checkbox name="multi" [(ngModel)]="assessment.multi" [disabled]="assessment.optionType === OptionTypes.Radio"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label> Has Other </ion-label>
+                </ion-col>
+                <ion-col  >
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="other" [(ngModel)]="assessment.hasOther" [disabled]="(isValueType || assessment.optionType === OptionTypes.Checkbox) && !assessment.multi"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-label>Has Other <ion-checkbox name="other" [(ngModel)]="assessment.hasOther" [disabled]="(isValueType || assessment.optionType === OptionTypes.Checkbox) && !assessment.multi"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-card-header><ion-card-title>Extra Info Input</ion-card-title></ion-card-header>
+              <ion-row>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Text</ion-label>
+                </ion-col>
+                <ion-col  >
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="text" [(ngModel)]="assessment.hasText" [disabled]="isValueType"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-label>Text<ion-checkbox name="text" [(ngModel)]="assessment.hasText" [disabled]="isValueType"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+                <ion-col size="2" class="ion-hide-sm-down">
+                  <ion-label>Number</ion-label>
+                </ion-col>
+                <ion-col>
+                  <ion-item class="ion-hide-sm-down">
+                    <ion-checkbox name="number" [(ngModel)]="assessment.hasNumber" [disabled]="isValueType"></ion-checkbox>
+                  </ion-item>
+                  <ion-item class="ion-hide-sm-up">
+                    <ion-label>Number<ion-checkbox name="number" [(ngModel)]="assessment.hasNumber" [disabled]="isValueType"></ion-checkbox></ion-label>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+      <!-- Options -->
+      <ion-row *ngIf="showOption">
+        <ion-col>
+          <ion-card>
+            <ion-card-header><ion-card-title>Options</ion-card-title></ion-card-header>
+            <ion-card-content>
+              <!-- CheckBox multiple / Radio / value -->
+              <ng-container *ngIf="(assessment.multi && (OptionTypes.Checkbox === assessment.optionType)) || assessment.optionType === OptionTypes.Radio || isValueType">
+                <ion-row *ngFor="let item of assessment.optionsList as data; let i=index; trackBy: trackOption;" [hidden]="item.name === 'textLabel' || item.name === 'numberLabel'">
+                  <ion-col>
+                    <ion-item>
+                      <ng-container *ngIf="width >= 577">
+                        <ng-container *ngIf="!isValueType">
+                          <ion-label>Name:</ion-label>
+                          <ion-input class="name-input" name="option-name-{{i}}" placeholder="Enter key name" [(ngModel)]="item.name" required></ion-input>
+                        </ng-container>
+                        <ion-label>Display Name:</ion-label>
+                        <ion-input name="option-displayName-{{i}}" placeholder="Enter the name to show" [(ngModel)]="item.displayName" required></ion-input>
+                        <ng-container *ngIf="isValueType">
+                          <ion-label>Value:</ion-label>
+                          <ion-input name="option-value-{{i}}" placeholder="Enter value" *ngIf="assessment.optionType === OptionTypes.Text"
+                            [(ngModel)]="item.textValue"
+                            required></ion-input>
+                          <ion-input name="option-value-{{i}}" placeholder="Enter value" *ngIf="assessment.optionType === OptionTypes.Number"
+                            [(ngModel)]="item.value"
+                            type="number"
+                            required></ion-input>
+                        </ng-container>
+                      </ng-container>
+                      
+                      <div *ngIf="width < 577" class="compact-container" >
+                          <div class="compact-grp" *ngIf="!isValueType">
+                            <ion-label>Name:</ion-label>
+                            <ion-input name="option-name-{{i}}" placeholder="Enter key name" [(ngModel)]="item.name" required></ion-input>
+                          </div>
+                          <div class="compact-grp">
+                            <ion-label>Display Name:</ion-label>
+                            <ion-input name="option-displayName-{{i}}" placeholder="Enter the name to show" [(ngModel)]="item.displayName" required></ion-input>
+                          </div>
+                          <div class="compact-grp" *ngIf="isValueType">
+                            <ion-label>Value:</ion-label>
+                            <ion-input name="option-value-{{i}}" placeholder="Enter value" *ngIf="assessment.optionType === OptionTypes.Text"
+                              [(ngModel)]="item.textValue"
+                              required></ion-input>
+                            <ion-input name="option-value-{{i}}" placeholder="Enter value" *ngIf="assessment.optionType === OptionTypes.Number"
+                              [(ngModel)]="item.value"
+                              type="number"
+                              required></ion-input>
+                          </div>
+                      </div>
+
+                      <div class="option-ctl ion-hide-md-down">
+                        <ion-button [color]="item.isDefault? 'secondary-alt':'medium'" class="icon-button"
+                          [class.inactive]="!item.isDefault"
+                          (click)="item.isDefault = !item.isDefault">
+                          <ion-icon name="bookmark-outline"></ion-icon>
+                        </ion-button>
+                        <ion-button color="medium" size="small" class="icon-button" (click)="swap(item, data[i-1])" [disabled]="i === 0">
+                          <ion-icon name="arrow-up"></ion-icon>
+                        </ion-button>
+                        <ion-button color="medium" size="small" class="icon-button" (click)="swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                          <ion-icon name="arrow-down"></ion-icon>
+                        </ion-button>
+                        <ion-button class="icon-button" (click)="assessment.optionsList.splice(i, 1)" color="danger" *ngIf="data.length > 1">
+                          <ion-icon name="trash"></ion-icon>
+                        </ion-button>
+                      </div>
+                    </ion-item>
+                    <div class="option-ctl ion-hide-md-up">
+                      <ion-button [color]="item.isDefault? 'secondary-alt':'medium'" class="icon-button"
+                        [class.inactive]="!item.isDefault"
+                        (click)="item.isDefault = !item.isDefault">
+                        <ion-icon name="bookmark-outline"></ion-icon>
+                      </ion-button>
+                      <ion-button color="medium" class="icon-button" (click)="swap(item, data[i-1])" [disabled]="i === 0">
+                        <ion-icon name="arrow-up"></ion-icon>
+                      </ion-button>
+                      <ion-button color="medium" class="icon-button" (click)="swap(item, data[i+1])" [disabled]="i === data.length - 1">
+                        <ion-icon name="arrow-down"></ion-icon>
+                      </ion-button>
+                      <ion-button class="icon-button" (click)="assessment.optionsList.splice(i, 1)" color="danger" *ngIf="data.length > 1">
+                        <ion-icon name="trash"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="center">
+                    <ion-fab-button (click)="addNewOption()" size="small" color="medium">
+                      <ion-icon name="add"></ion-icon>
+                    </ion-fab-button>
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+              <!-- Single Checkbox -->
+              <ng-container *ngIf="!assessment.multi && OptionTypes.Checkbox === assessment.optionType">
+                <ion-row>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating">Check Label</ion-label>
+                      <ion-input name="yes" placeholder="Yes" [(ngModel)]="yesLabel"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col>
+                    <ion-item>
+                      <ion-label position="floating">Uncheck Label</ion-label>
+                      <ion-input name="no" placeholder="No" [(ngModel)]="noLabel"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ng-container>
+              
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <!-- Has Text -->
+      <ion-row *ngIf="assessment.hasText && !isValueType">
+        <ion-col>
+          <ion-card>
+            <ion-card-header><ion-card-title>Text</ion-card-title></ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Text Label</ion-label>
+                    <ion-input name="text-label" placeholder="Enter Value" [(ngModel)]="textLabel"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <!-- Has Number -->
+      <ion-row *ngIf="assessment.hasNumber && !isValueType">
+        <ion-col>
+          <ion-card>
+            <ion-card-header><ion-card-title>Number</ion-card-title></ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+                    <ion-label position="floating">Number Label</ion-label>
+                    <ion-input name="number-label" placeholder="Enter Value" [(ngModel)]="numberLabel"></ion-input>
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="audit" *ngIf="editMode">
+        <ion-col size="12" size-md="6">
+          <span class="audit-label"> Established: </span>
+          <audit-name [id]="assessment.createdBy" [date]="assessment.created"></audit-name>
+        </ion-col>
+        <ion-col *ngIf="assessment.updatedBy && assessment.updatedBy !== assessment.createdBy">
+          <span class="audit-label"> Modified: </span>
+          <audit-name [id]="assessment.updatedBy" [date]="assessment.updated"></audit-name>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-text color="danger">
+            {{ error }}
+          </ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="btn-group">
+          <ion-button type="submit" (click)="save()" color="greenish" >Save</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="editMode" >Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  <!-- </form> -->
+  
+</ion-content>

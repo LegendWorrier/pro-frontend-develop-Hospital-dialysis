@@ -1,0 +1,20 @@
+<ion-list>
+  <ng-container *ngIf="!selected" >
+    <ion-item *ngIf="slot" button (click)="onSelect(slot)">
+      {{ getLabel(slot) }}
+    </ion-item>
+    <ion-item *ngFor="let item of schedules" button (click)="onSelect(item)">
+      <span>{{ getLabel(item) }}</span>
+      <ion-card-subtitle class="ion-margin-left tmp-label" >Temporary</ion-card-subtitle>
+    </ion-item>
+  </ng-container>
+  <ng-container *ngIf="selected" >
+    <ion-item-divider>
+      {{ getLabel(selected, true) }}
+    </ion-item-divider>
+    <ion-item button (click)="reschedule()" [detail]="false" *ngIf="!isSchedule && !readOnly">Reschedule</ion-item>
+    <ion-item button (click)="transfer()" [detail]="false" [disabled]="!authorized" *ngIf="!isSchedule && !readOnly">Transfer Request</ion-item>
+    <ion-item button (click)="audit($event)">Audit Detail</ion-item>
+    <ion-item button class="delete" [detail]="false" (click)="delete()" *ngIf="!readOnly" >Delete</ion-item>
+  </ng-container>
+</ion-list>

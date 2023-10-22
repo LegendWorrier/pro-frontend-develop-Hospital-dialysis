@@ -1,0 +1,96 @@
+ion-content {
+    --padding-bottom: 100px;
+}
+
+.data-header {
+    padding-top: 5px;
+    padding-left: calc(10px + var(--padding-start) + var(--ion-safe-area-left, 0px));
+    padding-right: calc(10px + var(--padding-end) + var(--ion-safe-area-right, 0px));
+    background-color: var(--ion-color-panel);
+    position: fixed;
+    width: 100%;
+    z-index: 110;
+
+    display: flex;
+    
+    --padding-start: 16px;
+    --padding-end: 16px;
+    
+    @media (max-width: 768px) {
+        --padding-start: 10px;
+    }
+    @media (max-width: 577px) {
+        --padding-start: 0px;
+    }
+
+    ion-col {
+        padding-left: 0;
+        padding-right: 0;
+        .ios & {
+            padding-right: 8px;
+        }
+    }
+
+    .date-col {
+        min-width: 100px;
+        .ios & {
+            min-width: 108px;
+        }
+    }
+    
+}
+
+.main-label {
+    ion-col {
+        position: static;
+    }
+    ion-text {
+        position: absolute;
+        margin-left: 10px;
+    }
+}
+
+.expand {
+    height: 57px;
+}
+
+:host ::ng-deep {
+    ion-item {
+        --min-height: 69.33px;
+        ion-badge {
+            margin-top: 5px;
+        }
+
+        @media (max-width: 992px) {
+            --min-height: 143.33px;
+        }
+    }
+
+    .unused {
+        .item {
+            --ion-item-background: rgba(var(--ion-color-base-rgb), 0.55);
+            .dark & {
+                --ion-item-background: rgba(var(--ion-color-base-rgb), 0.3);
+            }
+            @media (prefers-color-scheme: dark) {
+                --ion-item-background: rgba(var(--ion-color-base-rgb), 0.3);
+            }
+
+            --ion-color-base: var(--ion-color-brown);
+            --ion-color-base-rgb: var(--ion-color-brown-rgb);
+            --ion-color-contrast: var(--ion-color-brown-contrast);
+            --ion-color-contrast-rgb: var(--ion-color-brown-contrast-rgb);
+            --ion-color-shade: var(--ion-color-brown-shade);
+            --ion-color-tint: var(--ion-color-brown-tint);
+
+            .unused-label {
+                position: absolute !important;
+                bottom: -5px;
+                width: 100%;
+                text-align: center;
+                background-color: rgba($color: black, $alpha: 0.4);
+                white-space: normal;
+            }
+        }
+    }
+}

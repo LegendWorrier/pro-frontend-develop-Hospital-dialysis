@@ -1,0 +1,138 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Lab Item Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-badge color="secondary" *ngIf="tmp.isSystemBound" class="system-icon">
+    System : {{ tmp.bound }}
+  </ion-badge>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12" size-sm="6" size-lg="4">
+          <ion-item>
+            <ion-label>Is Positive/Negative Value </ion-label>
+            <ion-checkbox name="isYN" [(ngModel)]="tmp.isYesNo" required [disabled]="!canEdit"></ion-checkbox>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Name: </ion-label>
+            <ion-input name="name" placeholder="Enter name" [(ngModel)]="tmp.name" required [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6" *ngIf="!tmp.isYesNo">
+          <ion-item>
+            <ion-label position="floating">Unit: </ion-label>
+            <ion-input name="unit" placeholder="Enter unit" [(ngModel)]="tmp.unit" required [readonly]="!canEdit"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6">
+          <ion-item>
+            <ion-label position="floating">Category: </ion-label>
+            <ion-select name="category" placeholder="Select Category" [(ngModel)]="tmp.category" [disabled]="!canEdit">
+              <ion-select-option *ngFor="let item of categories" [value]="item.v">{{item.t | pretty}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col size="12" size-sm="6" *ngIf="trtEnable">
+          <ion-item>
+            <ion-label position="floating">TRT: </ion-label>
+            <ion-select name="trt" placeholder="Select Mapping" [(ngModel)]="tmp.trt" [disabled]="!canEdit">
+              <ion-select-option *ngFor="let item of trtMaps" [value]="item.v">{{item.t | pretty}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="spacing-top panel" *ngIf="!tmp.isYesNo">
+        <ion-col>
+          <ion-label>Upper - Lower Limit:</ion-label>
+          <ion-row class="spacing-top-half">
+            <ion-col>
+              Upper Limit
+            </ion-col>
+            <ion-col>
+              Lower Limit
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col>
+              Common / Default
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-input name="upper-c" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.upperLimit"
+                [readonly]="!canEdit"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col>
+              <ion-item>
+                <ion-input name="lower-c" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.lowerLimit"
+                [readonly]="!canEdit"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <ng-container>
+            <ion-row>
+              <ion-col>
+                Male
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-input name="upper-m" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.upperLimitM"
+                  [readonly]="!canEdit"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-input name="lower-m" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.lowerLimitM"
+                  [readonly]="!canEdit"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                Female
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-input name="upper-f" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.upperLimitF"
+                  [readonly]="!canEdit"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col>
+                <ion-item>
+                  <ion-input name="lower-f" type="number" inputmode="decimal" pattern="[0-9]*(\.[0-9])*" placeholder="Value" [(ngModel)]="tmp.lowerLimitF"
+                  [readonly]="!canEdit"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ng-container>
+          
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text id="error" color="danger">{{error}}</ion-text>
+        </ion-col>
+      </ion-row>
+
+      <ion-row *ngIf="canEdit">
+        <ion-col class="btn-group">
+          <ion-button type="submit" (click)="save()" color="greenish" [disabled]="form.invalid">Save</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="editMode"  [disabled]="tmp.isSystemBound" >Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

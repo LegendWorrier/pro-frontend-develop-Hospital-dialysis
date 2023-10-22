@@ -1,0 +1,23 @@
+.value {
+  margin-left: 10px;
+}
+
+.date {
+  font-size: smaller;
+}
+
+ion-toolbar {
+  padding-left: 10px;
+  --min-height: 28px;
+
+  --ion-color-base: #6cb6e0 !important;
+  
+  @media (prefers-color-scheme: dark) {
+    --ion-color-base: var(--ion-color-secondary) !important;
+  }
+
+  .dark & {
+    --ion-color-base: var(--ion-color-secondary) !important;
+  }
+
+}

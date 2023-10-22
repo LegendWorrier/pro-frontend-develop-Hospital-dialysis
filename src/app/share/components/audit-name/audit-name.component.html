@@ -1,0 +1,22 @@
+<ng-container *ngIf="isSystem || id && (auditName() | async) as name; else loading;">
+  <ng-container *ngIf="isSystem">
+    <hemo-stamp></hemo-stamp>
+    <span class="timestamp" *ngIf="date">
+      ({{date | date: 'dd/MM/yy (EE) HH:mm'}})
+    </span>
+  </ng-container>
+  <ng-container *ngIf="!isSystem">
+    <ion-text color="orange">
+      <i>
+        {{ name | pretty }} 
+      </i>
+    </ion-text>
+
+    <span class="timestamp" *ngIf="date">
+      ({{date | date: 'dd/MM/yy (EE) HH:mm'}})
+    </span>
+  </ng-container>
+</ng-container>
+<ng-template #loading>
+  <ion-skeleton-text style="width: 80%;" animated></ion-skeleton-text>
+</ng-template>

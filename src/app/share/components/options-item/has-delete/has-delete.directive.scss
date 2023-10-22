@@ -1,0 +1,35 @@
+app-option-list {
+
+    .deleted {
+        .item {
+            --background:rgb(223, 223, 223);
+            
+            .dark & {
+                --background: rgb(20, 20, 20) !important;
+            }
+            @media (prefers-color-scheme: dark) {
+                --background: rgb(20, 20, 20) !important;
+            }
+
+            ion-label {
+                opacity: 0.5;
+            }
+        }
+
+        &.item-sliding-active-slide .item {
+            --background: rgb(223, 223, 223) !important;
+
+            .dark & {
+                --background: rgb(20, 20, 20) !important;
+            }
+            @media (prefers-color-scheme: dark) {
+                --background: rgb(20, 20, 20) !important;
+            }
+        }
+
+        .del {
+            display: none !important;
+        }
+        
+    }
+}

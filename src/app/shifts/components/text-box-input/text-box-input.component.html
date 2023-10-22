@@ -1,0 +1,23 @@
+<ion-grid>
+  <ion-row>
+    <ion-col class="main">
+      <ion-item>
+        <ion-input
+        [placeholder]="placeholder" 
+        [pattern]="pattern"
+        [(ngModel)]="value" (keyup.enter)="confirm()"></ion-input>
+      </ion-item>
+      <ion-button color="secondary" (click)="confirm()">Ok</ion-button>
+    </ion-col>
+  </ion-row>
+  <ion-row >
+    <ion-col class="info">
+      <ion-text color="medium">{{ hint }}</ion-text>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col class="info">
+      <ion-text color="danger">{{ error }}</ion-text>
+    </ion-col>
+  </ion-row>
+</ion-grid>

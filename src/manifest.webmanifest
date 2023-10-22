@@ -1,0 +1,26 @@
+{
+  "name": "Hemodialysis Pro",
+  "app_name": "Hemodialysis Pro",
+  "short_name": "HemoPro",
+  "description": "Hemodialysis Pro is an application designed for hospital operation, specifically, hemodialysis department. The app will assist nurses and doctors in the daily tasks to attend to patients.",
+  "display_override": ["window-controls-overlay"],
+  "theme_color": "#6dc3ee",
+  "background_color": "#6dc3ee",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "assets/icons/manifest-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "assets/icons/manifest-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+.mat-calendar {
+    max-width: calc(100vh);
+    position: relative;
+    left: max(0px, calc(50% - 50vh));
+}
+
+.cancel-btn {
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+
+    position: sticky;
+    bottom: calc(5px + var(--ion-safe-area-bottom, 0px));
+    z-index: 250;
+}
+
+.unit-label {
+    display: flex;
+    justify-content: center;
+    height: 0px;
+
+    position: sticky;
+    top: calc(5px + var(--ion-safe-area-top, 0px));
+    z-index: 250;
+}

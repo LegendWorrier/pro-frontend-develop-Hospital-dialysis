@@ -1,0 +1,217 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>User Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row [style.marginBottom.px]="user.isAdmin? 10 : 61.67">
+      <ion-badge color="danger" *ngIf="user.isAdmin" class="ion-float-left ion-margin"> Admin </ion-badge>
+      <ion-col class="control-group">
+        <ng-container *ngIf="!inputMode">
+          <ion-button color="secondary" [disabled]="!canEdit" shape="round" fill="outline" class="ion-float-right" (click)="edit()">
+            <ion-label>
+              Edit
+            </ion-label>
+          </ion-button>
+        </ng-container>
+        <ng-container *ngIf="inputMode">
+          <ion-button *ngIf="!addMode" color="danger" shape="round" class="ion-float-right" (click)="cancel()">
+            <ion-label>
+              Cancel
+            </ion-label>
+          </ion-button>
+          <ion-button *ngIf="addMode" color="danger" shape="round" fill="outline" class="ion-float-right" (click)="clear()">
+            <ion-label>
+              Clear
+            </ion-label>
+          </ion-button>
+          <ion-button *ngIf="!addMode" color="success" shape="round" class="ion-float-right" (click)="save()">
+            <ion-label>
+              Save
+            </ion-label>
+          </ion-button>
+          <ion-button *ngIf="addMode" color="success" shape="round" class="ion-float-right" (click)="add()">
+            <ion-label>
+              Add
+            </ion-label>
+          </ion-button>
+        </ng-container>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Username: </ion-label>
+          <ion-input placeholder="Enter Username" [(ngModel)]="user.userName"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Username: </ion-label>
+          <ion-label> {{user.userName}} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6" *ngIf="inputMode">
+        <ion-item>
+          <ion-label position="floating">Password: </ion-label>
+          <ion-input [placeholder]="addMode?'Enter new password':'Change password'"  [(ngModel)]="user.password"></ion-input>
+        </ion-item>
+        <!-- <ion-item *ngIf="!inputMode">
+          <ion-label> Password: </ion-label>
+          <ion-label> {{user.password}} </ion-label>
+        </ion-item> -->
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Fisrt Name: </ion-label>
+          <ion-input placeholder="Enter First Name"  [(ngModel)]="user.firstName"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Fisrt Name: </ion-label>
+          <ion-label> {{user.firstName || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm>
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Last Name: </ion-label>
+          <ion-input placeholder="Enter Last Name"  [(ngModel)]="user.lastName"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Last Name: </ion-label>
+          <ion-label> {{user.lastName || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="12" size-sm>
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Email: </ion-label>
+          <ion-input placeholder="Enter the email" inputmode="email" [(ngModel)]="user.email"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Email: </ion-label>
+          <ion-label> {{user.email || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm>
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Phone Number: </ion-label>
+          <ion-input placeholder="Enter the phone number" inputmode="tel" [(ngModel)]="user.phoneNumber"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Phone Number: </ion-label>
+          <ion-label> {{user.phoneNumber || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="6">
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Role: </ion-label>
+          <ion-select placeholder="Select Role" [(ngModel)]="user.role" [disabled]="user?.isPowerAdmin">
+            <ion-select-option *ngFor="let role of roleOptions" [value]="role">{{role | pretty}}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Role: </ion-label>
+          <ion-label> {{(user.role | pretty) || '-' }} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col size="12" size-sm="6">
+        <ion-item *ngIf="inputMode">
+          <ion-label> Admin: </ion-label>
+          <ion-toggle [(ngModel)]="user.isAdmin" [disabled]="user?.isPowerAdmin"></ion-toggle>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="12" size-sm="6" *ngIf="!user.isPowerAdmin">
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Employee ID: </ion-label>
+          <ion-input placeholder="Enter the employee ID" [(ngModel)]="user.employeeId"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Employee ID: </ion-label>
+          <ion-label> {{user.employeeId || '-'}} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!-- Units and PartTime status -->
+    <ion-row *ngIf="!user.isPowerAdmin">
+      <ion-col size="12" size-sm="6">
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Unit(s): </ion-label>
+          <ion-select placeholder="Select Unit(s)" multiple="true" [(ngModel)]="user.units" *ngIf="unitList; else loading;">
+            <ion-select-option *ngFor="let unit of selectableUnits" [value]="unit.id">{{ unit.name }}</ion-select-option>
+          </ion-select>
+          <ng-template #loading>
+            <ion-spinner></ion-spinner>
+          </ng-template>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Unit(s): </ion-label>
+          <ion-label> {{ user.units | dataname : unitList }} </ion-label>
+        </ion-item>
+      </ion-col>
+      <ion-col >
+        <ion-item *ngIf="inputMode">
+          <ion-label position="floating">Status: </ion-label>
+          <ion-select placeholder="Choose Status" (ionChange)="onStatusChange($event)" [value]="getCurrentStatus()">
+            <ion-select-option *ngFor="let item of statusList" [value]="item.id">{{ item.name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item *ngIf="!inputMode">
+          <ion-label> Status: </ion-label>
+          <ion-label> {{ user.isPartTime ? 'Part Time' : 'Full Time' }} </ion-label>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!-- Signature -->
+    <ion-row class="signature-row">
+      <ion-col size="12" size-sm="2.5" class="signature-label">
+        <ion-label>Signature: <span *ngIf="!inputMode && !user.signature" >-</span></ion-label>
+      </ion-col>
+      <ion-col size="auto">
+        <ion-img *ngIf="src" [src]="src" [style.height]="src?(width > 376?'150px':'90px'):''" style="max-width: 300px;"
+          (click)="chooseSignature()" [style.cursor]="inputMode ? 'pointer':'unset'"></ion-img>
+        <ion-button color="secondary" size="small" (click)="chooseSignature()" *ngIf="inputMode">
+          <ion-icon name="image"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-text id="error" color="danger">{{error}}</ion-text>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!inputMode && !user.isPowerAdmin" class="spacing">
+      <ion-col>
+        <ion-list class="list-panel">
+          <ion-item button (click)="permission()">
+           <ion-icon name="id-card" style="height: 20px;"></ion-icon> Extra Roles & Permissions
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    
+  </ion-grid>
+
+  
+
+  <div class="btn-grp">
+    <ion-button *ngIf="canDelete && !user.isPowerAdmin" color="danger" size="medium" (click)="deleteUser()">Delete</ion-button>
+  </div>
+
+</ion-content>

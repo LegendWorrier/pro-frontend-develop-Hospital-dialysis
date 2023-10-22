@@ -1,0 +1,5 @@
+@media (display-mode: window-controls-overlay) { 
+    ion-app {
+        margin-top: env(titlebar-area-height, var(--fallback-title-bar-height));
+    }
+}

@@ -1,0 +1,24 @@
+.title {
+    font-size: larger;
+    display: block;
+    color: var(--ion-color-dark);
+}
+
+.sub-title {
+    padding-bottom: 15px;
+    display: block;
+    color: var(--ion-color-medium);
+}
+
+.content {
+    @media (max-width: 400px) {
+        padding-right: 10px;
+    }
+}
+
+ion-checkbox {
+    max-width: 100%;
+    .label-text-wrapper {
+        white-space: normal;
+    }
+}

@@ -1,0 +1,92 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="people" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-title>Incharges</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-row [hidden]="info.length === 0">
+    <ion-col>
+      <ion-button *ngIf="!nextMonth" color="secondary-bright" (click)="NextMonth = true">Next Month</ion-button>
+      <ion-button *ngIf="nextMonth" color="medium" (click)="NextMonth = false">Back</ion-button>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="container" #container [hidden]="info.length === 0">
+    <ion-col>
+
+      <ng-container *ngFor="let item of info; let i=index;">
+        
+        <ion-row class="unit-label col-sticky">
+          <ion-col class="col-sticky">
+            <ion-label>{{ getUnit(item.unitId).name }}</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row class="header month-header col-sticky">
+          <ion-col class="col-sticky">{{ month | date: 'MMMM yyyy'}}</ion-col>
+        </ion-row>
+        <ion-row class="header">
+          <ion-col size="2" class="col-sticky">Round/Day</ion-col>
+          <ion-col size="1" *ngFor="let day of days" class="ion-activatable ripple-parent" (click)="daySelect(i, day, $event)" >
+            {{ day }}
+            <ion-ripple-effect></ion-ripple-effect>
+          </ion-col>
+        </ion-row>
+        <ng-container *ngIf="current[i]" >
+          <ion-row *ngFor="let section of item.sections" class="data-row" >
+            <ion-col size="2" class="col-sticky ion-activatable ripple-parent" (click)="sectionSelect(i, section)">
+              {{ startTime(section) | date: 'hh:mm a' }} - {{ endTime(section) | date: 'hh:mm a' }}
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+            <ion-col size="1" *ngFor="let day of days" class="ion-activatable ripple-parent">
+              <ng-container *ngIf="getIncharge(i, day) as incharge; else default">
+                <div *ngIf="getInchargeUser(incharge, section.id) as user; else withIncharge"
+                  class="cell-content-container" (click)="onSelect(i, day, section, $event, incharge, user)">
+                  <ion-label>{{ getName(user) }}</ion-label>
+                </div>
+                <ng-template #withIncharge>
+                  <div class="cell-content-container" (click)="onSelect(i, day, section, $event, incharge)"></div>
+                </ng-template>
+              </ng-container>
+              <ng-template #default>
+                <div class="cell-content-container" (click)="onSelect(i, day, section, $event)"></div>
+              </ng-template>
+              <ion-ripple-effect></ion-ripple-effect>
+            </ion-col>
+          </ion-row>
+          <ion-row class="data-row month-header col-sticky" *ngIf="item.sections.length === 0" >
+            <ion-col class="no-record">
+              <ion-text>
+                No Round Yet
+              </ion-text>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="month-header col-sticky" *ngIf="isChanged(i)" >
+            <ion-col class="ion-text-center">
+              <ion-button class="ion-margin-right" color="greenish" (click)="save(i)">Save Change</ion-button>
+              <ion-button color="danger" (click)="cancel(i)">Cancel</ion-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <ion-row class="data-row month-header col-sticky" *ngIf="!current[i]" >
+          <ion-col>
+            <ion-spinner></ion-spinner>
+          </ion-col>
+        </ion-row>
+      </ng-container>
+
+    </ion-col>
+  </ion-row>
+  <div *ngIf="info.length === 0" class="no-record no-record-middle">
+    <ion-text>Initialize schedule rounds first</ion-text>
+  </div>
+  <app-control-helper #control [step]="331.75"></app-control-helper>
+</ion-content>
+
+<ng-template #menuItem let-item="item">
+  <ion-label [color]="item.value === 'del' ? 'danger' : ''">{{ item.txt }}</ion-label>
+</ng-template>

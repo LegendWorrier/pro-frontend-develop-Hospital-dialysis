@@ -1,0 +1,75 @@
+<ng-container *ngIf="simpleMode" >
+  <ion-item-divider *ngIf="title" >
+    <ion-label>{{title}}</ion-label>
+  </ion-item-divider>
+    <ion-list class="list" *ngIf="filteredData | async as dataList; else loading">
+      <ion-item *ngFor="let item of dataList" button (click)="onSelect(item)" [disabled]="disabledItem(item)">
+        <ng-container *ngIf="templateOverride" >
+          <ng-container *ngTemplateOutlet="templateOverride; context: { item }"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="!templateOverride" >
+          {{ getSearchKey(item) }}
+        </ng-container>
+      </ion-item>
+    </ion-list>
+</ng-container>
+
+<ng-container *ngIf="!simpleMode" >
+  <ion-header appHeaderTheme>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button text=""></ion-back-button>
+      </ion-buttons>
+  
+      <ion-title>{{ title }}</ion-title>
+
+      <ion-buttons slot="end" class="close-btn" *ngIf="closeBtn">
+        <ion-button shape="round" (click)="closeByBtn()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+  
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-searchbar #searchInput inputmode="search" *ngIf="!hideSearch"  [placeholder]="getSearchTxt()" (ionInput)="onSearch($event)" debounce="250" ></ion-searchbar>
+    <ng-container *ngIf="filteredData | async as dataList; else loading">
+      <ng-container *ngIf="hasReload">
+        <ion-row class="update-grp"  >
+          <ion-col>
+            <span>Last Update: <ion-text color="medium"><em>{{ lastUpdateText }}</em></ion-text></span>
+            <ion-fab-button class="reload-btn" size="small" (click)="reload()" color="primary">
+              <ion-icon name="reload"></ion-icon>
+            </ion-fab-button>
+          </ion-col>
+        </ion-row>
+        <ion-item-divider style="min-height: unset;"></ion-item-divider>
+      </ng-container>
+      <cdk-virtual-scroll-viewport #viewport [itemSize]="itemSize" [class.has-reload]="hasReload">
+      
+        <ion-list class="list">
+          <ion-item *cdkVirtualFor="let item of dataList" button (click)="onSelect(item)" [disabled]="disabledItem(item)">
+            <ng-container *ngIf="templateOverride" >
+              <ng-container *ngTemplateOutlet="templateOverride; context: { item }"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="!templateOverride" >
+              {{ getSearchKey(item) }}
+            </ng-container>
+          </ion-item>
+          <div *ngIf="dataList?.length === 0 ?? true" class="no-select empty">
+            <ion-text>No items to display.</ion-text>
+          </div>
+          
+        </ion-list>
+      </cdk-virtual-scroll-viewport>
+    </ng-container>
+  </ion-content>
+</ng-container>
+
+<ng-template #loading>
+  <div class="ion-text-center ion-margin-top" ><ion-spinner></ion-spinner></div>
+</ng-template>
+
+
+
+

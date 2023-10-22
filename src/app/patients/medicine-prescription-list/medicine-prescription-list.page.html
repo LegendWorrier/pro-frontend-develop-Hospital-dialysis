@@ -1,0 +1,123 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="pills" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title>Medicine Prescriptions List</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row class="data-header" *ngIf="width > 992">
+    <ion-col class="date-col">
+      Medicine Name
+    </ion-col>
+    <ion-col>
+      {{ width > 367? 'Frequency' : 'Feq' }}
+    </ion-col>
+    <ion-col>
+      Route
+    </ion-col>
+    <ion-col>
+      Amount
+    </ion-col>
+    <ion-col>
+      Administer Date
+    </ion-col>
+    <ion-col>
+      Expired Date
+    </ion-col>
+    
+  </ion-row>
+  <ion-grid>
+    <ion-row [style.margin-top]="width > 992 ? '40px': null">
+      <ion-col class="ion-text-center">
+        <app-option-list *ngIf="dataList.length !== 0" 
+        hasDelete
+        [canEdit]="canEdit"
+        [data]="dataList" 
+        [options]="canEdit ? [{name:'Copy',color:'secondary-alt'}] : []"
+        [itemClasses]="itemClasses"
+        (selectCallback)="onSelect($event)" 
+        (optionSelectCallback)="onOptionSelect($event)">
+        
+          <ng-template #listContent let-item="item" let-i="index">
+            <ng-container *ngIf="width > 992">
+              <ion-label style="min-width: 100px;">
+                {{ item.medicine.name }} <br>
+                <ion-badge color="primary" *ngIf="isInUse(item) && !item.isExpired"> In-Use </ion-badge>
+                <ion-badge color="medium" *ngIf="item.isExpired"> Expired </ion-badge>
+              </ion-label>
+              <ion-label>
+                {{ getFreq(item.frequency) }}
+              </ion-label>
+              <ion-label>
+                {{ getRoute(item.route) }}
+              </ion-label>
+              <ion-label>
+                {{ getAmount(item) }}
+              </ion-label>
+              <ion-label>
+                {{ item.administerDate | date: 'dd MMM yyyy'}}
+              </ion-label>
+              <ion-label>
+                {{ (getExpire(item) | date: 'dd MMM yyyy') || '-' }}
+              </ion-label>
+            </ng-container>
+            <ng-container *ngIf="width <= 992">
+              <ion-label class="main-label">
+                <ion-row>
+                  <ion-col>
+                    {{ item.medicine.name }} <ion-text color="medium"><p> Admin. Date : {{ item.administerDate | date: 'dd MMM yyyy' }} </p></ion-text>
+                    <br>
+                    <ion-badge color="primary" *ngIf="isInUse(item) && !item.isExpired"> In-Use </ion-badge>
+                    <ion-badge color="medium" *ngIf="item.isExpired"> Expired </ion-badge>
+                  </ion-col>
+                </ion-row>
+                <ion-row [class.expand]="!item.isExpired && !isInUse(item)">
+                  <ion-col>
+                    <ion-label><p> {{ getAmount(item) }} </p></ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label><p>Until: {{ (getExpire(item) | date: 'dd MMM yyyy') || '-' }} </p></ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-label>
+              <ion-label class="second-label">
+                <ion-row>
+                  <ion-col>
+                    <ion-label>
+                      {{ getFreq(item.frequency) }}
+                    </ion-label>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col>
+                    <ion-label>
+                      {{ getRoute(item.route) }}
+                    </ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-label>
+            </ng-container>
+            <ion-label class="unused-label ion-color ion-color-warning" *ngIf="!isInUse(item) && item.isActive">
+              <i>This prescription has never been executed, and newer prescription(s) has obscured this one.</i>
+            </ion-label>
+          </ng-template>
+        </app-option-list>
+        <h4 *ngIf="dataList.length === 0"> No Prescription </h4>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab *ngIf="canEdit" vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="newPrescription()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <show-delete-toggle [(ngModel)]="showDeleted" (onChange)="updateList()" ></show-delete-toggle>
+
+</ion-content>

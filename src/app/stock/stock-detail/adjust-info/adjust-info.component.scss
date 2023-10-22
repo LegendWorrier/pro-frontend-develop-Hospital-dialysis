@@ -1,0 +1,17 @@
+.adjust {
+    background: var(--ion-color-panel);
+    box-shadow: none;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+ion-item-divider {
+    min-height: 5px;
+}
+
+ion-content {
+    --padding-top: 15px;
+    --padding-bottom: 5px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+}

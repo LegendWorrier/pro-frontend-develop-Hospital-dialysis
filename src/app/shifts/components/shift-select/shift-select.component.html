@@ -1,0 +1,18 @@
+<ion-list>
+  <ion-item-divider>
+    Shift Select
+  </ion-item-divider>
+  <ion-item *ngFor="let item of info.sections; let i = index;" >
+    <ion-checkbox [(ngModel)]="selects[i]" labelPlacement="end" justify="start">
+      {{getStartTime(item)|date:'hh:mm a'}} - {{getEndTime(item)|date:'hh:mm a'}}
+    </ion-checkbox>
+  </ion-item>
+  <ion-item button class="all" (click)="all()">
+    <ion-label>
+      All
+    </ion-label>
+  </ion-item>
+</ion-list>
+<ion-buttons>
+  <ion-button size="large" color="primary" (click)="confirm()">Ok</ion-button>
+</ion-buttons>

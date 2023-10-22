@@ -1,0 +1,49 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Unit List</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div class="content-container">
+    <app-masterdata-list
+      [content]="content" 
+      name="unit" 
+      [get]="getUnitList" 
+      [editPage]="editPage"
+      [params]="getParams"
+      [delete]="deleteUnit" 
+      [warning]="warning"
+      [noDelete]="!canDelete"
+      [canEdit]="canEdit"
+      (onUpdateList)="onUpdateList($event)"
+      (onSave)="onSave($event)"
+      minWidth="720"
+      >
+
+      <ng-template #display let-item="item">
+        <ion-label class="code-label ion-hide-sm-down">Code: </ion-label>
+        <ion-label class="code-col">
+          {{ item.code || '-' }}
+        </ion-label>
+
+        <ion-label class="head-nurse-label ion-hide-sm-down">Head Nurse: </ion-label>
+        <ion-label class="head-nurse-col">{{ headNurseName(item.headNurse) || '-'}} 
+          <ion-badge *ngIf="!isHeadNurse(item.headNurse)" color="orange" class="warning" >
+            <ion-icon name="warning"></ion-icon>Not Head Nurse
+          </ion-badge>
+          <ion-badge *ngIf="!isInUnit(item.headNurse, item.id)" color="danger" class="warning" >
+            <ion-icon name="warning"></ion-icon>No Permission
+          </ion-badge>
+        </ion-label>
+      </ng-template>
+
+    </app-masterdata-list>
+  </div>
+</ion-content>

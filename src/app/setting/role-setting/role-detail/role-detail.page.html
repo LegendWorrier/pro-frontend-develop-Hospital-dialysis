@@ -1,0 +1,38 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Role Detail</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-label position="floating">Role Name: </ion-label>
+        <ion-input placeholder="Enter role name" [(ngModel)]="tmp.name" [disabled]="isBuiltIn"></ion-input>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  
+  <app-permission-edit [permissions]="tmp.permissions"></app-permission-edit>
+
+  <ion-row>
+    <ion-col>
+      <ion-text id="error" color="danger">{{error}}</ion-text>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="ion-justify-content-center">
+    <ion-col size="auto">
+      <ion-button color="greenish" (click)="save()">Save</ion-button>
+    </ion-col>
+    <ion-col size="auto" *ngIf="!add && !isBuiltIn">
+      <ion-button color="danger" (click)="deleteRole()">Delete</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

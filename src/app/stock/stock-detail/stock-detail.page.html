@@ -1,0 +1,202 @@
+<app-header [pageName]="'Stock Detail : ' + itemInfo?.name" [icon]="getIcon()" [content]="content" [searchBar]="false" prev="/stocks">
+  <ion-buttons slot="end">
+    <ion-button (click)="openMenu($event)">
+      <ion-icon slot="icon-only" name="chevron-down-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</app-header>
+
+<ion-content #content class="main">
+  <ion-row class="ctl-grp">
+    <ng-container *ngIf="multiUnit">
+      <ion-col size="2.5" size-sm="2" offset="1" offset-sm="0" class="ctl-label">
+        <ion-label>
+          Unit:
+        </ion-label>
+      </ion-col>
+      <ion-col size="6" size-sm="3">
+        <ion-select interface="popover" [value]="selectedUnitId" (ionChange)="onUnitChange($event)">
+          <ion-select-option *ngFor="let item of selectableUnits" [value]="item.id">{{item.name}}</ion-select-option>
+        </ion-select>
+      </ion-col>
+    </ng-container>
+    <!-- Filter -->
+    <ion-col size="2.5" size-sm="2" offset="1" offset-sm="0" class="ctl-label">
+      <ion-label>
+        Before:
+      </ion-label>
+    </ion-col>
+    <ion-col size="6" size-sm="3">
+      <hemo-datetime-item [hasLabel]="false" [(value)]="pointOfTime" displayFormat="YY MMM d">
+        <ion-datetime [(ngModel)]="pointOfTime"
+        presentation="date"
+        [max]="maxDate"
+        [showDefaultButtons]="true"
+        (ngModelChange)="updateFilter()"
+        ></ion-datetime>
+      </hemo-datetime-item>
+    </ion-col>
+    
+  </ion-row>
+
+  <ion-row class="info" [class.multi-unit]="multiUnit">
+    <ion-col>
+      <ion-label>
+        <h1>
+          {{ itemInfo?.name }}
+        </h1>
+      </ion-label>
+    </ion-col>
+  </ion-row>
+
+  <ion-grid style="height: 100%;" >
+    <ion-row class="header-label" [class.multi-unit]="multiUnit">
+      <ion-col class="" size-sm="2.5">
+        Date
+      </ion-col>
+      <ion-col>
+        Type
+      </ion-col>
+      <ion-col>
+        {{ width > 576 ? 'Quantity' : 'Qt.'}}
+      </ion-col>
+      <ion-col *ngIf="width > 576">
+        Unit Price
+      </ion-col>
+      <ion-col *ngIf="width > 576">
+        Total Price
+      </ion-col>
+      <ion-col size="2" size-sm="1.5">
+        {{ width > 576 ? 'Remaining' : width > 395 ? 'Remain' : 'Sum' }}
+      </ion-col>
+    </ion-row>
+
+    <ion-row style="height: 100%;" *ngIf="firstLoad || unitList?.length === 0 || detailList?.length === 0">
+      <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <div *ngIf="!firstLoad" class="no-record no-record-middle"><ion-text>No Stocks</ion-text></div>
+        <ion-spinner *ngIf="firstLoad"></ion-spinner>
+      </ion-col>
+    </ion-row>
+    
+    <ion-row [hidden]="firstLoad || unitList?.length === 0 || detailList?.length === 0">
+      <ion-col>
+        <ion-list>
+          <ion-item *ngFor="let item of detailList" button (click)="onSelect(item)">
+            <ion-col size-sm="2.5">
+              <ion-label>{{ item.entryDate | date: 'dd MMM yy' }}</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label>{{ getTypeLabel(item) }}</ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label [color]="item.isCredit ? 'danger' : 'greenish'">{{ item.isCredit? '-' : '' }}{{ item.quantity }}</ion-label>
+            </ion-col>
+            <ion-col *ngIf="width > 576">
+              <ion-label>{{ (item.pricePerPiece | currency:currencyCode:true:'1.2-2') }}</ion-label>
+            </ion-col>
+            <ion-col *ngIf="width > 576">
+              <ion-label>{{ (item.pricePerPiece * item.quantity | currency:currencyCode:true:'1.2-2') }}</ion-label>
+            </ion-col>
+            <ion-col size="2" size-sm="1.5">
+              <ion-label>{{ item.sum }}</ion-label>
+            </ion-col>
+          </ion-item>
+        </ion-list>
+        <!-- loading -->
+        <app-page-loader #loader *ngIf="unitList?.length > 0" label="Stocks" [(dataList)]="detailList" [retryable]="true" [autoRefresh]="true" [limit]="pageSize"
+        [loadCall]="loadList$" [filter]="where" (onLoadFinish)="onLoadList()" ></app-page-loader>
+      </ion-col>
+    </ion-row>
+  
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="addStock()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="reload-btn" size="small" (click)="reload()" [class.fade]="isTotal" [disabled]="isLoading">
+      <ion-icon name="reload"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<ion-popover #menu [showBackdrop]="false" [dismissOnSelect]="true">
+  <ng-template>
+    <ion-content>
+      <ion-list>
+        <ion-item button (click)="broughtForward()">
+          Brought Forward List
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover>
+
+<ion-modal #bf>
+  <ng-template>
+    <ion-header appHeaderTheme>
+      <ion-toolbar>
+        <ion-title>
+          Brought Forward
+        </ion-title>
+        <ion-buttons slot="end">
+          <ion-button id="close-btn" shape="round" fill="clear" (click)="bf.dismiss()">
+            <ion-icon  name="close-outline" ></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="bf-content">
+      <ion-row class="safe-area">
+        <ion-col>
+          <ion-button size="small" color="greenish" *ngIf="!bfEdit" (click)="bfEdit = true" >Edit</ion-button>
+          <ion-button size="small" fill="outline" *ngIf="bfEdit" (click)="addLot()"><ion-icon name="add"></ion-icon> Add Lot</ion-button>
+          <ion-list *ngIf="bfList; else loading" class="spacing">
+            <ion-item *ngFor="let item of bfLots">
+              <ion-col>
+                <hemo-datetime-item [hasLabel]="false" [(value)]="item.entryDate" displayFormat="dd/MM/yy" lines="none" [readonly]="!bfEdit" >
+                  <ion-datetime name="date" [(ngModel)]="item.entryDate"
+                  presentation="date"
+                  [max]="maxDate"
+                  [showDefaultButtons]="true"
+                  ></ion-datetime>
+                </hemo-datetime-item>
+              </ion-col>
+              <ion-col>
+                <ion-input name="q" label="Quantity" labelPlacement="floating" [(ngModel)]="item.quantity" [readonly]="!bfEdit"></ion-input>
+              </ion-col>
+              <ion-col>
+                <ion-input name="uPrice" label="Unit Price" labelPlacement="floating" [(ngModel)]="item.pricePerPiece" [readonly]="!bfEdit"></ion-input>
+              </ion-col>
+              <ion-col size="auto" *ngIf="bfEdit" (click)="removeLot(item)">
+                <ion-button color="danger">
+                  <ion-icon name="close-outline"></ion-icon>
+                </ion-button>
+              </ion-col>
+            </ion-item>
+            <div *ngIf="bfList.length === 0 && !bfEdit">
+              <ion-text>
+                No Brought Forward Lots.
+              </ion-text>
+            </div>
+          </ion-list>
+
+          <ion-buttons class="edit-ctl" *ngIf="bfEdit">
+            <ion-button color="greenish" (click)="saveBf()">
+              Save
+            </ion-button>
+            <ion-button color="danger" (click)="cancelBfEdit()">
+              Cancel
+            </ion-button>
+          </ion-buttons>
+        </ion-col>
+      </ion-row>
+      
+    </ion-content>
+    <ng-template #loading> <ion-spinner></ion-spinner> </ng-template>
+    
+  </ng-template>
+</ion-modal>

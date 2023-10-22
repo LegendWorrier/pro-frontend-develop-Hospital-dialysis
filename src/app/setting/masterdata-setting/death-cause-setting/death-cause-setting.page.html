@@ -1,0 +1,17 @@
+
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Death Cause {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <app-masterdata-list [content]="content" name="death cause" [get]="getDeathCauseList" [add]="addDeathCause" [edit]="editDeathCause" [delete]="deleteDeathCause" [canEdit]="canEdit">
+
+  </app-masterdata-list>
+</ion-content>

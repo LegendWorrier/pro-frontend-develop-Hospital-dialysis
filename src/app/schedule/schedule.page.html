@@ -1,0 +1,189 @@
+<app-header pageName = "Schedule" [content]="content" [searchBar]="false" [back]="false" [showMenuBtn]="true"></app-header>
+
+<ion-content #content [class.padding-top]="multiUnit">
+  
+  <ion-row class="unit-grp" *ngIf="multiUnit" >
+    <ion-col size="2.5" size-sm="2" class="unit-label">
+      <ion-label>
+        Unit:
+      </ion-label>
+    </ion-col>
+    <ion-col size="5" size-sm="3">
+      <ion-select interface="popover" [value]="selectedUnit" (ionChange)="onUnitChange($event)">
+        <ion-select-option *ngFor="let item of selectableUnits" [value]="item.id">{{item.name}}</ion-select-option>
+      </ion-select>
+    </ion-col>
+  </ion-row>
+
+  <ion-grid class="main-grid" *ngIf="unitList?.length > 0 && schedule; else loading">
+    <ion-row>
+      <ion-col>
+        <ion-row>
+          <ion-col class="title">
+            <ion-title>{{ unitName }}</ion-title>
+            <ion-button size="small" color="greenish" (click)="setting()" *ngIf="authorized" >Config</ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class="panel">
+          <ion-col size="12" size-sm="12" size-lg="4.5">
+            <span>Last Update: <ion-text color="medium"><em>{{ lastUpdateText }}</em></ion-text></span>
+            <ion-fab-button class="reload-btn" size="small" (click)="reload()" color="primary">
+              <ion-icon name="reload"></ion-icon>
+            </ion-fab-button>
+          </ion-col>
+          <ion-col size-lg="auto" class="ion-hide-sm-down">
+            <ion-button class="excel" fill="clear" (click)="excel()">
+              <ion-icon name="excel-file"></ion-icon>
+            </ion-button>
+          </ion-col>
+          <ion-col class="schedule-btn" size="12" size-sm="4" size-lg="3" >
+            <ion-button color="secondary" (click)="patientSchedule()" *ngIf="!isSwapMode && !isRescheduleMode" >
+              Patient Schedule
+            </ion-button>
+
+            <ion-button color="danger" (click)="cancel()" *ngIf="isSwapMode || isRescheduleMode">
+              Cancel
+            </ion-button>
+          </ion-col>
+          <ion-col class="option-grp">
+            <ion-row style="width: 100%;">
+              <ion-col class="ion-hide-sm-up">
+                <ion-button class="excel" fill="clear" (click)="excel()">
+                  <ion-icon name="excel-file"></ion-icon>
+                </ion-button>
+              </ion-col>
+
+              <ion-col class="options">
+                <ion-toggle [checked]="!isClearMode && weekMode" [(ngModel)]="weekMode" [disabled]="isSwapMode || isRescheduleMode || isClearMode">
+                  Week Mode
+                </ion-toggle>
+              </ion-col>
+              <ion-col class="options">
+                <ion-toggle [(ngModel)]="showCount">Show Count</ion-toggle>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+        <ion-row class="schedule-container">
+          <ion-col>
+            <ion-row class="header">
+              <ion-col size="1.2" class="col-sticky" [class.week-ctl]="weekMode">
+                <ion-label *ngIf="!weekMode || isClearMode" >Round\Day</ion-label>
+                <ng-container *ngIf="weekMode && !isClearMode" >
+                  <button mat-icon-button (click)="prev()" [disabled]="week === 0">
+                    <ion-icon name="chevron-back"></ion-icon>
+                  </button>
+                  <ion-row class="label-grp">
+                    <ion-label>Round\Day</ion-label>
+                    <ion-card-subtitle>{{weekName}}</ion-card-subtitle>
+                  </ion-row>
+                  <button mat-icon-button (click)="next()" [disabled]="week === weekLimit">
+                    <ion-icon name="chevron-forward"></ion-icon>
+                  </button>
+                </ng-container>
+              </ion-col>
+              <ion-col size="1"><ion-label>Mon</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(0, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Tue</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(1, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Wed</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(2, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Thu</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(3, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Fri</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(4, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Sat</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(5, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+              <ion-col size="1"><ion-label>Sun</ion-label><br><ion-card-subtitle *ngIf="weekMode && !isClearMode">({{ getDateFromDay(6, week) | date: 'd MMM' }})</ion-card-subtitle></ion-col>
+            </ion-row>
+            <ion-row *ngFor="let item of schedule.sections" class="data-row" >
+              <ion-col size="1.2" class="col-sticky">
+                <ion-label>{{ item.section.start | date: 'hh:mm a' }} - {{ endTime(item.section) | date: 'hh:mm a' }}</ion-label>
+              </ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[0]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[0] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[1]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[1] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[2]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[2] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[3]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[3] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[4]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[4] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[5]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[5] }"></ng-container></ion-col>
+              <ion-col size="1" [class.long-list]="getSlotPatients(item.slots[6]).length > 4"><ng-container *ngTemplateOutlet="slot; context: { item:item.slots[6] }"></ng-container></ion-col>
+            </ion-row>
+            
+            <ng-template #slot let-item="item" >
+              <div class="count-label-wrapper" [class.long-list]="getSlotPatients(item).length > 4" *ngIf="showCount" >
+                <ion-label class="count-label"> {{item.patientList.length}}
+                  <br>
+                  <ion-card-subtitle *ngIf="weekMode">({{getSlotPatients(item).length}})</ion-card-subtitle></ion-label>
+              </div>
+              <input class="picker-input-dummy" [matDatepicker]="picker" (dateChange)="onDateConfirm($event)">
+              <mat-datepicker [touchUi]="useTouchMode" [calendarHeaderComponent]="header" #picker>
+                <mat-datepicker-actions>
+                  <ion-row class="ion-text-center" style="width: 100%;">
+                    <ion-col>
+                      <ion-label>{{ getUnitName(rescheduleData?.unitId) }}</ion-label>
+                      <ion-label *ngIf="isDateSelected"><br>{{ lastSelectedDate | date: 'EEE, dd MMM  hh:mm a' }}</ion-label>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row>
+                    <ion-col>
+                      <ion-button color="secondary" (click)="onFindButton($event)">Find Nearest Available</ion-button>
+                    </ion-col>
+                    <ion-col *ngIf="multiUnit || isRequest">
+                      <ion-button color="orange" (click)="onChooseUnit()">Choose Unit</ion-button>
+                    </ion-col>
+                    <ion-col>
+                      <ion-button color="greenish" matDatepickerApply [disabled]="!isDateSelected">Confirm</ion-button>
+                    </ion-col>
+                  </ion-row>
+                  <ion-icon class="scroll-down" name="scroll-down" *ngIf="isCalendarOverflow" ></ion-icon>
+                </mat-datepicker-actions>
+              </mat-datepicker>
+              <ion-list class="slot-list" *ngIf="getSlotPatients(item).length > 0" >
+                <ion-item *ngFor="let patient of getSlotPatients(item)" button [detail]="false" 
+                  (click)="onSlotSelect(item, patient, $event, picker)"
+                  [class.selected]="isSelected(patient, item)"
+                  [disabled]="isSameOrSchedule(patient) || isRescheduleMode" >
+                  <ion-label *ngIf="!patient.date" >{{ getName(patient) }}</ion-label>
+                  <ion-card-subtitle *ngIf="patient.date">{{ getName(patient) }}</ion-card-subtitle>
+                </ion-item>
+              </ion-list>
+              <ion-fab-button *ngIf="!isRescheduleMode && !isSwapMode && !isClearMode" 
+                class="slot-add-btn" color="primary" (click)="slotAdd(item)"><ion-icon name="add"></ion-icon></ion-fab-button>
+              <ion-button *ngIf="!isRescheduleMode && !isSwapMode && isClearMode"
+                color="danger" class="slot-clear-btn" size="small" (click)="slotClear(item)">Clear</ion-button>
+              <ion-button *ngIf="isRescheduleMode && !isCurrentSlot(item)" size="small"
+              class="reschedule-btn" color="greenish" (click)="reschedule(item)" [hidden]="isFullOrOccupied(item)">
+                Select <ion-icon name="caret-up"></ion-icon>
+              </ion-button>
+              <ion-button *ngIf="isRescheduleMode && isCurrentSlot(item)" size="small"
+              class="reschedule-btn" color="danger" (click)="onRescheduleCancel()">
+                Cancel
+              </ion-button>
+              
+            </ng-template>
+            
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col>
+            <ion-button color="danger" size="small" (click)="isClearMode = !isClearMode">Toggle Clear Mode</ion-button>
+          </ion-col>
+        </ion-row>
+        
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <ion-grid class="loading-grid">
+      <ion-row>
+        <ion-col>
+          <div class="no-record-middle">
+            <ion-spinner *ngIf="isLoading" ></ion-spinner>
+            <div class="retry">
+              <ion-icon *ngIf="!isLoading" name="reload" (click)="reload()"></ion-icon>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
+
+</ion-content>

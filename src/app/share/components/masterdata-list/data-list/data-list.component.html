@@ -1,0 +1,112 @@
+<ion-list *ngIf="!loading && data.length > 0; else init">
+  <ng-container *ngFor="let item of data; let i=index;">
+    <!-- for mobile screen size -->
+    <ion-item-sliding #sliding *ngIf="(Width <= 767 && mobileVersion) || !desktopVersion" [disabled]="item.editing || item.adding || !canEdit">
+      <!-- Display -->
+      <ng-container *ngIf="!(item.editing || item.adding)" >
+        <ng-container *ngTemplateOutlet="displayT; context: { item, i, sliding }"></ng-container>
+      </ng-container>
+
+      <!-- Edit  -->
+      <ng-container *ngIf="item.editing || item.adding" >
+        <ng-container *ngTemplateOutlet="editT; context: { item, i, sliding }"></ng-container>
+      </ng-container>
+      
+      <ion-item-options side="end" >
+        <ng-container *ngTemplateOutlet="options; context: { item, sliding }"></ng-container>
+      </ion-item-options>
+    </ion-item-sliding>
+    <!-- for wider screen size  -->
+    <ng-container *ngIf="(Width > 767 && desktopVersion) || !mobileVersion">
+      <!-- Display -->
+      <ng-container *ngIf="!(item.editing || item.adding)" >
+        <ng-container *ngTemplateOutlet="displayT; context: { item, i, options }"></ng-container>
+      </ng-container>
+
+      <!-- Edit  -->
+      <ng-container *ngIf="item.editing || item.adding" >
+        <ng-container *ngTemplateOutlet="editT; context: { item, i }"></ng-container>
+      </ng-container>
+    </ng-container>
+
+  </ng-container>
+
+
+  <!-- Display Template -->
+  <ng-template #displayT let-item="item" let-sliding="sliding" let-i="i" let-options="options">
+    <ion-item [hidden]="item.editing || item.adding" [button]="Width <= 767 || editPage" (click)="(Width <= 767 && canEdit) || editPage ? editMode(item, sliding):null" >
+      <ion-note slot="start"> {{i + 1}} </ion-note>
+      <ng-container *ngFor="let tp of displayList" >
+        <ng-container *ngTemplateOutlet="tp; context: { item: item }"></ng-container>
+      </ng-container>
+      
+      <ng-container *ngIf="options" >
+        <ng-container *ngTemplateOutlet="options; context: { class: 'list-item', item }"></ng-container>
+      </ng-container>
+    </ion-item>
+  </ng-template>
+
+  <!-- Edit Template -->
+  <ng-template #editT let-item="item" let-sliding="sliding" let-i="i" > 
+    <ion-item>
+      <ion-note slot="start"> {{i + 1}} </ion-note>
+      <ng-container *ngIf="!minWidth || Width > minWidth" >
+        <ng-container *ngFor="let tp of editList" >
+          <ng-container *ngTemplateOutlet="tp; context: { item: item }"></ng-container>
+        </ng-container>
+      </ng-container>
+      
+      <div *ngIf="minWidth > 0 && Width < minWidth" class="compact-container" >
+        <ng-container *ngFor="let tp of editList" >
+          <div class="compact-grp">
+            <div>
+              <ng-container *ngTemplateOutlet="tp; context: { item: item }"></ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <ion-item-option color="success" (click)="add(item)" class="list-item" *ngIf="item.adding && canEdit">Add</ion-item-option>
+      <ion-item-option color="success" (click)="edit(item)" class="list-item" *ngIf="!item.adding && canEdit" tabindex="1">
+        <ion-icon name="checkmark" class="ion-hide-sm-up"></ion-icon>
+        <ion-text class="ion-hide-sm-down" >Confirm</ion-text>
+      </ion-item-option>
+      <ion-item-option color="danger" (click)="cancel(item);" class="list-item" tabindex="2">
+        <ion-icon name="close-outline" class="ion-hide-sm-up"></ion-icon>
+        <ion-text class="ion-hide-sm-down" >Cancel</ion-text>
+      </ion-item-option>
+    </ion-item>
+  </ng-template>
+
+  <!-- Options Template -->
+  <ng-template #options let-class="class" let-item="item" let-sliding="sliding">
+    <ion-item-option *ngIf="!editPage && canEdit" (click)="editMode(item, sliding)" [class]="class">Edit</ion-item-option>
+    <ion-item-option *ngIf="!noDelete && canEdit" (click)="$event.stopPropagation(); delete(item, sliding);" [class]="class"
+    color="danger" [disabled]="!canDel(item)" >Delete</ion-item-option>
+  </ng-template>
+
+  <ion-text id="error" color="danger">{{error}}</ion-text>
+</ion-list>
+<ng-template #init>
+  <ng-container *ngIf="loading" >
+    <ion-skeleton-text animated ></ion-skeleton-text>
+    <ion-skeleton-text animated ></ion-skeleton-text>
+    <ion-skeleton-text animated ></ion-skeleton-text>
+
+    <ion-spinner></ion-spinner>
+  </ng-container>
+
+  <ng-container *ngIf="!loading" >
+    <ion-text class="no-data">No Data</ion-text>
+  </ng-container>
+  
+  <ng-container *ngIf="networkError" >
+    <ion-text class="network-error">Could not load the data</ion-text>
+  </ng-container>
+</ng-template>
+
+<ion-fab vertical="bottom" horizontal="center" slot="fixed" *ngIf="!addMode && canEdit">
+  <ion-fab-button center bottom (click)="addNew()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

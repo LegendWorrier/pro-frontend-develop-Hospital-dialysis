@@ -1,0 +1,91 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="today" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-title>Next Months</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-grid *ngIf="!isLoading; else loading">
+    <app-sheet-control [content]="content"
+      (onSheetChange)="onSheetChange($event)"
+      (onFilter)="updateFilter($event)"
+      [canFilter]="!editSelf"
+      [mainColW]="8"
+      [mainOffset]="width > 637 ? '0': '2'"
+      >
+      <ion-col class="extra-option label" 
+      size="2.5" 
+      size-sm="1.6"
+      offset="1.5"
+      [offsetSm]="width > 637 ? '0': '2'">
+        <ion-label>
+          Month:
+        </ion-label>
+      </ion-col>
+      <ion-col class="extra-option" size="5" [sizeSm]="width > 637 ? '2.4' : '3'" size-xl="auto">
+        <ion-select name="month" [(ngModel)]="selectedMonthIndex" interface="popover" (ionChange)="onMonthChange($event)">
+          <ion-select-option *ngFor="let item of monthList; let i = index" [value]="i"> {{ item | date: 'MMMM yyyy' }} </ion-select-option>
+        </ion-select>
+      </ion-col>
+      <ion-col [size]="Width > 482 ? 'auto' : 12" class="control-grp" *ngIf="!isAuthorized" >
+        <ion-button color="secondary" (click)="editSelf = true" *ngIf="!editSelf" >
+          Request
+        </ion-button>
+      </ion-col>
+    </app-sheet-control>
+
+    <app-shifts-table #table
+      [colors]="colors"
+      [isMain]="isMain"
+      [multiUnit]="multiUnit"
+      [isEditable]="isEditable"
+      [allNurseUsers]="allNurseUsers"
+      [unitList]="unitList"
+
+      [data]="editSelf ? [getSelf()] : userShifts"
+
+      [days]="days"
+      [month]="month"
+
+      (onExport)="excel()"
+      
+      (onSlotSelect)="slotSelect($event[0], $event[1], $event[2], $event[3])"
+      (onGlobalSelect)="globalSelect($event[0], $event[1])"
+    >
+    </app-shifts-table>
+    
+    <ion-row>
+      <ion-col>
+        <ion-label color="danger">{{ error }}</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="isChanged || editSelf" >
+      <ion-col class="ion-text-center">
+        <ion-button class="ion-margin-right" color="greenish" (click)="editSelf ? updateSelf() : save()">Save Change</ion-button>
+        <ion-button color="danger" (click)="cancel(); editSelf = false;">Cancel</ion-button>
+      </ion-col>
+    </ion-row>
+
+    <app-control-helper #control [autoSetup]="false" [step]="304.4"></app-control-helper>
+
+  </ion-grid>
+
+  <ng-template #loading>
+    <ion-grid class="loading-grid">
+      <ion-row>
+        <ion-col>
+          <div class="no-record-middle">
+            <ion-spinner *ngIf="isLoading" ></ion-spinner>
+            <div class="retry">
+              <ion-icon *ngIf="!isLoading" name="reload" (click)="reload()"></ion-icon>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template>
+
+</ion-content>

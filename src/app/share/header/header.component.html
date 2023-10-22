@@ -1,0 +1,40 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start" class="page-icon" *ngIf="icon">
+      <ion-icon [name]="icon"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start" *ngIf="back || prev">
+      <app-back-btn-group [prev]="prev"></app-back-btn-group>
+    </ion-buttons>
+    
+    <ion-buttons slot="secondary">
+      <ion-button (click)="profile()">
+        <ion-icon slot="icon-only" name="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  
+    <ion-title>
+      <p>{{pageName}}</p>
+    </ion-title>
+  
+    <ion-buttons slot="primary">
+      <ion-button id="noti-btn" (click)="showNoti($event)">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      
+      <ion-badge *ngIf="unreadNoti" color="danger" class="noti-badge">{{unreadNoti}}</ion-badge>
+    </ion-buttons>
+    
+    <ng-content select="not:(.header-addon) ion-buttons"></ng-content>
+    <ng-content></ng-content>
+    <ion-buttons slot="end" *ngIf="showMenuBtn">
+      <ion-menu-button [autoHide]="true"></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <ion-toolbar class="searchbar" *ngIf="searchBar" mode=ios [appScrollHide]="headerScrollConfig" [content]="content">
+    <ion-searchbar [debounce]="350" (ionInput)="onSearchEvent($event)" (ionClear)="onClearEvent()" [placeholder]="searchPlacehodler"></ion-searchbar>
+  </ion-toolbar>
+
+  <ng-content select=".header-addon"></ng-content>
+</ion-header>

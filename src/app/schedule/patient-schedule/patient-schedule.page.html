@@ -1,0 +1,32 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="calendar-number" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+
+    <ion-title> Schedule: {{ patient.name }} </ion-title>
+    
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div *ngIf="crossUnit" class="unit-label" >
+    <ion-chip color="secondary">{{ getUnitLabel(crossUnit) }}</ion-chip>
+  </div>
+  <div class="calendar-wrapper">
+    <mat-calendar #calendar [dateClass]="dateClass" [dateFilter]="dateFilter" (selectedChange)="saveSelectDate($event)">
+    </mat-calendar>
+  </div>
+  <ion-row *ngIf="currentSelected" class="cancel-btn" >
+    <ion-col size="auto">
+      <ion-button color="secondary" (click)="findNearest($event)">
+        Find nearest available
+      </ion-button>
+    </ion-col>
+    <ion-col size="auto">
+      <ion-button color="danger" (click)="cancel()">
+        Cancel
+      </ion-button>
+    </ion-col>
+  </ion-row>
+</ion-content>

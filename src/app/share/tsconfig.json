@@ -1,0 +1,15 @@
+{
+  "extends": "../../../server/tsconfig-base.json",
+  "include": [
+    "guid.ts",
+    "audit.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "../../../server/dist",
+    "composite": true, // needed for references sub-projects
+    "rootDir": ".",
+    "tsBuildInfoFile": "../../../server/dist/srcbuildinfo-share",
+    "strict": false,
+    "strictNullChecks": false
+  }
+}

@@ -1,0 +1,145 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="med-history" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title> Med History : {{patient.name}}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <ion-row class="header-panel" [appScrollHide]="configHeader" [content]="content" [canScrollSelf]="true">
+    <ion-col class="custom-col" [class.ion-hide-sm-down]="filterDate">
+      <ng-container *ngIf="!filterDate">
+        <ion-label>From: </ion-label>
+        <div class="select-date" (click)="dt.present()" >
+          <ion-label>{{ (customFilterDate | date: 'd MMM yy') || 'Select...' }}</ion-label>
+          <ion-popover #dt [keepContentsMounted]="true" class="hemo-calendar">
+            <ng-template>
+              <ion-datetime presentation="date" [(ngModel)]="customFilterDate" (ionChange)="updateUpper()" [showDefaultButtons]="true" >
+                
+              </ion-datetime>
+            </ng-template>
+          </ion-popover>
+        </div>
+      </ng-container>
+    </ion-col>
+    <ion-col *ngIf="!filterDate" >
+      <ion-label>Up until: </ion-label>
+      <div class="select-date" [class.active]="customFilterDate" (click)="dt.present()">
+        <ion-label>{{ (upperlimit | date: 'd MMM yy') || 'Select...' }}</ion-label>
+        <ion-popover #dt [keepContentsMounted]="true" class="hemo-calendar">
+          <ng-template>
+            <ion-datetime presentation="date" [(ngModel)]="upperlimit" [min]="customFilterDate" [showDefaultButtons]="true" >
+
+            </ion-datetime>
+          </ng-template>
+        </ion-popover>
+      </div>
+    </ion-col>
+    
+    <ion-col size="12" size-sm="7" class="ion-no-padding">
+      <ion-row class="ion-align-items-center">
+        <ion-col *ngIf="!filterDate" class="search-btn ion-text-center" size="3.5" >
+          <ion-button color="secondary" (click)="update(true)" >
+            Search
+          </ion-button>
+        </ion-col>
+        <ion-col class="filter-box" size="5" [sizeXl]="width>1600?'3':'4'" push="3.5" push-sm="0" >
+          <ion-item>
+            <ion-select placeholder="Select filter" interface="popover" [(ngModel)]="filterDate" (ionChange)="update()">
+              <ion-select-option *ngFor="let item of filterList" [value]="item.v">{{ item.t }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+        <ion-col class="excel-btn-col">
+          <ion-button fill="clear" (click)="excel()">
+            <ion-icon name="excel-file"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-col>
+    
+  </ion-row>
+  
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ng-container *ngIf="medHistoryResult; else loading">
+          <div class="table-wrapper">
+            <table mat-table #table [dataSource]="medHistoryResult.data" aria-label="med-history">
+              <ng-container matColumnDef="name" sticky>
+                <th mat-header-cell *matHeaderCellDef> Name/Date </th>
+                <td mat-cell *matCellDef="let row"> {{ row.key.name }} </td>
+              </ng-container>
+              <ng-container *ngFor="let item of medHistoryResult.columns; let colIndex = index" matColumnDef={{item}}>
+                <th mat-header-cell *matHeaderCellDef> {{item|date: 'MMM dd, yyyy'}} </th>
+                <td mat-cell *matCellDef="let row">
+                  <ion-item button lines="none" (click)="detail(row.key, row.value[colIndex][0])" *ngIf="row.value[colIndex].length == 1" >
+                    <ng-container *ngTemplateOutlet="medItem; context: { med: row.value[colIndex][0] }"></ng-container>
+                  </ion-item>
+                  <ion-item button lines="none" (click)="detailMulti($event, row.key, row.value[colIndex])" *ngIf="row.value[colIndex].length > 1" >
+                    <ng-container *ngTemplateOutlet="medItem; context: { med: row.value[colIndex][row.value[colIndex].length-1], multi: true }"></ng-container>
+                  </ion-item>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="getColumns(); sticky: true"></tr>
+              <tr mat-row *matRowDef="let row; columns: getColumns();"></tr>
+            </table>
+            <div *ngIf="medHistoryResult && medHistoryResult.data.length === 0" class="no-record no-record-middle"> <ion-text>No Data</ion-text> </div>
+          </div>
+        </ng-container>
+
+        <ng-template #medItem let-med="med" let-multi="multi">
+          <ion-label>{{med.quantity}} 
+            {{ (med.overrideDose ?? med.medicine.dose) ? " x " + (med.overrideDose ?? med.medicine.dose) : "" }} 
+            {{ (med.overrideUnit??med.medicine.doseUnit) || "pcs" }}
+
+            <span *ngIf="(med.overrideDose ?? med.medicine.dose)">
+              (= {{ (med.overrideDose ?? med.medicine.dose)*med.quantity }} {{ (med.overrideUnit??med.medicine.doseUnit) || "pcs" }})
+            </span>
+          </ion-label>
+          
+          <ion-text *ngIf="multi" color="medium" class="multi-value"><em>(...more)</em></ion-text>
+        </ng-template>
+
+        <!-- <ion-popover #multiPop >
+          <ng-template>
+            <ion-header>
+              <ion-toolbar color="secondary">
+                {{lab.name}} : {{ items[0].entryTime | date: 'MMM dd, yyyy' }}
+              </ion-toolbar>
+            </ion-header>
+            <ion-row>
+              <ion-col>
+                <ion-list>
+                  <ion-item button (click)="confirm(item)"  *ngFor="let item of items" >
+                    <ion-text color="medium" class="date">({{item.entryTime | date: 'hh:mm a'}})</ion-text>: <span class="value">{{item.labValue}}</span>
+                  </ion-item>
+                </ion-list>
+              </ion-col>
+            </ion-row>
+          </ng-template>
+        </ion-popover> -->
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ng-template #loading>
+    <div class="loading-div">
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="newMed()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

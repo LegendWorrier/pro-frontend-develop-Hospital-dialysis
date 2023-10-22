@@ -1,0 +1,25 @@
+.retry-btn {
+    display: inline-grid;
+    width: 100%;
+    cursor: pointer;
+    font-size: 18px;
+    justify-items: center;
+    ion-icon {
+        --ionicon-stroke-width: 35px;
+        font-size: 20px;
+    }
+
+    margin-top: 20px;
+
+    &:hover {
+        color: var(--ion-color-medium);
+    }
+
+
+}
+
+:host ::ng-deep {
+    .override-display .infinite-loading {
+            display: block;
+    }
+}

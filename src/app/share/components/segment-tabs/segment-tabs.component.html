@@ -1,0 +1,9 @@
+<ion-segment mode="md" (ionChange)="onChange()" [(ngModel)]="value" (touchend)="ontouchend($event)">
+  <ion-segment-button *ngFor="let t of tabs" [value]="t.name" [disabled]="isDisabled(t.name)">
+    <ion-icon [name]="t.icon" class="ion-hide-sm-up"></ion-icon>
+    <ion-label> <ion-icon [name]="t.icon" class="ion-hide-sm-down"></ion-icon>
+      <span class="ion-hide-sm-down"> {{ t.display }} </span>
+      <span class="ion-hide-sm-up"> {{ t.shortDisplay || t.display }} </span>
+    </ion-label>
+  </ion-segment-button>
+</ion-segment>

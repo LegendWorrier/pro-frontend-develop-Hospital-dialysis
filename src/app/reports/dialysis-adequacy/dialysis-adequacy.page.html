@@ -1,0 +1,105 @@
+<app-header pageName = "Dialysis Adequacy"
+[content]="content"
+[searchBar]="true"
+placeholder="Search by Name, ID, HN or use custom search"
+prev="/reports"
+(onSearch)="onSearch($event)"></app-header>
+
+<ion-content #content>
+  <ion-grid style="height: 100%;" *ngIf="firstLoad || patients?.length === 0">
+    <ion-row style="height: 100%;">
+      <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <h1 *ngIf="!firstLoad">No Patient</h1>
+        <ion-spinner *ngIf="firstLoad"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+    
+  <ion-grid [class.hide]="!(patients?.length > 0)">
+    <ion-row>
+      <ion-col>
+        <ion-list>
+
+          <ion-row>
+            <ion-col *ngFor="let p of patients" size="12" [attr.size-md]="patients.length > 1 ? '6' : '12'">
+
+              <ion-item button (click)="showReport(p, monthPicker)" >
+                
+                <ion-label class="main-label">
+                  <ion-row>
+                    <ion-col>
+                      <h2>
+                        <ion-text color="primary-bright"><b> {{ p.name }} </b></ion-text>
+                      </h2>
+                    </ion-col>
+                    <ion-col >
+                      <ion-label>
+                        <p>{{ p.hospitalNumber }}</p>
+                      </ion-label>
+                    </ion-col>
+                    <ion-col>
+                      <ion-text color="tertiary" *ngIf="multiUnit" class="ion-float-right"><p>{{ getUnit(p.unitId) }}</p></ion-text>
+                    </ion-col>
+                  </ion-row>
+                </ion-label>
+
+              </ion-item>
+
+            </ion-col>
+          </ion-row>
+          
+        </ion-list>
+        <!-- loading -->
+        <app-page-loader #loader label="Patients" [(dataList)]="patients" [retryable]="true" [autoRefresh]="true"
+        [loadCall]="loadPatients$" (firstLoadEvent)="firstLoad = $event" [filter]="searchString" ></app-page-loader>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-popover [keepContentsMounted]="true" >
+  <ng-template>
+    <ion-datetime id="month-picker" presentation="month-year" [(ngModel)]="selectedMonth">
+    </ion-datetime>
+  </ng-template>
+</ion-popover>
+
+<ion-modal #monthPicker >
+  <ng-template>
+    <ion-header appHeaderTheme>
+      <ion-toolbar>
+        <ion-title>
+          Patient: {{ selectedPatient.name }}
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-card-header>
+        <ion-row>
+          <ion-col size="auto" class="ion-align-self-center">
+            <ion-label>
+              Select Month:
+            </ion-label>
+          </ion-col>
+          <ion-col size="auto">
+            <ion-datetime-button datetime="month-picker"></ion-datetime-button>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="auto">
+          <ion-button color="secondary" (click)="monthPicker.dismiss(selectedMonth, 'ok')">
+            Confirm
+          </ion-button>
+        </ion-col>
+        <ion-col size="auto">
+          <ion-button color="danger" (click)="monthPicker.dismiss()">
+            Cancel
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-content>
+    
+  </ng-template>
+</ion-modal>

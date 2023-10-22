@@ -1,0 +1,8 @@
+{
+  "name": "Hemodialysis Pro",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular",
+  "id": "de29ad82"
+}

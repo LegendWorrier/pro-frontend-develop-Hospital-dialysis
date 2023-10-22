@@ -1,0 +1,37 @@
+<ng-container *ngIf="(dataList | async) as list; else loading">
+  <ion-item *ngIf="list.length > 0" [lines]="lines">
+    <ion-label position="floating" class="ion-hide-sm-up"> {{ label }} <ion-text color="danger" *ngIf="required">*</ion-text></ion-label>
+    <ion-select [name]="name" [placeholder]="placeholder" [(ngModel)]="value" (ionChange)="notify($event)" class="full-h-sm-up" 
+    [required]="required" 
+    [disabled]="disabled" 
+    [selectedText]="selectedText"
+    [interfaceOptions]="{header: label}">
+      <ng-container *ngFor="let item of list; let index = index;">
+        <ng-container *ngTemplateOutlet="itemTemplate; context: getItemContext(item, list, index)"></ng-container>
+      </ng-container>
+    </ion-select>
+  </ion-item>
+  <ng-container *ngIf="(!list || list.length === 0) && !custom">
+    <ion-label class="ion-hide-sm-up" style="margin-right: 10px;"> {{ label }} <ion-text color="danger" *ngIf="required">*</ion-text></ion-label>
+    <ion-button color="greenish" (click)="addNew()">
+      <ion-icon name="add" style="margin-right: 5px; --padding-start: 10px;"></ion-icon>
+      {{ (width > 576? 'New ' : '') + (buttonName? buttonName : label) }}
+    </ion-button>
+  </ng-container>
+  <ng-container *ngIf="(!list || list.length === 0) && custom">
+    <ion-item *ngIf="isCustomString" lines="none" class="custom-string">
+      <ion-label position="floating" class="ion-hide-sm-up"> {{ label }} <ion-text color="danger" *ngIf="required">*</ion-text></ion-label>
+      <div #empty style="min-height: 56px; display: flex; align-items: center;"></div>
+    </ion-item>
+    
+    <div #empty style="min-height: 56px; display: flex; align-items: center;" *ngIf="!isCustomString"></div>
+  </ng-container>
+  
+</ng-container>
+<ng-template #loading>
+  <ion-item [lines]="lines">
+    <ion-label position="floating" class="ion-hide-sm-up"> {{ label }} <ion-text color="danger" *ngIf="required">*</ion-text></ion-label>
+    <ion-select [placeholder]="placeholder" class="full-h-sm-up" disabled [interfaceOptions]="{header: label}"></ion-select>
+    <ion-spinner></ion-spinner>
+  </ion-item>
+</ng-template>

@@ -1,0 +1,45 @@
+
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-list>
+        <ion-item *ngFor="let item of notifications" class="noti-item"
+        [class.new]="!item.isRead"
+        [class.expired]="isExpired(item)"
+        [class.approved]="isApproved(item)"
+        [class.denied]="isDenied(item)"
+        [class.invalid]="isInvalid(item)"
+        [class.no-select]="!canAction(item)"
+        [button]="canAction(item)"
+        (click)="canAction(item) ? notiAction(item) : undefined"
+        >
+          <div class="content">
+            <ion-text class="title"> {{ item.Title }}</ion-text>
+            <span class="detail">
+              <ion-text [innerHTML]="getSanitizedDetail(item)"></ion-text>
+            </span>
+            <ion-text class="time-label">{{getCreateLabel(item.Created)}}</ion-text>
+          </div>
+          <!-- indicator -->
+          <ion-text *ngIf="isApproved(item)" color="greenish" class="indicator">Approved</ion-text>
+          <ion-text *ngIf="isDenied(item)" color="danger" class="indicator">Rejected</ion-text>
+          <ion-text *ngIf="isInvalid(item)" color="danger" class="indicator">Invalid</ion-text>
+        </ion-item>
+      </ion-list>
+      <div class="no-record no-record-middle" *ngIf="notifications.length === 0">
+        <ion-text>No Notification</ion-text>
+      </div>
+    </ion-col>
+  </ion-row>
+  <ion-row class="ion-no-padding" *ngIf="moreCount">
+    <ion-col class="ion-no-padding ion-text-center">
+      <ion-badge color="danger" class="noti-badge">+{{moreCount}}</ion-badge>
+    </ion-col>
+  </ion-row>
+  <ion-footer class="footer" >
+    <ion-button color="secondary" (click)="showAll()" expand="full" [disabled]="noShowAll">
+      View All
+    </ion-button>
+    <ion-button color="orange" size="small" (click)="resetRead()" *ngIf="debug">Reset Reads</ion-button>
+  </ion-footer>
+</ion-content>

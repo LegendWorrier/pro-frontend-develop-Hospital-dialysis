@@ -1,0 +1,15 @@
+ion-footer ion-list {
+    padding: 0;
+}
+
+.install-btn {
+    margin-left: var(--ion-safe-area-left, 0);
+    text-align: center;
+    ion-button {
+        vertical-align: middle;
+    }
+    ion-checkbox {
+        vertical-align: middle;
+        margin-left: 5px;
+    }
+}

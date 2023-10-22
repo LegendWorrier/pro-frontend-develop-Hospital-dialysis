@@ -1,0 +1,75 @@
+.cls-4 {
+    fill: var(--ion-color-dark);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+}
+
+.vein-part {
+    fill: #7fffd4;
+    cursor: pointer;
+
+    &.text-box {
+        fill: #cef4ee;
+    }
+
+    .selected & {
+        fill: var(--ion-color-danger);
+    }
+
+    .hilight & {
+        filter: url(#hilight);
+    }
+    
+    &:active {
+        filter: url(#shade);
+    }
+}
+
+.selected {
+    line {
+        stroke: var(--ion-color-danger);
+    }
+
+    .cls-4 {
+        fill: #ffffff;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .vein-part {
+        fill: #35c794;
+        
+        &.text-box {
+            fill: #2a786b;
+        }
+
+        .selected & {
+            fill:hsl(352, 81%, 42%);
+        }
+    }
+
+    .cls-2, .cls-3 {
+        stroke: #ffffff;
+    }
+}
+
+.dark {
+    .vein-part {
+        fill: #35c794;
+        
+        &.text-box {
+            fill: #2a786b;
+        }
+
+        .selected & {
+            fill:hsl(352, 81%, 42%);
+        }
+    }
+
+    .cls-2, .cls-3 {
+        stroke: #ffffff;
+    }
+}

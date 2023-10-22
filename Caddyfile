@@ -1,0 +1,157 @@
+{
+    local_certs
+}
+
+(frontend) {
+    reverse_proxy {
+        to hemoweb:3080 # change to node name for docker and kubernetes
+
+        header_down -x-powered-by
+    }
+    
+    route /assets/ssltest.js {
+        header Cache-Control                     no-cache
+        header Access-Control-Allow-Origin       {header.origin}
+        header Access-Control-Allow-Credentials  true
+    }
+
+    route /*cert/ca.crt {
+        header Content-Description 'File Transfer'
+        header Content-Type application/octet-stream
+        header Content-Disposition 'attachment; filename=ca.crt'
+    }
+
+    header -server
+    header -x-powered-by
+    
+    # try_files {path} /index.html
+    encode zstd gzip
+    # file_server
+}
+(backend) {
+    header -server
+
+    @update {
+        path /update/*
+        path /update
+    }
+    reverse_proxy @update {
+        to http://updateserver:80
+
+        header_down -x-powered-by
+    }
+
+    reverse_proxy /api/report/* {
+        to http://hemoreport:80
+        
+        # header_down Access-Control-Allow-Origin       {header.origin}
+        # header_down Access-Control-Allow-Credentials  true
+    }
+
+    route /box/log/* {
+        header Content-Description 'File Transfer'
+        header Content-Type application/octet-stream
+		reverse_proxy http://hemoserver:80
+    }
+
+    @api {
+        path /api/*
+        path /available
+        path /connect
+        path /connect/*
+        path /box
+        path /box/*
+        path /checkin
+        path /checkin/*
+        path /health
+        path /jobs
+        path /jobs/*
+    }
+    reverse_proxy @api {
+        to http://hemoserver:80
+        lb_policy cookie
+	  trusted_proxies 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+	# this is ip ranges for cloudflare. If use local network proxy of some kind, may just use 0.0.0.0/0
+
+        # header_down Access-Control-Allow-Origin       {header.origin}
+        # header_down Access-Control-Allow-Credentials  true
+    }
+
+    # @auth {
+    #     path /api/Authentication
+    #     path /api/Authentication/refresh-token
+    # }
+    # header @auth {
+    #     Set-Cookie (.*) $1;SameSite=strict;Secure;httponly
+    #     defer
+    # }
+    
+    @log {
+        header referer */log
+    }
+    handle_path /log {
+        reverse_proxy http://seq:80
+    }
+    route @log {
+        reverse_proxy http://seq:80
+    }
+
+    @backplane {
+        header referer */backplane
+    }
+    handle_path /backplane {
+        reverse_proxy http://redis:8001
+    }
+    route @backplane {
+        reverse_proxy http://redis:8001
+    }
+
+    # handle_path /db {
+    #     reverse_proxy db:5431 
+    # }
+}
+
+# need to have portal for user to access without ssl (in case of internal network)
+*:80 {
+    # @knownhost {
+    #     host {env.domain} 
+    # }
+    # redir @knownhost https://{host}{uri} permanent
+    
+    import frontend
+}
+*:443 {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import frontend
+}
+
+# Backend Access
+*:9000 {
+    #tls /certs/cert.crt /certs/cert.key
+    tls internal
+    import backend
+}
+
+*:9010 { # backward compat when user choose to skip init and use http
+    import backend
+}
+
+
+# support special subdomain: backend
+# add custom domain if this rule cannot be applied (like, too much subdomain level)
+backend.{env.domain} {
+    #tls /certs/cert.crt /certs/cert.key
+    #tls internal
+    import backend
+}
+
+# need to explicitly defined here to generate tls for the domain
+# hospital's prefered domain
+{env.domain} {
+    #tls /certs/cert.crt /certs/cert.key
+    #tls internal
+    import frontend
+}
+
+

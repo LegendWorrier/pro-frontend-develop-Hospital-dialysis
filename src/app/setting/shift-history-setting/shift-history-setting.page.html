@@ -1,0 +1,63 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Shift History Setting</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row *ngIf="!canEdit" >
+      <ion-col>
+        <ion-label color="danger">*You need permission to edit this setting</ion-label>
+      </ion-col>
+    </ion-row>
+
+    <ng-container *ngIf="tmp; else loading" >
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-checkbox [(ngModel)]="tmp.enabled"></ion-checkbox>
+            <ion-label>Keep Shift History</ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="tmp.enabled" >
+        <ion-col>
+          <ion-item>
+            <ion-label>Keep Limit</ion-label>
+            <ion-select [(ngModel)]="tmp.limit">
+              <ion-select-option *ngFor="let item of limitOptions" [value]="item.v"> {{ item.t }} </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ng-container>
+
+    <div class="btn-group">
+      <ion-row>
+        <ion-col>
+          <ion-button color="secondary" (click)="save()" [disabled]="!canEdit">Update Setting</ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button color="danger" (click)="clear()" [disabled]="!canEdit">Clear History</ion-button>
+        </ion-col>
+      </ion-row>
+    </div>
+    
+  </ion-grid>
+
+  <ng-template #loading>
+    <div>
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+  
+
+</ion-content>

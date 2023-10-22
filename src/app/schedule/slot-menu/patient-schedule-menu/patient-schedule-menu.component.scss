@@ -1,0 +1,9 @@
+.delete {
+    --color: var(--ion-color-danger);
+}
+
+.tmp-label {
+    .ios & {
+        font-size: xx-small;
+    }
+}

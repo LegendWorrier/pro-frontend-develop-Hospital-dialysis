@@ -1,0 +1,16 @@
+<ion-list *ngIf="list?.length > 0; else noData">
+  <ion-item *ngFor="let item of list" [class.notify]="!item.Dismiss" class="ion-text-wrap">
+    <ion-label class="timestamp"> {{item.Timestamp | date: 'hh:mm a'}} </ion-label>
+    <ion-label class="ion-text-wrap"> {{ mapDesc[item.Type] }} </ion-label>
+  </ion-item>
+</ion-list>
+
+<ng-template #noData>
+  <ion-list style="height: 100px;">
+    <div class="no-record no-record-middle">
+      <ion-text>
+        No alarm for today
+      </ion-text>
+    </div>
+  </ion-list>
+</ng-template>

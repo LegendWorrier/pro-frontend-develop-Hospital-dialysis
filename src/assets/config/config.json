@@ -1,0 +1,19 @@
+{
+  "apiServer": "http://192.168.0.21:8200",
+  "reportService": "http://192.168.0.21:8400",
+  "secureDomain": "192.168.0.21:4200",
+  "centerName": "Wasenshi",
+  "centerType": "hospital",
+  "enableHIS": true,
+  "enableTRTMap": true,
+
+  "decimalPrecision": 2,
+
+  "hasReassessment": true,
+  "hideNursesInShift": false,
+  "enableCosignRequest": true,
+  
+  "localLanguage": "th",
+  "localCurrency": "฿",
+  "timeZoneId": "Asia/Bangkok"
+}

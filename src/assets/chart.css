@@ -1,0 +1,83 @@
+html {
+    font-family: "Roboto", "Helvetica Neue", sans-serif;
+}
+
+.chart-legend .legend-title {
+    white-space: nowrap;
+    overflow: hidden;
+    margin-left: 10px;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.chart-legend .legend-wrap {
+    width: calc(100% - 10px);
+}
+
+.chart-legend .legend-label-color {
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+    color: #141415;
+    border-radius: 3px;
+}
+
+.chart-legend .legend-labels {
+    line-height: 85%;
+    list-style: none;
+    text-align: left;
+    float: left;
+    width: 100%;
+    border-radius: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: nowrap;
+    background: rgba(0,0,0,.05);
+    
+}
+
+.chart-legend .legend-labels {
+    white-space: unset !important;
+}
+
+.chart-legend .legend-label {
+    font-size: 90%;
+    margin: 8px;
+}
+
+.chart-legend .legend-label-text {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 15px;
+    font-size: 12px;
+    width: calc(100% - 20px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.chart-legend .horizontal-legend li {
+    display: inline-flex !important;
+}
+
+.ngx-charts .gridline-path {
+    stroke: #ddd;
+    stroke-width: 1;
+    fill: none;
+}
+
+.timeline .embedded-chart {
+    opacity: .6;
+}
+
+.timeline .brush-background {
+    fill: #0000000d;
+}
+
+.timeline .brush .selection {
+    fill: #0000001a;
+    stroke-width: 1px;
+    stroke: #888;
+}

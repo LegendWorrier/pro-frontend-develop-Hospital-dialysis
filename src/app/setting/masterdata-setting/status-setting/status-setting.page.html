@@ -1,0 +1,30 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Status {{ canEdit ? 'Setting' : 'List' }}</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content #content>
+  <div class="content-container">
+    <app-masterdata-list [content]="content" name="status" [get]="getStatusList" [add]="addStatus" [edit]="editStatus" [delete]="deleteStatus" [canEdit]="canEdit"
+    minWidth="720">
+
+      <ng-template #display let-item="item">
+        <ion-label> Category: {{ item.category }} </ion-label>
+      </ng-template>
+      
+      <ng-template #edit let-item="item">
+        <ion-label> Category:  </ion-label>
+        <ion-select [(ngModel)]="item.category" placeholder="Select category" class="cat">
+          <ion-select-option *ngFor="let choice of categories" [value]="choice"> {{ choice }} </ion-select-option>
+        </ion-select>
+      </ng-template>
+
+    </app-masterdata-list>
+  </div>
+</ion-content>

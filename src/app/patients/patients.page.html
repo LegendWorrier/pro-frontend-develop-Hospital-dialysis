@@ -1,0 +1,157 @@
+<app-header pageName = "Patients"
+[content]="content"
+[searchBar]="true"
+placeholder="Search by Name, ID, HN, Coverage or use custom search"
+[back]="false"
+[showMenuBtn]="true"
+(onSearch)="onSearch($event)"></app-header>
+
+<ion-content #content>
+  <app-segment-tabs [tabs]="tabList" [(value)]="tab" [class.ads-margin]="showAds"
+  initTab="all" [autoFixed]="false" [appScrollHide]="configSegment" [content]="content" [canScrollSelf]="true"></app-segment-tabs>
+
+  <div class="ads" *ngIf="showAds" slot="fixed" style="margin-top: 48px;" >
+    <ion-fab-button class="close-btn" size="small" color="medium" (click)="closeAds()"><ion-icon name="close"></ion-icon></ion-fab-button>
+    <ion-label>Please consider supporting us by renewing maintenance & support package. Contact for more info: <a [href]="mailString" target="_top">customer@softtechmedcare.com</a></ion-label>
+    <ng-adsense></ng-adsense>
+  </div>
+
+  <ion-grid style="height: 100%;" *ngIf="firstLoad || patients?.length === 0" >
+    <ion-row style="height: 100%;">
+      <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+        <div *ngIf="!firstLoad" class="no-record no-record-middle"><ion-text>No Patients</ion-text></div>
+        <ion-spinner *ngIf="firstLoad"></ion-spinner>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+ <!-- ===================== All Patients ================================ -->
+  <ion-grid [hidden]="firstLoad || patients?.length === 0 || tab !== 'all'" >
+    <ion-row>
+      <ion-col>
+        <ng-container *ngTemplateOutlet="patientList; context: { patients: patients }"></ng-container>
+        
+        <!-- loading -->
+        <app-page-loader #loader label="Patients" [(dataList)]="patients" [retryable]="true" [autoRefresh]="true"
+        [loadCall]="loadPatient$" [filter]="searchString"></app-page-loader>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <!-- ================== Today Patients ================================= -->
+  <ng-container *ngIf="tab === 'today' && !firstLoad && patients?.length > 0">
+    
+    <ng-container *ngIf="todayPatients as today; else loading">
+      <ng-container *ngIf="today.length > 0; else noData">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ng-container *ngTemplateOutlet="patientList; context: { patients: today }"></ng-container>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noData>
+      <ion-grid style="height: 100%;">
+        <ion-row style="height: 100%;">
+          <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+            <div class="no-record no-record-middle"><ion-text>No Patients for Today</ion-text></div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+
+    <ng-template #loading>
+      <ion-grid style="height: 100%;">
+        <ion-row style="height: 100%;">
+          <ion-col style="text-align: center; display: flex; justify-content: center; align-items: center;">
+            <ion-spinner></ion-spinner>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+      
+  </ng-container>
+
+  <ng-template #patientList let-patients="patients">
+    <ion-list>
+      <ion-row>
+        <ion-col *ngFor="let p of patients" size="12" [attr.size-md]="patients.length > 1 ? '6' : '12'">
+
+          <ion-item button (click)="detail(p)" >
+            <ion-avatar slot="start">
+              <ion-icon class="gender"
+              [color]="p.gender?(p.gender === 'M'?'primary':'pink'):'warning'"
+              [name]="p.gender?(p.gender === 'M'?'male':'female'):'help'"></ion-icon>
+              <ion-img [src]="p.img || 'assets/avatar.svg'"></ion-img>
+              <div class="status ion-color-brown" *ngIf="p.dialysisInfo?.transferTo">
+                <span>Transferred</span>
+              </div>
+              <div class="status ion-color-medium" *ngIf="p.dialysisInfo?.causeOfDeath">
+                <span>Deceased</span>
+              </div>
+            </ion-avatar>
+            <ion-label class="main-label">
+              <ion-row>
+                <ion-col>
+                  <h2 style="font-weight: bold;"><b>{{ p.name }}</b></h2>
+                </ion-col>
+                <ion-col >
+                  <ion-label>
+                    <p>{{ p.id }}</p>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label *ngIf="p.doctorId && !doctorMode">
+                    <p> Doctor : {{ (getName(p.doctorId) | async) || '?' }}</p>
+                  </ion-label>
+                  <ion-badge *ngIf="!p.doctorId && !doctorMode" color="danger" class="no-doctor" >
+                    <ion-icon name="warning"></ion-icon> <span> No Doctor</span>
+                  </ion-badge>
+                  <ion-label *ngIf="doctorMode">
+                    <p> Total This Month : {{ p.totalThisMonth || '-' }}</p>
+                  </ion-label>
+                </ion-col>
+                <ion-text color="tertiary" *ngIf="multiUnit || isCross(p)" class="ion-float-right"><p>{{ getUnit(p.unitId) }}</p></ion-text>
+              </ion-row>
+              <ion-row style="min-height: 31px;">
+                <ion-col>
+                  <hemo-tag
+                    [tag]="{ text: 'In Session', bold: true, italic: false, color: 'warning' }"
+                    *ngIf="p.isInSession"></hemo-tag>
+                  <hemo-tag
+                    [tag]="{ text: 'Schedule: ' + (p.schedule | date: 'dd MMM hh:mm a') + (showUnit(p) ? getCrossUnit(p) : ''), bold: true, italic: false, color: 'orange' }"
+                    *ngIf="p.schedule && !p.isInSession"></hemo-tag>
+                  <hemo-tag [tag]="t" *ngFor="let t of p.tags"></hemo-tag>
+                </ion-col>
+              </ion-row>
+            </ion-label>
+          </ion-item>
+
+        </ion-col>
+      </ion-row>
+      
+    </ion-list>
+  </ng-template>
+  
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed" *ngIf="(isDoctor && !rule?.doctorCanSeeOwnPatientOnly) || isPowerAdmin">
+    <ion-item class="toggle-bg" lines="none" [detail]="false">
+      <ion-toggle [(ngModel)]="myPatient" (ngModelChange)="reload(true)" labelPlacement="end">My Patients</ion-toggle>
+    </ion-item>
+    
+  </ion-fab>
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="addPatient()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="reload-btn" size="small" (click)="reload()" [class.fade]="isTotal" [disabled]="isLoading">
+      <ion-icon name="reload"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

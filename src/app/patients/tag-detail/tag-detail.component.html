@@ -1,0 +1,106 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>New Tag</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <form #form="ngForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="2" class="ion-hide-sm-down">
+          <ion-label> Text </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating" class="ion-hide-sm-up"> Text </ion-label>
+            <ion-input name="text" placeholder="Enter the text to show" [(ngModel)]="tag.text" required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row class="tag-style">
+        <ion-col width-50>
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label> Bold </ion-label>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating" class="ion-hide-sm-up"> Bold </ion-label>
+              <ion-checkbox name="bold" [(ngModel)]="tag.bold"></ion-checkbox>
+            </ion-item>
+          </ion-col>
+        </ion-col>
+        <ion-col>
+          <ion-col size="2" class="ion-hide-sm-down">
+            <ion-label> Italic </ion-label>
+          </ion-col>
+          <ion-col>
+            <ion-item>
+              <ion-label position="floating" class="ion-hide-sm-up"> Italic </ion-label>
+              <ion-checkbox name="italic" [(ngModel)]="tag.italic"></ion-checkbox>
+            </ion-item>
+          </ion-col>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="2" class="ion-hide-sm-down">
+          <ion-label> Style </ion-label>
+        </ion-col>
+        <ion-col>
+          <ion-item>
+            <ion-label position="floating" class="ion-hide-sm-up"> Style </ion-label>
+            <ion-select name="style" interface="popover" placeholder="Select style" [(ngModel)]="tag.strikeThroughStyle" class="full-h-sm-up">
+              <ion-select-option [value]="undefined">None</ion-select-option>
+              <ion-select-option value="line-through">Strikethrough</ion-select-option>
+              <ion-select-option value="overline">Overline</ion-select-option>
+              <ion-select-option value="underline">Underline</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-label>Color</ion-label>
+        </ion-col>
+      </ion-row>
+      <ion-row id="color">
+        <ng-container *ngFor="let item of colors">
+          <ion-col size="2" [class.selected]="tag.color === item">
+            <ion-chip [color]="item" (click)="tag.color=item"></ion-chip>
+          </ion-col>
+          <ion-col size="2" [class.selected]="tag.color === item + ' true'">
+            <ion-chip [color]="item" outline="true" (click)="tag.color=item + ' true'"></ion-chip>
+          </ion-col>
+        </ng-container>
+      </ion-row>
+
+      <!-- preview -->
+      <ng-container>
+        <ion-row class="ion-margin-top">
+          <ion-col>
+            <ion-label>Preview</ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <hemo-tag [tag]="tag" placeholder="true"></hemo-tag>
+          </ion-col>
+        </ion-row>
+      </ng-container>
+
+      <ion-row class="ion-margin-top">
+        <ion-col class="ion-text-center">
+          <ion-button type="submit" color="secondary" [disabled]="form.invalid" (click)="save()" style="min-width: 150px;">{{ addMode? 'Ok' : 'Save'}}</ion-button>
+          <ion-button color="danger" (click)="delete()" *ngIf="!addMode">Delete</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

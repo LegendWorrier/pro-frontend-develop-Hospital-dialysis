@@ -1,0 +1,16 @@
+{
+  "apiServer": "https://backend.hemopro.net",
+  "reportService": "https://backend.hemopro.net",
+  "secureDomain": "hemopro.net",
+  "centerName": null,
+  "centerType": "hospital",
+  "enableHIS": true,
+
+  "decimalPrecision": 2,
+
+  "hasReassessment": true,
+  "enableCosignRequest": true,
+  
+  "localLanguage": "th",
+  "timeZoneId": "Asia/Bangkok"
+}

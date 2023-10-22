@@ -1,0 +1,22 @@
+<ion-list style="margin-bottom: 60px;">
+
+  <ng-container *ngFor="let item of data; let i=index;">
+    <ion-item-sliding #sliding button [disabled]="isDesktop && !isHybrid && width > 767" [class]="getClasses(item, i)">
+      <ion-item (mouseover)="toggleButtons(sliding, true)" (mouseleave)="toggleButtons(sliding, false)" button (click)="onSelect(item, i, data)">
+        <ng-container *ngTemplateOutlet="listContent;context: { item: item, index: i }"></ng-container>
+        <div class="item-button-group" [hidden]="!show(sliding)" *ngIf="isDesktop && width > 767">
+          <ion-button *ngFor="let o of options; let i=index" [color]="o.color" (click)="$event.stopPropagation();onOptionSelect(item, i)" [class]="o.role" [disabled]="!canEdit">
+            <ion-icon [name]="o.icon" *ngIf="o.icon"></ion-icon>{{o.name}}
+          </ion-button>
+        </div>
+      </ion-item>
+      
+      <ion-item-options side="end">
+        <ion-item-option *ngFor="let o of options; let optionNo=index" [color]="o.color" (click)="onOptionSelect(item, optionNo)" [class]="o.role" [disabled]="!canEdit">
+          <ion-icon [name]="o.icon" *ngIf="o.icon"></ion-icon>{{o.name}}
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ng-container>
+
+</ion-list>

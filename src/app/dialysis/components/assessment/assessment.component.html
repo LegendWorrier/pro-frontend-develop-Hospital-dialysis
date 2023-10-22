@@ -1,0 +1,205 @@
+<ion-row *ngIf="!isLoaded || (otherAssessments | async)?.length > 0">
+  <ion-col>
+    <ion-card>
+      <ion-card-header><ion-card-title>General</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="otherAssessments | async as list; else loading">
+          <ion-row class="assessment-content">
+            <ng-container #other></ng-container>
+          </ion-row>
+          <ion-row *ngIf="!viewOnly">
+            <ion-col>
+              <ion-button class="ion-margin-top ion-float-right" color="orange" (click)="save('other')"> Update </ion-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      </ion-card-content>
+      <ion-spinner *ngIf="!(otherAssessments | async)"></ion-spinner>
+    </ion-card>
+  </ion-col>
+</ion-row>
+
+<ion-row>
+  <ion-col>
+    <ion-card>
+      <ion-card-header><ion-card-title>Pre Assessement</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="preAssessments | async as list; else loading">
+          <ion-row class="assessment-content">
+            <ng-container #pre></ng-container>
+          </ion-row>
+          <ion-row *ngIf="!viewOnly">
+            <ion-col>
+              <ion-button class="ion-margin-top ion-float-right" color="orange" (click)="save('pre')"> Update </ion-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      </ion-card-content>
+      <ion-spinner *ngIf="!(preAssessments | async)"></ion-spinner>
+    </ion-card>
+  </ion-col>
+</ion-row>
+
+<ion-row *ngIf="reassessment">
+  <ion-col>
+    <ion-card>
+      <ion-card-header><ion-card-title>Re Assessement</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="preAssessments | async as list; else loading">
+          <ion-row class="assessment-content">
+            <ng-container #re></ng-container>
+          </ion-row>
+          <ion-row *ngIf="!viewOnly">
+            <ion-col>
+              <ion-button class="ion-margin-top ion-float-right" color="orange" (click)="save('re')"> Update </ion-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        
+      </ion-card-content>
+      <ion-spinner *ngIf="!(preAssessments | async)"></ion-spinner>
+    </ion-card>
+  </ion-col>
+</ion-row>
+
+<ion-row class="margin-bottom">
+  <ion-col>
+    <ion-card>
+      <ion-card-header><ion-card-title>Post Assessement</ion-card-title></ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="postAssessments | async as list; else loading">
+          <ion-row class="assessment-content">
+            <ng-container #post></ng-container>
+          </ion-row>
+          <ion-row *ngIf="!viewOnly">
+            <ion-col>
+              <ion-button class="ion-margin-top ion-float-right" color="orange" (click)="save('post')"> Update </ion-button>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+      </ion-card-content>
+      <ion-spinner *ngIf="!(postAssessments | async)"></ion-spinner>
+    </ion-card>
+  </ion-col>
+</ion-row>
+
+<ng-template #groupHeader let-name="name">
+  <ion-col size="12">
+    <ion-card-title>{{name}}</ion-card-title>
+  </ion-col>
+</ng-template>
+
+<ng-template #assessment let-list="list" let-re="reassessment" let-item="item" let-clearMode="clearMode">
+  <ion-col size="12" size-sm="6" [attr.size-lg]="width > 1500 ? '4' : '6'">
+    <!-- Binding Data Version -->
+    <ng-container *ngIf="getData(list, item, re) as data; else init">
+      <ion-label>
+        <h2>{{ item.displayName }} <span *ngIf="item.optionType === types.Checkbox && !item.multi">{{data? ' : ' : '' }}{{ getLabel(data, item) }}</span></h2>
+      </ion-label>
+      <ion-label color="medium">
+        {{ item.note ? item.note + ' ' : '' }}
+        <ion-text *ngIf="!item.isMulti && getSelectedOption(item, data) as selected">{{ selected.note ? '(' + selected.note + ')' : '' }}</ion-text>
+      </ion-label>
+      <ion-item-divider></ion-item-divider>
+      <!-- Checkbox -->
+      <ion-checkbox *ngIf="item.optionType === types.Checkbox && !item.multi" [checked]="data.checked" (ionChange)="toggleCheck(list, data, item, re)" [class.readonly]="viewOnly"></ion-checkbox>
+      <ng-container *ngIf="item.optionType === types.Checkbox && item.multi">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-checkbox [checked]="data.selected.includes(option.id)" (ionChange)="select(list, option, data, item, re)" [class.readonly]="viewOnly"></ion-checkbox> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ng-container>
+      <!-- Radio -->
+      <ion-radio-group *ngIf="item.optionType === types.Radio" [value]="data.selected[0]" (ionChange)="select(list, $event, data, item, re)">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-radio [value]="option.id" [class.readonly]="viewOnly"></ion-radio> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ion-radio-group>
+      <!-- Value Type -->
+      <ion-select *ngIf="item.optionType === types.Text && item.multi && !data.custom" [value]="data.text" (ionChange)="selectOption(list, $event, data, item, re)">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.textValue">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      <ion-select *ngIf="item.optionType === types.Number && item.multi && !data.custom" [value]="data.value" (ionChange)="selectOption(list, $event, data, item, re)">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.value">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      
+    </ng-container>
+    <!-- Empty Data Version -->
+    <ng-template #init>
+      <ion-label>
+        <h2>{{ item.displayName }}</h2>
+      </ion-label>
+      <ion-label color="medium">{{ item.note }}</ion-label>
+      <ion-item-divider></ion-item-divider>
+      <!-- Checkbox -->
+      <ion-checkbox *ngIf="item.optionType === types.Checkbox && !item.multi" (ionChange)="toggleCheck(list, null, item, re)" [class.readonly]="viewOnly"></ion-checkbox>
+      <ng-container *ngIf="item.optionType === types.Checkbox && item.multi">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-checkbox (ionChange)="select(list, option, null, item, re)" [class.readonly]="viewOnly"></ion-checkbox> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ng-container>
+      <!-- Radio -->
+      <ion-radio-group *ngIf="item.optionType === types.Radio" (ionChange)="select(list, $event, null, item, re)">
+        <ion-row *ngFor="let option of getOptionList(item); trackBy: trackOption">
+          <ion-label class="option"><ion-radio [value]="option.id" [class.readonly]="viewOnly"></ion-radio> <span>{{ option.displayName }}</span></ion-label>
+        </ion-row>
+      </ion-radio-group>
+      <!-- Value Type -->
+      <ion-select *ngIf="item.optionType === types.Text && item.multi" (ionChange)="selectOption(list, $event, null, item, re)" placeholder="Choose value">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.textValue">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+      <ion-select *ngIf="item.optionType === types.Number && item.multi" (ionChange)="selectOption(list, $event, null, item, re)" placeholder="Choose value">
+        <ion-select-option *ngFor="let item of getOptionList(item); trackBy: trackOption" [value]="item.value">
+          {{ item.displayName }}
+        </ion-select-option>
+      </ion-select>
+    </ng-template>
+
+    <!-- Value Type (single) & Extra Input -->
+    <ion-item *ngIf="(!item.multi && isValueType(item)) || (isOther(getData(list, item, re)) && !item.hasText && !item.hasNumber) || isCustom(getData(list, item, re))">
+      <ion-input class="text" *ngIf="item.optionType !== types.Number"
+        [value]="getData(list, item, re)?.text" (ionChange)="textInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+
+      <ion-input class="text" *ngIf="item.optionType === types.Number" type="number"
+        [value]="getData(list, item, re)?.value" (ionChange)="valueInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="item.hasText && (item.multi || item.optionType !== types.Checkbox || (item.optionType === types.Checkbox && getData(list, item, re)?.checked))">
+      <ion-label position="floating">{{ getTextLabel(item) }}</ion-label>
+      <ion-input [value]="getData(list, item, re)?.text" (ionChange)="textInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="item.hasNumber && (item.multi || item.optionType !== types.Checkbox || (item.optionType === types.Checkbox && getData(list, item, re)?.checked))">
+      <ion-label position="floating">{{ getNumberLabel(item) }}</ion-label>
+      <ion-input [value]="getData(list, item, re)?.value" (ionChange)="valueInput(list, $event, getData(list, item, re), item, re)" [class.readonly]="viewOnly"></ion-input>
+    </ion-item>
+    <!-- custom value -->
+    <ng-container *ngIf="isValueType(item) && item.hasOther">
+      <ion-label *ngIf="getData(list, item, re) as data; else init" class="other"><ion-checkbox [(ngModel)]="data.custom"></ion-checkbox> Other Value {{ item.optionType === types.Number ? '(number)' : ''}}</ion-label>
+      <ng-template #init>
+        <ion-label class="other"><ion-checkbox (ionChange)="customToggle(list, getData(list, item, re), item, re)"></ion-checkbox> Other Value {{ item.optionType === types.Number ? '(number)' : ''}}</ion-label>
+      </ng-template>
+    </ng-container>
+    
+    <ion-button class="ion-margin-top clear-btn" 
+    [class.ion-float-right]="item.optionType === types.Checkbox && !item.multi" 
+    color="danger" 
+    size="small" 
+    fill="outline"
+    *ngIf="clearMode()"
+    (click)="clearItem(getData(list, item, re));">
+      Clear
+    </ion-button>
+
+  </ion-col>
+  
+</ng-template>
+
+<ng-template #loading>
+  <ion-skeleton-text animated style="width: 10%; margin-bottom: 20px;"></ion-skeleton-text>
+  <ion-skeleton-text animated style="width: 5%; margin-bottom: 10px;"></ion-skeleton-text>
+  <ion-skeleton-text animated style="width: 2%"></ion-skeleton-text>
+</ng-template>

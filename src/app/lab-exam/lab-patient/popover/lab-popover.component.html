@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    {{lab.name}} : {{ items[0].entryTime | date: 'MMM dd, yyyy' }}
+  </ion-toolbar>
+</ion-header>
+<ion-row>
+  <ion-col>
+    <ion-list>
+      <ion-item button (click)="confirm(item)"  *ngFor="let item of items" >
+        <ion-text color="medium" class="date">({{item.entryTime | date: 'hh:mm a'}})</ion-text>: <span class="value">{{item.labValue}}</span>
+      </ion-item>
+    </ion-list>
+  </ion-col>
+</ion-row>

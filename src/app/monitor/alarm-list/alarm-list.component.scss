@@ -1,0 +1,34 @@
+.notify {
+  --background: rgb(216, 213, 118);
+}
+
+.timestamp {
+  max-width: 90px;
+}
+
+.no-record {
+  ion-text {
+      font-size: 15px;
+      font-weight: bold;
+  }
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select:none;
+  -o-user-select:none;
+  user-select:none;
+}
+
+.no-record-middle {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  max-height: calc(100% - 30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 700;
+  
+  flex-grow : 1;
+}

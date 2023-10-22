@@ -1,0 +1,39 @@
+<ion-header appHeaderTheme>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-icon name="newspaper" style="font-size: 24px; margin-left: 10px;"></ion-icon>
+    </ion-buttons>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Hemosheet</ion-title>
+
+  </ion-toolbar>
+</ion-header>
+<ion-content #content>
+  <app-segment-tabs [tabs]="tabList" [(value)]="tab"></app-segment-tabs>
+  
+  <ng-container [ngSwitch]="tab">
+    <ng-container *ngSwitchDefault><hemo-dialysis-info [patient]="patient" [hemosheet]="hemosheet" (hemosheetChange)="hemosheetChange.emit($event)" [executeRecords]="executionRecords" [(setting)]="setting" [viewMode]="true" [nav]="nav" [cosignFunc]="cosign"></hemo-dialysis-info></ng-container>
+    <ng-container *ngSwitchCase="'assessment'"><hemo-assessment [hemosheet]="hemosheet" [assessments]="assessments" [assessmentGroups]="assessmentGroups" [items]="assessItems" (itemsChange)="updateAssessment($event)" [clearEvent]="clearBtnClick" [isModal]="true"></hemo-assessment></ng-container>
+    <ng-container *ngSwitchCase="'record'">
+      <hemo-record #record [hemosheet]="hemosheet" [patient]="patient"
+      [dialysisRecords]="dialysisRecords" (dialysisRecordsChange)="updateDialysisRecord($event)" 
+      [machineRecords]="machineRecords"
+      [nurseRecords]="nurseRecords" (nurseRecordsChange)="updateNurseRecord($event)" 
+      [doctorRecords]="doctorRecords" (doctorRecordsChange)="updateDoctorRecord($event)" 
+      [executionRecords]="executionRecords" (executionRecordsChange)="updateExecutionRecord($event)" 
+      [progressNotes]="progressNotes" (progressNotesChange)="updateProgressNotes($event)"
+      [hemoSetting]="setting"
+      [viewMode]="true"
+      [assessments]="assessments" [assessmentGroups]="assessmentGroups"
+      [nav]="nav">
+      </hemo-record>
+    </ng-container>
+  </ng-container>
+
+  <div class="clear-btn" slot="fixed" *ngIf="!isPN">
+    <ion-button *ngIf="tab === 'assessment'" (click)="clearBtnClick.emit()" color="danger" size="small" shape="round">Toggle Clear Mode</ion-button>
+  </div>
+</ion-content>

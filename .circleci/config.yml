@@ -1,0 +1,106 @@
+# This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.3
+
+jobs:
+  build:
+    executor:
+      name: node/default
+      tag: '16.18.0'
+    steps:
+      - checkout
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      - run:
+          name: Build Prod
+          command: |
+            npm run build
+            zipName=$(echo hemoweb-www-build$CIRCLE_BUILD_NUM.zip)
+            echo $zipName
+            zip -r $zipName ./www
+            mkdir HemoDialysisPro
+            mv $zipName ./HemoDialysisPro
+
+      - store_artifacts:
+          path: ./HemoDialysisPro
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
+  publish:
+    docker:
+      - image: wasenshi/dockerbuild
+    steps:
+      - checkout
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - server/server.tar
+            - node_modules
+            - server/node_modules
+      - run:
+          name: Load Docker image layer caches
+          command: |
+            set +o pipefail
+            docker load -i server/server.tar | true
+      - run:
+          name: Setup npm
+          command: |
+            apk add npm
+      - run:
+          name: Build FE Server
+          command: |
+            npm install
+            cd ./server
+            npm install
+            npx tsc --build
+      - run:
+          name: Build Image File - HemoWeb
+          command: |
+            export APP_VERSION='latest'
+            echo $APP_VERSION
+            zipName=$(echo hemoweb-$APP_VERSION.tar)
+            echo $zipName
+
+            cd ./server
+            
+            docker image build -f Dockerfile -t wasenshi/hemoweb:$APP_VERSION .
+            docker save wasenshi/hemoweb:$APP_VERSION > server.tar
+
+            mkdir /HemoDialysisPro;
+            cp server.tar /HemoDialysisPro/$zipName
+            mv ./dist/his-*.js /HemoDialysisPro/
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - server/server.tar
+            - node_modules
+            - server/node_modules
+      - store_artifacts:
+          path: /HemoDialysisPro
+
+workflows:
+  build_and_publish_artifact:
+    jobs:
+      - build
+      - publish_approval:
+          type: approval
+          filters:
+            branches:
+              only: develop
+      - publish:
+          requires:
+            - publish_approval

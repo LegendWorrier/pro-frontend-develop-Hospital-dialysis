@@ -1,0 +1,404 @@
+<ion-grid>
+  <ion-row>
+      <ion-col>
+          <div class="ion-card">
+            <ion-card-header>
+              <ion-card-title>
+                Dialysis Records
+              </ion-card-title>
+
+              <ion-buttons class="ion-float-right plus-btn">
+                <ion-button (click)="addDialysisRecord()">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+              <ion-buttons class="addon-btn">
+                <ion-button (click)="getDataNow()" *ngIf="!viewMode">
+                  <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+                </ion-button>
+
+                <ion-button id="adjust-date-trigger" (click)="initAdjustData()">
+                  <ion-icon slot="icon-only" name="time-outline"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col id="record-panel" class="record-table" size="12" [attr.size-md]="hideMachine ? '12' : '6'">
+                  <div class="table-wrapper">
+                    <table #recordTable mat-table [dataSource]="dialysisRecords" aria-label="dialysis-records">
+                      <ng-container matColumnDef="date">
+                        <th mat-header-cell *matHeaderCellDef> Time </th>
+                        <td mat-cell *matCellDef="let v"> {{ v.timestamp | date: 'HH:mm, d MMM yyyy' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="bp">
+                          <th mat-header-cell *matHeaderCellDef> BP </th>
+                          <td mat-cell *matCellDef="let v"> {{ (v.bps || '-') + '/' + (v.bpd || '-') }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="hr">
+                          <th mat-header-cell *matHeaderCellDef> Pulse </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.hr || '-' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="rr">
+                          <th mat-header-cell *matHeaderCellDef> Breath </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.rr || '-' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="tmp">
+                          <th mat-header-cell *matHeaderCellDef> TMP </th>
+                          <td mat-cell *matCellDef="let v"> {{ (v.tmp | number: decimal) || '-' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="bfr">
+                        <th mat-header-cell *matHeaderCellDef> Blood Flow </th>
+                        <td mat-cell *matCellDef="let v"> {{ v.bfr | number: decimal || '-' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="ufr">
+                        <th mat-header-cell *matHeaderCellDef> UF Rate </th>
+                        <td mat-cell *matCellDef="let v"> {{ v.ufRate | number: decimal || '-' }} </td>
+                      </ng-container>
+                      <ng-container matColumnDef="ktv">
+                        <th mat-header-cell *matHeaderCellDef> Kt/V </th>
+                        <td mat-cell *matCellDef="let v"> {{ v.ktv | number: decimal || '-' }} </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="created">
+                        <th mat-header-cell *matHeaderCellDef> Created </th>
+                        <td mat-cell *matCellDef="let v">
+                          <audit-name [id]="v.createdBy"></audit-name>
+                        </td>
+                      </ng-container>
+                      <ng-container matColumnDef="updated">
+                        <th mat-header-cell *matHeaderCellDef> Updated </th>
+                        <td mat-cell *matCellDef="let v">
+                          <audit-name [id]="v.updatedBy"></audit-name>
+                        </td>
+                      </ng-container>
+
+                      <ng-container matColumnDef="delete">  <!-- stickyEnd -->
+                        <th mat-header-cell *matHeaderCellDef>  </th>
+                        <td mat-cell *matCellDef="let v">
+                          <ion-button class="del-btn" color="danger" (click)="$event.stopPropagation(); deleteRecord(v);">
+                            <ion-icon name="trash"></ion-icon>
+                          </ion-button>
+                        </td>
+                      </ng-container>
+
+                      <tr mat-header-row *matHeaderRowDef="['date', 'bp', 'hr', 'bfr', 'ufr', 'tmp', 'ktv', 'created', 'updated', 'delete']; sticky: true"></tr>
+                      <tr mat-row *matRowDef="let data; columns: ['date', 'bp', 'hr', 'bfr', 'ufr', 'tmp', 'ktv', 'created', 'updated', 'delete']" (click)="editRecord(data)" [class.still]="data.still">
+                      </tr>
+                    </table>
+                    <div *ngIf="!dialysisRecords || dialysisRecords.length === 0" class="no-data no-record">
+                      <ion-text>No Data</ion-text>
+                    </div>
+                  </div>
+                </ion-col>
+                <ion-col id="machine-panel" class="record-table" [class.record-table-collapsed]="hideMachine" *ngIf="hasIntegrated">
+                  <div class="machine-panel-handle-wrapper">
+                    <div class="machine-panel-handle" (click)="machinePanelToggle()">
+                      Machine <ion-icon [name]="handleIcon"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="table-wrapper" [class.odd]="odd" >
+                    <cdk-virtual-scroll-viewport #viewport [itemSize]="rowH" [style.height.px]="tableSize" >
+                      <table #machineTable mat-table fixedLayout [dataSource]="$machineDatasource" aria-label="machine-records" >
+                        <ng-container matColumnDef="copy" sticky>
+                          <th mat-header-cell *matHeaderCellDef> Copy </th>
+                          <td mat-cell *matCellDef="let v">
+                            <ion-button (click)="$event.stopPropagation(); copyRecord(v);" size="small" color="secondary-alt">
+                              <ion-icon name="copy"></ion-icon>
+                            </ion-button>
+                          </td>
+                        </ng-container>
+                        <ng-container matColumnDef="date">
+                          <th mat-header-cell *matHeaderCellDef> Time </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.timestamp | date: 'medium' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="bp">
+                          <th mat-header-cell *matHeaderCellDef> BP </th>
+                          <td mat-cell *matCellDef="let v"> {{ (v.bps || '-') + '/' + (v.bpd || '-') }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="hr">
+                          <th mat-header-cell *matHeaderCellDef> Pulse </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.hr || '-' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="rr">
+                          <th mat-header-cell *matHeaderCellDef> Breath </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.rr || '-' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="tmp">
+                          <th mat-header-cell *matHeaderCellDef> TMP </th>
+                          <td mat-cell *matCellDef="let v"> {{ (v.tmp | number: decimal) || '-' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="bfr">
+                          <th mat-header-cell *matHeaderCellDef> Blood Flow </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.bfr | number: decimal || '-' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="ufr">
+                          <th mat-header-cell *matHeaderCellDef> UF Rate </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.ufRate | number: decimal || '-' }} </td>
+                        </ng-container>
+                        <ng-container matColumnDef="ktv">
+                          <th mat-header-cell *matHeaderCellDef> Kt/V </th>
+                          <td mat-cell *matCellDef="let v"> {{ v.ktv | number: decimal || '-' }} </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="['copy', 'date', 'bp', 'hr', 'rr', 'bfr', 'ufr', 'tmp', 'ktv']; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let data; columns: ['copy', 'date', 'bp', 'hr', 'rr', 'bfr', 'ufr', 'tmp', 'ktv']" (click)="editRecord(data)"></tr>
+                      </table>
+                      
+                    </cdk-virtual-scroll-viewport>
+                    <div *ngIf="!$machineDatasource.value || $machineDatasource.value.length === 0" class="no-data no-record">
+                      <ion-text>No Data</ion-text>
+                    </div>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </div>
+
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Execution Records
+              </ion-card-title>
+
+              <ion-buttons class="ion-float-right" *ngIf="isNurse" >
+                <ion-button (click)="addExecutionRecord($event)">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col class="record-list">
+                  <ion-list *ngIf="executionRecords.length > 0; else noRecord;">
+                    <ion-item class="execution-record" [class.waiting]="!item.isExecuted" *ngFor="let item of executionRecords" button (click)="executionClick(item, $event)">
+                      <ion-label class="top">{{ item.timestamp | date: 'medium' }}</ion-label>
+                      <ion-label>
+                        <ng-container *ngIf="item.type === executionType.Medicine">
+                          {{ item.prescription.medicine.name }} <p>
+                            <ion-text [color]="item.overrideDose ? 'orange': 'unset' ">{{ item.prescription.getTotalAmount() }} {{ item.prescription.getUnit() }}</ion-text>
+                            <ion-text *ngIf="item.overrideRoute" color="orange" style="margin-left: 10px;">{{ getMedRoute(item.overrideRoute) }}</ion-text>
+                          </p>
+                        </ng-container>
+                        <ng-container *ngIf="item.type === executionType.NSSFlush">
+                          Flush NSS
+                        </ng-container>
+                      </ion-label>
+                      <ion-label class="ctl-btn-group" *ngIf="item.type === executionType.Medicine">
+                        <ion-button color="orange" size="small" (click)="$event.stopPropagation(); claim(item);" *ngIf="isSystemCreated(item)" [disabled]="item.isClaiming">Claim</ion-button>
+                        <ion-button color="orange" size="small" (click)="$event.stopPropagation(); execute(item);" *ngIf="canExecute(item)">Execute</ion-button>
+                        <ion-button color="orange" size="small" (click)="$event.stopPropagation(); requestCosign(item);" *ngIf="canRequest(item)">Request</ion-button>
+                      </ion-label>
+                      <ion-label class="ctl-btn-group" *ngIf="item.type === executionType.NSSFlush">
+                        <ion-button color="orange" size="small" (click)="$event.stopPropagation(); execute(item);" *ngIf="canExecute(item)">Execute</ion-button>
+                      </ion-label>
+                      <div class="record-audit">
+                        <ng-container *ngIf="item.coSign">
+                          <ion-text>Co-Signer:</ion-text>
+                          <audit-name [id]="item.coSign" style="margin-bottom: 5px;"></audit-name>
+                        </ng-container>
+                        <ion-text>Executor:</ion-text>
+                        <audit-name [id]="item.createdBy"></audit-name>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+          
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Nurse Records
+              </ion-card-title>
+
+              <ion-buttons class="ion-float-right" *ngIf="isNurse" >
+                <ion-button (click)="addNurseRecord()">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col class="record-list">
+                  <ion-list *ngIf="nurseRecords.length > 0; else noRecord;">
+                    <ion-item class="record" *ngFor="let item of nurseRecords" button (click)="editRecord(item)">
+                      <ion-label>
+                        {{ item.timestamp | date: 'medium' }}
+                        <ion-card-subtitle>
+                          {{ item.content }}
+                        </ion-card-subtitle>
+                      </ion-label>
+                      <div class="record-audit">
+                        <ng-container *ngIf="item.updatedBy !== item.createdBy">
+                          <ion-text>Modified:</ion-text>
+                          <audit-name [id]="item.updatedBy" style="margin-bottom: 5px;"></audit-name>
+                        </ng-container>
+                        <ion-text>Established:</ion-text>
+                        <audit-name [id]="item.createdBy"></audit-name>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Progress Notes
+              </ion-card-title>
+
+              <ion-buttons class="ion-float-right" *ngIf="isNurse" >
+                <ion-button (click)="addProgressNote()">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+
+            </ion-card-header>
+            <ion-card-content>
+              <ion-row>
+                <ion-col class="record-list">
+                  <ion-list *ngIf="progressNotes.length > 0; else noRecord;">
+                    <ion-item class="record" *ngFor="let item of progressNotes; let i=index;" button (click)="editRecord(item)">
+                      <ion-label>
+                        Focus: 
+                        <ion-card-subtitle>
+                          {{ item.focus }}
+                        </ion-card-subtitle>
+                      </ion-label>
+                      <div class="swap-ctl" *ngIf="progressNotes.length > 1">
+                        <ion-button color="medium" class="icon-button" (click)="$event.stopPropagation();swap(item, progressNotes[i-1])" [disabled]="i === 0">
+                          <ion-icon name="arrow-up"></ion-icon>
+                        </ion-button>
+                        <ion-button color="medium" class="icon-button" (click)="$event.stopPropagation();swap(item, progressNotes[i+1])" [disabled]="i === progressNotes.length - 1">
+                          <ion-icon name="arrow-down"></ion-icon>
+                        </ion-button>
+                      </div>
+                      <div class="record-audit">
+                        <ng-container *ngIf="item.updatedBy !== item.createdBy">
+                          <ion-text>Modified:</ion-text>
+                          <audit-name [id]="item.updatedBy" style="margin-bottom: 5px;"></audit-name>
+                        </ng-container>
+                        <ion-text>Established:</ion-text>
+                        <audit-name [id]="item.createdBy"></audit-name>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>
+                Doctor Notes
+              </ion-card-title>
+              <ion-buttons class="ion-float-right" *ngIf="isDoctor" >
+                <ion-button (click)="addDoctorNote()">
+                  <ion-icon slot="icon-only" name="add"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-card-header>
+            <ion-card-content id="doctor-panel">
+              <ion-row>
+                <ion-col class="record-list">
+                  <ion-list *ngIf="doctorRecords.length > 0; else noRecord;">
+                    <ion-item class="record" *ngFor="let item of doctorRecords" button (click)="editRecord(item)">
+                      <ion-label>
+                        {{ item.timestamp | date: 'medium' }}
+                        <ion-card-subtitle>
+                          {{ item.content }}
+                        </ion-card-subtitle>
+                      </ion-label>
+                      <div class="record-audit">
+                        <ng-container *ngIf="item.updatedBy !== item.createdBy">
+                          <ion-text>Modified:</ion-text>
+                          <audit-name [id]="item.updatedBy" style="margin-bottom: 5px;"></audit-name>
+                        </ng-container>
+                        <ion-text>Established:</ion-text>
+                        <audit-name [id]="item.createdBy"></audit-name>
+                      </div>
+                    </ion-item>
+                  </ion-list>
+                </ion-col>
+              </ion-row>
+            </ion-card-content>
+          </ion-card>
+
+          <ng-template #noRecord>
+            <div class="no-record no-record-middle">
+              <ion-text>No Record</ion-text>
+            </div>
+          </ng-template>
+
+      </ion-col>
+  </ion-row>
+</ion-grid>
+
+<ion-popover trigger="adjust-date-trigger" triggerAction="click" #adjustDatePop [reference]="null">
+  <ng-template>
+    <ng-container *ngIf="dialysisRecords.length > 0; else empty;">
+      <ion-content class="adjust-date-content">
+        <ion-card-header>
+          <ion-title>
+            Adjust Times
+          </ion-title>
+        </ion-card-header>
+        
+        <ion-row>
+          <ion-col>
+            <ion-row>
+              <ion-col>
+                <ion-label>Select Start Time:</ion-label>
+              </ion-col>
+              <ion-col>
+                <ion-datetime-button datetime="adjust-date" ></ion-datetime-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-label>Select Interval:</ion-label>
+              </ion-col>
+              <ion-col>
+                <button class="interval" (click)="selectInterval(intervalSelect)">
+                  {{ convertIntervalToStr(interval) | pretty }}
+                </button>
+              </ion-col>
+            </ion-row>
+          </ion-col>
+        </ion-row>
+        <ion-buttons>
+          <ion-button color="secondary" (click)="adjustTimes();adjustDatePop.dismiss();">Confirm</ion-button>
+          <ion-button color="danger" (click)="adjustDatePop.dismiss();">Cancel</ion-button>
+        </ion-buttons>
+      </ion-content>
+    </ng-container>
+    <ng-template #empty>
+      <ion-content class="adjust-date-content">
+        <div class="empty">
+          <ion-text>No Record yet.</ion-text>
+        </div>
+        <ion-buttons>
+          <ion-button color="secondary" (click)="adjustDatePop.dismiss();">Ok</ion-button>
+        </ion-buttons>
+      </ion-content>
+    </ng-template>
+    
+  </ng-template>
+</ion-popover>
+
+<ion-popover [keepContentsMounted]="true">
+  <ng-template>
+    <ion-datetime id="adjust-date" presentation="time" [showDefaultButtons]="true" [(ngModel)]="startTime" hourCycle="h23"></ion-datetime>
+  </ng-template>
+</ion-popover>
+
+<ion-picker [columns]="intervalPickerColumn" [buttons]="intervalButtons" #intervalSelect></ion-picker>

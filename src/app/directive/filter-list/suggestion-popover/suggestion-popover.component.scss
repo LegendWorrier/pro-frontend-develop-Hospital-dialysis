@@ -1,0 +1,24 @@
+@media (max-width: 767px) {
+    ion-searchbar {
+        display: inline-flex;
+        vertical-align: middle;
+        width: 80%;
+    }
+    
+    ion-button {
+        display: inline-flex;
+        vertical-align: middle;
+    }
+}
+
+ion-searchbar {
+    display: inline-flex;
+    vertical-align: middle;
+    max-width: 440px;
+}
+
+ion-button {
+    display: inline-flex;
+    vertical-align: middle;
+
+}

@@ -1,0 +1,35 @@
+ion-grid {
+    padding-bottom: 70px;
+}
+
+ion-list {
+    ion-label {
+        display: flex;
+        align-items: center;
+        ion-checkbox {
+            margin-right: 5px;
+        }
+    }
+}
+.name {
+    margin-left: 10px;
+}
+
+.icon-button {
+    ion-icon {
+        margin-right: 0px;
+    }
+}
+
+.title {
+    padding-bottom: 6px;
+
+    align-items: center;
+    .ios & {
+        position: relative;
+        padding-left: 10px;
+        padding-right: 0px;
+        text-align: left;
+    }
+    
+}

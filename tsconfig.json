@@ -1,0 +1,32 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2020",
+    "lib": [
+      "es2019",
+      "dom"
+    ],
+    "paths": {
+      "jszip": ["../node_modules/jszip/dist/jszip.min.js"],
+      "JSZipUtils": ["../node_modules/jszip-utils/dist/jszip-utils.min.js"],
+      "xlsx-style": ["../node_modules/xlsx-style/dist/xlsx.js"],
+      "cpexcel": ["../node_modules/xlsx-style/dist/cpexcel.js"]
+    },
+    "strict": false,
+    "strictNullChecks": false
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+  }
+}
